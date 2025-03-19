@@ -1,0 +1,1101 @@
+airline_id,airline_code,airline_name,check_in_link,check_in_time
+835,00,LANHSA,,0
+745,01,JetHunter,,0
+888,0A,Emetebe,,0
+896,0B,Blue Air,,0
+429,0C,AIS Airlines,,0
+680,0D,Finistair,,0
+703,0E,Northwest,,0
+794,0F,FlyALS,,0
+258,0G,Grumeti Air,,0
+787,0H,Uzbekistan Airways Express,,0
+490,0I,Meraj Airlines,,0
+1010,0J,Premium Jet AG,,0
+249,0K,GlobeAir,,0
+765,0L,Lodyssey,,0
+910,0M,Premier Airlines,,0
+565,0N,Jonair,,0
+420,0O,Air Ocean,,0
+1066,0P,Silver Air,,0
+287,0Q,Hydro - Quebec,,0
+416,0R,Renegade Air,,0
+396,0S,Sunday Airlines,,0
+1062,0T,AnadoluJet,,0
+200,0U,Speed train,,0
+352,0V,Heron Aviation,,0
+425,0W,AS SALAAM AIR,,0
+1012,0X,Air Excel,,0
+614,0Y,FlyArystan,,0
+369,0Z,Magnicharters,,0
+641,1A,Amadeus IT Group SA,,0
+679,1B,Abacus International Pte. Ltd.,,0
+585,1C,Hewlett-Packard (Schweiz) GmbH,,0
+255,1D,Radixx Solutions International, Inc.,,0
+681,1E,Travelsky Technology Limited,,0
+915,1F,INFINI Travel Information, Inc.,,0
+846,1G,Travelport Global Distribution SystemB.V.,,0
+184,1H,"JSC ""Sirena-Travel""",,0
+133,1I,ChallengAir,,0
+467,1J,Axess International Network Inc.,,0
+190,1K,Sutra Inc.,,0
+608,1L,CitizenPlane,,0
+510,1M,JSC Transport Automated InformationSystems - TAIS,,0
+528,1N,Navitaire,,0
+380,1P,Worldspan,,0
+58,1R,Bird Information Systems Private Limited,,0
+1018,1S,Sabre Inc.,,0
+771,1T,PT Aerosystems Indonesia,,0
+323,1U,ITA Software Inc.,,0
+622,1V,Galileo International,,0
+881,1X,Fly Branson Travel dba Branson AirExpress,https://checkin.onex.com/mci/start,24
+961,1Y,Electronic Data Systems Corporation,,0
+582,1Z,Sabre Pacific,,0
+1030,2A,Deutsche Bahn AG,,0
+934,2B,Ak Bars Aero,,0
+954,2C,SNCF,,0
+943,2D,Eastern Airlines, LLC,,0
+635,2E,Smokey Bay Air, Inc.,,0
+814,2F,Afrinat International Airlines,,0
+359,2G,Angara Airlines,,0
+144,2H,Eurostar,,0
+575,2I,Star Peru,,0
+938,2J,Air Burkina,,0
+487,2K,Avianca Ecuador,,0
+354,2L,Helvetic Airways,,0
+256,2M,Moldavian Airlines,,0
+223,2N,Nextjet,,0
+131,2O,Redemption Inc.,,0
+155,2P,PAL Express,https://checkin.si.amadeus.net/static/PRD/PR/#/checkindirect?LANGUAGE=EN&ln=en&ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR},24
+879,2Q,Air Cargo Carriers, LLC.,,0
+320,2R,VIA Rail Canada Inc.,,0
+157,2S,Southwind,,0
+929,2T,Bermudair,,0
+586,2U,FlyKhiva,,0
+1085,2V,Amtrak,,0
+123,2W,World2Fly,,0
+448,2Y,PT. My Indo Airlines,,0
+691,2Z,Passaredo Transportes Aereos S.A.,,0
+156,3A,Chu Kong Passenger Transport Co. Ltd.,,0
+443,3C,Calima Aviacion S.L,,0
+1026,3D,DoKaSch,,0
+509,3E,Air Choice One,,0
+773,3F,FlyOne,,0
+993,3G,Gambia Bird Airlines,,0
+171,3H,Air Inuit,,0
+216,3J,Cargo Three Inc. dba Pan Air Cargo,,0
+228,3K,Jetstar Asia,https://checkin.jetstar.com/au/en/checkin,48
+737,3L,Air Arabia Abu Dhabi,,0
+689,3M,Silver Airways,https://checkins.silverairways.com/dx/3MCI/#/check-in/deep-link?deepLink=true&locale=en-GB&lastName={LAST}&recordLocator={PNR}&departCity={IATA_DEP},24
+722,3N,Air Urga,,0
+229,3O,Air Arabia Maroc,,0
+902,3P,Tiara Air Aruba,,0
+783,3Q,Royal Zambian Airlines,,0
+76,3R,Avior Airlines,,0
+492,3S,Air Antilles Express,,0
+913,3T,Tarco Air,,0
+107,3U,Sichuan Airlines,http://global.sichuanair.com/www/?country=US-EN#/checkin,24
+998,3V,TNT Airways,,0
+127,3W,Malawian Airlines,,0
+739,3X,Premier Trans Aire Inc.,,0
+850,3Y,Kartika Airlines,,0
+269,3Z,Travel Service Polska Sp. z.o.o.,,0
+1020,4A,Aero Transporte S.A.,,0
+517,4B,Boutique Air,,0
+325,4C,LAN COLOMBIA AIRLINES,https://www.latamairlines.com/gb/en/check-in,48
+1015,4D,Air Sinai,,0
+1111,4E,Stabo Air Limited,,0
+394,4F,Air City,,0
+430,4G,Gazpromavia,,0
+589,4H,Hi Air,,0
+1109,4I,IHY Izmir Havayollari A.S.,,0
+464,4J,JetAir Caribbean,,0
+292,4K,Kenn Borek Air Ltd.,,0
+958,4L,Palau National Airlines,,0
+106,4M,Mavi Gok Airlines,,0
+291,4N,Air North Charter and Training Ltd.,,0
+1042,4O,Air Montenegro,,0
+471,4P,Travel Air,,0
+1078,4Q,Safi Airways,,0
+936,4R,CJSC Royal Flight airlines,,0
+7,4S,Red Sea Airlines,,0
+372,4T,Belair Airlines,,0
+479,4U,Germanwings,,0
+311,4V,Lignes Aeriennes Congolaises,,0
+390,4W,Warbelow's Air Ventures,,0
+991,4X,Avion Express Malta,https://m.fourx.com/en-US/webcheckin/index/bookingno,24
+237,4Y,Discover,,0
+1097,4Z,Airlink,https://checkin.si.amadeus.net/static/PRD/4Z/#/checkindirect?IFormOfIdentification=PNR&IGroupTravel=off&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+1115,55,Buta Airways,,0
+808,5A,Alpine Aviation Inc.,,0
+660,5B,Bassaka Air Limited,,0
+616,5C,Nature Air,,0
+817,5D,Aerolitoral S.A. de C.V.,https://aeromexico.com/en-us/check-in?last-name={LAST}&pnr={PNR},24
+623,5E,Siam Ga Co. Ltd.,,0
+727,5F,FlyOne,,0
+799,5G,Shirak Avia,,0
+701,5H,Fly540,,0
+1099,5I,Alsa Grupo SLU,,0
+930,5J,Cebu Pacific,https://book.cebupacificair.com/Mobile/CheckIn/Retrieve,48
+685,5K,Hi Fly,,0
+927,5M,Hi Fly Ltd,,0
+812,5N,Smartavia,https://flysmartavia.com/check-in/?lang=en,24
+853,5O,ASL Airlines France,,0
+964,5P,Panorama Airways,,0
+277,5Q,BQB Lineas Aereas,,0
+966,5R,Rutas Aereas, C.A. dba  RUTACA,,0
+403,5S,Global Aviation Services Group,,0
+67,5T,Canadian North,https://checkin.canadiannorth.com/dx/5TCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+35,5U,TAG Airlines,,0
+914,5V,Everts Air Cargo,,0
+815,5W,Wizz Air,,0
+949,5X,UPS,,0
+140,5Y,Atlas Air,,0
+839,5Z,CemAir,https://www.cemair.co.za/index.php?checkin=true,24
+141,6A,Armenia Airways,,0
+6,6B,TUIfly Nordic,,0
+1075,6C,Air Timor,,0
+322,6D,Travel Service Slovensko,,0
+674,6E,IndiGo,https://www.goindigo.in/web-check-in.html,48
+112,6G,Sun Air Express,,0
+692,6H,Israir Airlines,,0
+661,6I,Air Alsie,,0
+1118,6J,Solaseed Air,,0
+499,6K,Air Anka,,0
+992,6L,Aklak Air,,0
+852,6M,Zacarias Moreno,,0
+405,6N,Niger Airlines,,0
+942,6O,Orbest,,0
+283,6R,Alrosa,https://booking.alrosa.aero/web-chekin/?lang=en#search,24
+232,6T,Air Mandalay,,0
+381,6U,Air Cargo Germany,,0
+738,6V,AVANZA,,0
+948,6W,FlyBosnia,,0
+153,6Y,SmartLynx Airlines,,0
+906,6Z,Euro-Asia Air,,0
+1094,7A,Air Jet,,0
+466,7B,Bees Airline,,0
+1098,7C,Jeju Air,https://wcc.jejuair.net/en/ibe/checkin/viewCheckin.do,48
+1119,7D,Maluti Sky,,0
+567,7E,Sylt Air GmbH,,0
+92,7F,First Air,,0
+163,7G,StarFlyer,,0
+967,7H,Ravn Alaska,,0
+1090,7I,Insel Air,,0
+791,7J,Tajik Air,,0
+862,7K,MetroJet,,0
+289,7L,Aerocaribbean,,0
+848,7M,MAYAir,,0
+194,7N,Pan American World Airways,,0
+529,7O,Travel Service,,0
+1093,7P,Air Panama,https://wc2-7p.kiusys.net/,24
+613,7Q,Elite Airways,,0
+518,7R,RusLine,https://ticket.rusline.aero/websky-check-in/?lang=en#search,24
+999,7S,Ryan Air Service,,0
+678,7T,Trenitalia,,0
+279,7U,Alpha Air Transport,,0
+11,7V,Federal Air,,0
+383,7W,Windrose Airlines,,0
+686,7Y,Mann Yadanarpon Airlines,,0
+901,7Z,Halcyonair,,0
+960,86,Up Israel,,0
+12,8A,Panama Airways,,0
+335,8B,TransNusa,,0
+859,8C,Air Transport International L.L.C.,,0
+1006,8D,FITS Air,,0
+462,8E,Bering Air,,0
+619,8F,STP Airways,,0
+944,8G,Aero Dili,,0
+43,8H,BH Air,,0
+743,8I,Insel Air,,0
+130,8J,EcoJet,,0
+639,8K,K-Mile Air Co. Ltd,,0
+453,8L,Lucky Air,,0
+1052,8M,Myanmar Airways International,,0
+956,8N,Regional Air Services,,0
+719,8P,Pacific Coastal Airlines,,0
+891,8Q,Onur Air,,0
+898,8R,Sol Lineas Aereas,,0
+446,8S,TurboJET,,0
+450,8T,Air Tindi,,0
+42,8U,Afriqiyah Airways,,0
+894,8V,Wright Air Service,,0
+975,8W,Fly All Ways,,0
+688,9A,Eaglexpress Air Charter Sdn.Bhd.dbaEaglexpress Air,,0
+53,9B,AccesRail,,0
+197,9C,Spring Airlines,,0
+451,9E,Endeavor Air,https://www.delta.com/PCCOciWeb/findBy.action,24
+669,9F,Eurostar,,0
+260,9G,9G Rail,,0
+344,9H,Chang An Airlines,,0
+459,9I,Alliance Air,,0
+296,9J,Dana Airlines Limited,,0
+1007,9K,Cape Air,https://checkin.si.amadeus.net/static/PRD/9K/#/checkindirect?IFormOfIdentification=PNR&IGroupTravel=off&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+895,9L,West Link Airlines,,0
+782,9M,Central Mountain Air,,0
+169,9N,Tropic Air Limited,,0
+648,9P,Air Arabia Jordan,,0
+253,9Q,Caicos Express Airways,,0
+1000,9R,Southern Air,,0
+326,9S,Air Samarkand,,0
+1002,9T,ACT Havayollari A.S.,,0
+527,9U,Air Moldova,,0
+824,9V,Avior Airlines,,0
+937,9W,Jet Airways,https://selfservice.jetairways.com/MCI/mci,24
+1082,9X,Executive Express Aviation LLC dbaSouthern Airways,,0
+590,A1,A.P.G. Distribution System,,0
+238,A2,Animawings,,0
+71,A3,Aegean Airlines,https://checkin.si.amadeus.net/1ASIHSSCWEBA3/sscwa3/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+212,A4,Azimuth,,0
+26,A5,HOP!,https://wwws.airfrance.co.uk/check-in,30
+393,A6,Air Alps Aviation,,0
+33,A7,Air Niamey,,0
+647,A8,Aerolink Uganda Limited,,0
+13,A9,Georgian Airways,,0
+418,AA,American Airlines,,0
+550,AB,Bonza,,0
+10,AC,Air Canada,https://www.aircanada.com/uk/en/aco/home/ssci.html?lastName={LAST}&staffNumber={PNR},24
+280,AD,Azul Brazilian Airlines,https://www.voeazul.com.br/us/en/home/azulwebcheckin?pnr={PNR}&origin={IATA_DEP},48
+96,AE,Mandarin Airlines,,0
+549,AF,Air France,https://wwws.airfrance.co.uk/check-in,30
+813,AG,Aruba Airlines,,0
+699,AH,Air Algerie,https://checkin.si.amadeus.net/static/PRD/AH/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+828,AI,Air India,https://travel.airindia.in/ssci/identification,48
+307,AJ,Aztec Airways,,0
+761,AK,AirAsia,https://www.airasia.com/check-in/v2/en/gb,24
+327,AL,Malta Air,,0
+772,AM,Aeromexico,https://aeromexico.com/en-us/check-in?last-name={LAST}&pnr={PNR},24
+548,AN,HOP!,,0
+215,AO,Australian Airlines,,0
+710,AP,AlbaStar,,0
+214,AQ,9 Air,http://9air.com/en-US/ticketValidate,24
+968,AR,Aerolineas Argentinas,https://checkin.aerolineas.com.ar/dx/ARCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+206,AS,Alaska Airlines,https://webselfservice.alaskaair.com/checkinweb/findreservation.aspx?cmd=startapplication&language=en_US,24
+204,AT,Royal Air Maroc,https://checkin.si.amadeus.net/static/PRD/AT/#/checkindirect?IIdentificationBookingRef={PNR}&ISurname={LAST}&ln=en,48
+293,AU,Austral Lineas Aereas,,0
+152,AV,Avianca,https://checkin.si.amadeus.net/1ASIHSSCMCIAV/sscmav/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+80,AW,Africa World Airlines,,0
+79,AX,Trans States Airlines,,0
+3,AY,Finnair,https://checkin.si.amadeus.net/static/PRD/AY/#/checkindirect?IIdentificationBookingRef={PNR}&ISurname={LAST}&ln=gb,36
+305,AZ,ITA Airways,https://fly.ita-airways.com/ssci/identification?lang=EN&pointOfSale=EU&identifier={PNR}&lastName={LAST},24
+579,B0,La Compagnie,,0
+520,B1,TAB - Transportes Aéreos Bolivianos,,0
+210,B2,Belavia,https://tickets.belavia.by/wci/?lang=en#/search,24
+559,B3,Bhutan Airlines,,0
+493,B4,be0nd,,0
+671,B5,East African Safari Air,,0
+760,B6,JetBlue Airways,https://mobilecheckin.jetblue.com/checkin/check-in,24
+268,B7,Uni Air,https://www.uniair.com.tw/rwd/B2C/service/checkin/uck_login.aspx,24
+375,B8,Eritrean Airlines,,0
+36,B9,Iran Airtour,,0
+175,BA,British Airways,https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile,24
+75,BB,Seaborne Airlines,,0
+555,BC,Skymark Airlines,,0
+700,BE,Flybe,,0
+712,BF,French Bee,https://checkin.si.amadeus.net/static/PRD/BF/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=EN&lang=EN,24
+807,BG,Biman Bangladesh Airlines,https://checkin.biman-airlines.com/dx/BGCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+932,BH,Hawkair,,0
+844,BI,Royal Brunei,https://book-royalbrunei.crane.aero/ibe/checkin/search?PNRNo={PNR}&surname={LAST}&lang=en&agree=on,48
+985,BJ,Nouvelair,,0
+687,BK,Okay Airways,,0
+49,BL,Jetstar Pacific Airlines,https://booking.vietnamairlines.com/ssci/identification?lang=en-GB,24
+1084,BM,BMI Regional,,0
+189,BN,Luxwing,,0
+304,BO,BB Airways,,0
+387,BP,Air Botswana,,0
+962,BQ,SkyAlps,,0
+522,BR,Eva Air,https://booking.evaair.com/flyeva/eva/b2c/manage-your-trip/online-checked-in-login.aspx?lang=en-gb,24
+119,BS,US-Bangla Airlines,,0
+1059,BT,airBaltic,https://book.airbaltic.com/en/checkin/upsell?action2=upsell&ck_pnr={PNR}&ck_lastname={LAST},24
+764,BU,Compagnie Africaine d'Aviation,,0
+222,BV,Toki Air,,0
+482,BW,Caribbean Airlines,https://checkin.si.amadeus.net/static/PRD/BW/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+334,BX,Air Busan,https://men.airbusan.com/mw/checkin/checkinList,48
+407,BY,Thomson Airways,https://flightextras.tui.co.uk/#page,24
+124,BZ,Blue Bird Airways,,0
+273,C1,Tectimes Sudamerica,,0
+1034,C2,CEIBA Intercontinental,,0
+207,C3,Trade Air,,0
+882,C4,Conquest Air, Inc.,,0
+251,C5,CommutAir,,0
+601,C6,Centrum Air,,0
+1044,C7,Cinnamon Air,,0
+976,C8,Cronos Airlines,,0
+374,CA,Air China,https://m.airchina.com.cn/ac/c/invoke/qryCheckInsNoLogin@pg,24
+526,CB,Caribbean Air Export Import Inc.,,0
+1079,CC,Air Atlanta,,0
+1031,CD,Corendon Dutch Airlines,,0
+649,CE,Chalair Aviation,,0
+265,CF,China Postal Airlines Ltd.,,0
+981,CG,Airlines PNG,,0
+514,CH,Bemidji Airlines,,0
+547,CI,China Airlines,https://calec.china-airlines.com/eCheckin/eCheckin_home.aspx?country=us&locale=en,48
+633,CJ,BA Cityflyer,,0
+442,CK,China Cargo Airlines,,0
+259,CL,Lufthansa CityLine,https://www.lufthansa.com/us/en/online-check-in,24
+871,CM,Copa Airlines,https://checkin.copaair.com/check-in/{PNR}/{LAST}/en,24
+98,CN,Grand China Air,,0
+988,CO,Cobalt Air,,0
+1081,CP,Compass Airlines,,0
+1001,CQ,Coastal Travels,,0
+134,CR,OAG,,0
+1027,CS,Continental Micronesia, Inc.,,0
+115,CT,Alitalia CityLiner,,0
+663,CU,Cubana de Aviación,https://checkin.si.amadeus.net/static/PRD/CU/#/identification,24
+1054,CV,Cargolux,,0
+823,CX,Cathay Pacific,https://www.cathaypacific.com/mb/#/en_GB/olci/login,48
+412,CY,Cyprus Airways,,0
+457,CZ,China Southern Airlines,https://www.csair.com/gb/en/online_checkin/,24
+379,D0,DHL Air Limited,,0
+1051,D2,Severstal Air,,0
+243,D3,Daallo Airlines,,0
+1013,D4,Georgian Wings,,0
+195,D5,DHL Aero Expreso S.A.,,0
+196,D6,Inter Air,,0
+768,D7,AirAsia X,https://www.airasia.com/check-in/v2/en/gb,24
+1060,D8,Norwegian Air International,,0
+386,D9,Donavia,,0
+1102,DB,Brit Air,,0
+716,DC,Braathens Regional,,0
+1064,DD,Nok Air,https://booking.nokair.com/en/checkin?confirmationNumber={PNR}&bookingLastName={LAST},24
+666,DE,Condor,https://www.condor.com/tcibe/eu/mybooking/login,24
+1071,DF,Condor,,0
+770,DG,Cebgo,https://book.cebupacificair.com/Mobile/CheckIn/Retrieve,48
+512,DH,Douniah Airlines,,0
+972,DI,Norwegian Air,,0
+433,DJ,Air Djibouti,,0
+345,DK,Thomas Cook Airlines Scandinavia,https://checkin.si.amadeus.net/static/PRD/DK/#/identification?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+182,DL,Delta Air Lines,https://www.delta.com/PCCOciWeb/findBy.action,24
+434,DM,Arajet,,0
+597,DN,DAN AIR,,0
+748,DO,Discovery Airways,,0
+1046,DP,Pobeda,https://checkin.flypobeda.ru/check-in/?lang=en#/search,48
+447,DQ,Alexandria Airlines,,0
+478,DR,Ruili Airlines,https://www.rlair.net/#/selfCenter/flightCheckin,24
+588,DS,easyJet Switzerland,https://www.easyjet.com/en/?chkin=1,24
+239,DT,TAAG Angola Airlines,https://checkin.si.amadeus.net/static/PRD/DT/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+1068,DU,Norwegian Long Haul,,0
+349,DV,SCAT,https://checkin.scat.kz/dx/DVCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+353,DW,Aero-Charter Ukraine,,0
+1047,DX,Danish Air Transport,https://dat.dk/check-in/?___store=dat_en,24
+830,DY,Norwegian Air Shuttle,https://www.norwegian.com/en/ipr/CheckIn#/checkin/gotoresdetails?pnr={PNR}&pnrName={LAST},24
+244,DZ,Donghai Airlines,,0
+504,E2,Eagle Atlantic Airlines,,0
+176,E4,Enter Air,,0
+642,E5,Air Arabia Egypt,,0
+713,E6,Bringer Air Cargo,,0
+634,E7,Equaflight Service,,0
+219,E8,Tayaran Jet,,0
+427,E9,Iberojet,,0
+728,EA,East Horizon Airlines,,0
+100,EB,Wamos Air,,0
+360,EC,EasyJet Europe,https://www.flylevel.com/?culture=en-GB&rl={PNR}&ap={IATA_DEP}&dt={DEP_DATE_EU}&currency=EUR,24
+736,ED,AirExplore,,0
+569,EE,Regional Jet OÜ,,0
+672,EF,Fly CamInter,,0
+376,EG,Ernest Airline,,0
+1043,EH,ANA Wings,https://aswbe-i.ana.co.jp/international_asw/pages/webcheckin/checkin_search_input.xhtml?CONNECTION_KIND=JPN&LANG=en,24
+868,EI,Aer Lingus,https://webcheckin.aerlingus.com/html/checkIn/checkin.html#?pnr={PNR}&surname={LAST},24
+747,EJ,New England Airlines,,0
+990,EK,Emirates,https://mobile.emirates.com/english/CKIN/OLCI/flightInfo.xhtml,48
+933,EL,Ellinair,,0
+977,EM,Empire Airlines,,0
+584,EN,Air Dolomiti,https://www.lufthansa.com/xx/en/online-check-in,24
+838,EO,Pegas Fly,,0
+417,EP,Iran Aseman Airlines,,0
+192,EQ,TAME Linea Aerea del Ecuador,,0
+506,ER,Air East,,0
+607,ES,DHL Aviation EEMEA B.S.C.(c),,0
+1053,ET,Ethiopian Airlines,https://dxcheckin.ethiopianairlines.com/dx/ETCI/#/check-in/deep-link?deepLink=true&searchOption=PNR&recordLocator={PNR}&lastName={LAST}&locale=en-GB,24
+365,EU,Chengdu Airlines,,0
+974,EV,ExpressJet,,0
+887,EW,Eurowings,https://www.eurowings.com/en/my-trip/checkin.html,24
+62,EX,Thai Express Air Co. Ltd,,0
+57,EY,Etihad Airways,https://digital.etihad.com/selfservice/en,36
+515,EZ,Sun-Air of Scandinavia,,0
+496,F0,Fly Jordan,,0
+507,F1,Farelogix Qatar Airways,,0
+143,F2,Safarilink Aviation,,0
+690,F3,Flyadeal,,0
+572,F4,Air Flamenco,,0
+904,F5,Aerotranscargo,,0
+996,F6,fly2sky,,0
+1037,F7,iFly Airlines,,0
+25,F8,Flair Airlines,,0
+406,F9,Frontier Airlines,https://www.flyfrontier.com/travel/my-trips/manage-trip/,24
+1088,FA,Safair,https://app.flysafair.co.za/check-in?confirmationNumber={PNR}&bookingLastName={LAST},24
+562,FB,Bulgaria Air,https://digital.air.bg/ssci/identification?ln=en&IIdentificationType=PNR&identifier={PNR}&lastName={LAST}&lang=en-GB,24
+331,FC,Link Airways,,0
+286,FD,Thai AirAsia,https://www.airasia.com/check-in/v2/en/gb,24
+1077,FE,Far Eastern Air Transport,,0
+24,FF,Airshop B.V.,,0
+129,FG,Ariana Afghan Airlines,,0
+650,FH,Freebird Airlines,,0
+816,FI,Icelandair,https://checkin.si.amadeus.net/static/PRD/FI/#/checkindirect?IIdentificationBookingRef={PNR}&ISurname={LAST}&ln=en,24
+602,FJ,Fiji Airways,https://digital.fijiairways.com/fj/ssci/identification?lang=EN,24
+1113,FL,Fly Lili,,0
+408,FM,Shanghai Airlines,https://us.ceair.com/en/check-in.html,24
+60,FN,fastjet,,0
+1072,FO,Flybondi,,0
+314,FP,Servicios Aéreos de los Andes,,0
+208,FQ,Brindabella Airlines,,0
+609,FR,Ryanair,https://www.ryanair.com/gb/en/lp/check-in,48
+94,FS,FlyArystan,,0
+805,FT,FlyEgypt,,0
+890,FU,Fuzhou Airlines,,0
+122,FV,Rossiya Airlines,https://www.rossiya-airlines.ru/en/,24
+1017,FW,Ibex Airlines,,0
+202,FX,FedEx,,0
+763,FY,Firefly,,0
+836,FZ,Flydubai,https://www.flydubai.com/en/flying-with-us/check-in/online-check-in,24
+275,G2,Jet Express,,0
+111,G3,Gol Transportes Aéreos,https://b2c.voegol.com.br/check-in/,48
+315,G4,Allegiant Air,https://www.allegiantair.com/online-checkin,24
+696,G5,China Express Airlines,,0
+1005,G6,FlyArna,,0
+1065,G7,GoJet Airlines,,0
+818,G8,Go!,,0
+136,G9,Air Arabia,https://webcheckin.airarabia.com/accelaero/en/index.html#/,24
+120,GA,Garuda Indonesia,https://checkin.si.amadeus.net/1ASIHSSCMCIGA/sscmga/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&IDate={DEP_DATE_EU},24
+803,GB,ABX Air, Inc.,,0
+725,GC,Gambia International Airlines,,0
+784,GD,Aviair,,0
+861,GE,Lift,,0
+978,GF,Gulf Air,https://dxcheckin.gulfair.com/dx/GFCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+870,GG,Sky Lease I, Inc.,,0
+125,GH,Globus Airlines,,0
+382,GI,Itek Air,,0
+1050,GJ,Loong Air,,0
+391,GK,Jetstar Japan,https://checkin.jetstar.com/au/en/checkin,48
+233,GL,Air Greenland,https://checkin.si.amadeus.net/1ASIHSSCMCIGL/sscmgl/checkindirect?IFormOfIdentification=PNR&ln=en&ISurname={LAST}&IIdentification={PNR},24
+971,GM,Chair Airlines,,0
+500,GO,ULS Airlines Cargo,,0
+869,GP,APG Airlines,,0
+909,GQ,Sky Express,,0
+1021,GR,Aurigny Air Services,,0
+653,GS,Tianjin Airlines,,0
+1056,GT,Vista Georgia,,0
+706,GU,Aviateca,,0
+88,GV,Grant Aviation, Inc.,,0
+1029,GW,GetJet,,0
+1048,GY,Colorful Guizhou Airlines,,0
+577,GZ,Air Rarotonga,,0
+926,H1,Hahn Air,,0
+476,H2,Sky Airline,https://check-in.skyairline.com/en/unitedstates/,48
+183,H4,HiSky,,0
+385,H5,CM Airlines,,0
+717,H6,Bulgarian Air Charter,,0
+348,H7,HiSky,,0
+465,H8,Hesa Airlines,,0
+538,H9,Himalaya Airlines,,0
+281,HA,Hawaiian Airlines,https://checkin.hawaiianairlines.com/,24
+657,HB,Asia Atlantic Airlines,,0
+186,HC,Aero-Tropics Air Services,https://digital.flyairsenegal.com/ssci/identification?lang=en&identifier={PNR}&lastName={LAST}&program=,24
+358,HD,Air Do,,0
+203,HE,LGW Luftfahrtgesellschaft Walter,,0
+167,HF,Air Côte d'Ivoire,https://checkin.si.amadeus.net/static/PRD/HF/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+438,HG,Niki,,0
+539,HH,Qanot Sharq,,0
+673,HI,Papillon Airways,,0
+81,HJ,Humo Air,,0
+1063,HK,Skippers Aviation,,0
+501,HM,Air Seychelles,,0
+4,HN,Heston Airlines dba Heston Airlines,,0
+885,HO,Juneyao Airlines,https://global.juneyaoair.com/seat/list?firstName={FIRST}&lastName={LAST}&certificateNo={PNR},24
+788,HP,PopulAir,,0
+664,HQ,Thomas Cook Airlines Belgium,,0
+211,HR,Hahn Air,,0
+40,HS,Héli Sécurité Hélicopter Airline,,0
+732,HT,Ningxia Cargo Airlines CO.,LTD,,0
+595,HU,Hainan Airlines,https://www.hainanairlines.com/GB/GB/Check-in,24
+371,HV,Transavia,https://www.transavia.com/en-UK/my-transavia/check-in/login/,24
+531,HW,North-Wright Airways,,0
+150,HX,Hong Kong Airlines,https://new.hongkongairlines.com/hxair/ibe/hkaAncillaries/preCheckIn.do?Dst=preCheckIn&market=US&language=en,24
+953,HY,Uzbekistan Airways,https://www.uzairways.com/en/online-registration?etktfalse=1&etkt={PNR}&family={LAST},24
+454,HZ,Aurora,https://www.aeroflot.ru/sb/ckin/app/ru-en#/search_pnrs,24
+366,I2,Iberia Express,https://booking.iberiaexpress.com/myflights/flight-detail/{PNR}/{LAST},24
+656,I3,ATA Airlines,,0
+1022,I4,Interstate Airlines,,0
+755,I5,Air India Express,,0
+368,I6,IRYO,,0
+142,I8,Izhavia,,0
+378,I9,Air Italy,,0
+935,IB,Iberia,https://www.iberia.com/gb/online-checkin/?language=en&market=gb#!/ibcose,24
+248,ID,Batik Air Indonesia,https://checkin.batikair.com/dx/IDCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+486,IE,Solomon Airlines,,0
+267,IG,Air Italy,,0
+126,IH,Southern Sky,,0
+139,II,IBC Airways,,0
+665,IJ,Spring Airlines Japan,,0
+117,IK,Air Kiribati Limited,,0
+497,IL,PT.Trigana Air Service,,0
+178,IM,JSC Aircompany ATMA,,0
+72,IN,NAM Air,https://webcheckin.sriwijayaair.co.id/new/,24
+752,IO,IrAero,https://iraero.ru/en/check-in/#/search/{PNR}/{LAST}/,24
+754,IP,Apsara International Air,,0
+566,IQ,Qazaq Air,,0
+409,IR,Iran Air,,0
+889,IS,Sepehran Airlines,,0
+97,IT,Tigerair Taiwan,,0
+963,IU,Super Air Jet,,0
+173,IW,Wings Air,https://checkin.batikair.com/dx/IWCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+521,IX,Air India Express,https://www.airindiaexpress.com/checkin-home?checked=true,48
+341,IY,Yemenia,,0
+1032,IZ,Arkia,,0
+257,J0,Jetlink Express,,0
+1103,J1,One Jet, Inc.,,0
+694,J2,Azerbaijan Airlines,https://book.azal.az/checkin/select-passengers?lang=en&passengerId={LAST}&number={PNR},24
+711,J3,Northwestern Air,,0
+319,J4,BADR AIRLINES,,0
+469,J5,Alaska Seaplane,,0
+596,J6,Jet Ops,,0
+603,J7,Afrijet Business Service,,0
+1073,J8,Berjaya Air,,0
+85,J9,Jazeera Airways,,0
+1074,JA,JetSMART,,0
+329,JB,Helijet,,0
+832,JC,Japan Air Commuter,https://checkin.si.amadeus.net/static/PRD/JL/#/checkindirect?&IFormOfIdentification=PNR&IIdentification={PNR}&IDate={DEP_DATE_EU}&IlastName={LAST}&IfirstName={FIRST}&IFlight={FLT_NO}&ln=en,24
+561,JD,Beijing Capital Airlines,,0
+230,JE,Mango,,0
+945,JF,Jet Asia Airways,,0
+179,JG,JETGO Australia,,0
+946,JH,Fuji Dream Airlines,,0
+626,JI,Armenian Airlines,,0
+920,JJ,LATAM Brasil,https://www.latamairlines.com/gb/en/check-in,48
+1112,JL,Japan Airlines,https://checkin.si.amadeus.net/static/PRD/JL/#/checkindirect?&IFormOfIdentification=PNR&IIdentification={PNR}&IDate={DEP_DATE_EU}&IlastName={LAST}&IfirstName={FIRST}&IFlight={FLT_NO}&ln=en,24
+149,JM,Jambojet,,0
+1070,JN,Joon,,0
+473,JO,Jonika Airlines,,0
+270,JP,Adria Airways,,0
+455,JQ,Jetstar,https://checkin.jetstar.com/au/en/checkin,48
+987,JR,Joy Air,,0
+973,JS,Air Koryo,,0
+733,JT,Lion Air,https://checkin.lionair.co.id/dx/JTCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+856,JU,Air Serbia,https://dxcheckin.airserbia.com/dx/JUCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+1039,JV,Bearskin Airlines,,0
+615,JW,Vanilla Air,,0
+644,JX,STARLUX AIRLINES,https://checkin.si.amadeus.net/static/PRD/JX/#/checkindirect?ISurname={LAST}&IFirstName={FIRST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+789,JY,InterCaribbean Airways,,0
+951,JZ,Jatayu Airlines,,0
+524,K1,SkyFru,,0
+997,K2,Eurolot,,0
+274,K3,Taquan Air,,0
+880,K4,ALS Ltd.,,0
+855,K5,SeaPort Airlines,,0
+947,K6,Cambodia Angkor Air,,0
+940,K7,Air KBZ,,0
+59,K8,Kan Air,,0
+185,K9,TezJet,,0
+629,KA,Aero Nomad Airlines,,0
+209,KB,Druk Air,,0
+563,KC,Air Astana,https://checkin.si.amadeus.net/static/PRD/KC/#/checkindirect?ln=en&ghAirline=KC&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+15,KD,PT Kal Star Aviation,,0
+581,KE,Korean Air,https://www.koreanair.com/check-in,48
+1040,KF,Blue1,,0
+415,KG,Key Lime Air,,0
+630,KH,Kyrgyz Air,,0
+536,KI,SKS Airways,,0
+109,KJ,Air Incheon,,0
+592,KK,LEAV,,0
+1045,KL,KLM,https://www.klm.co.uk/check-in,30
+654,KM,KM Malta Airlines,,0
+313,KN,China United Airlines,,0
+723,KP,ASKY Airlines,,0
+570,KQ,Kenya Airways,https://checkin.si.amadeus.net/1ASIHSSCMCIKQ/sscmkq/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&IDate={DEP_DATE_EU},24
+227,KR,Cambodia Airways,,0
+282,KS,AirConnect,,0
+675,KT,AirAsia Cambodia,,0
+146,KU,Kuwait Airways,https://digital.kuwaitairways.com/ssci/identification?lang=en-GB,24
+494,KV,KrasAvia,,0
+45,KW,Kharkiv Airlines,,0
+698,KX,Cayman Airways,,0
+573,KY,Kunming Airlines,,0
+682,KZ,Nippon Cargo Airlines,,0
+553,L1,E-Savtravel,,0
+534,L2,Lynden Air Cargo, LLC,,0
+477,L3,Lynx Aviation,,0
+574,L4,Air Service Liege,,0
+557,L6,Mauritania Airlines International,,0
+445,L7,Linea Aerea Carguera de Colombia S.A.,,0
+605,L8,Afric Aviation,,0
+704,L9,Lumiwings,,0
+1016,LA,LATAM Chile,https://www.latamairlines.com/gb/en/check-in,48
+778,LB,Bul Air,,0
+995,LC,Skyway Costa Rica,,0
+843,LD,AHK Air Hong Kong Limited,,0
+594,LE,Laparkan Airways, Inc.,,0
+19,LG,Luxair,https://checkin.si.amadeus.net/static/PRD/LG/#/checkindirect?ln=en&ghAirline=LG&ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR},24
+138,LH,Lufthansa,https://www.lufthansa.com/us/en/online-check-in,24
+86,LI,Liat,,0
+921,LJ,Jin Air,https://www.jinair.com/login/quickform?,48
+766,LK,Lao Skyway,,0
+511,LL,Miami Air International,,0
+1069,LM,Loganair,https://www.loganair.co.uk/login/check-in,24
+271,LN,Libyan Airlines,,0
+897,LO,LOT Polish Airlines,https://checkin.si.amadeus.net/static/PRD/LO/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+32,LQ,Lanmei Airlines,,0
+39,LR,Avianca Costa Rica,,0
+90,LS,Jet2.com,https://www.jet2.com/en/login,24
+413,LT,Air Lituanica,,0
+860,LU,LAN Express,https://www.latamairlines.com/gb/en/check-in,48
+263,LV,Level,,0
+55,LW,Pacific Wings,,0
+684,LX,Swiss International Air Lines,https://www.swiss.com/gb/de/fly/check-in/online-check-in,24
+912,LY,El Al Israel Airlines,https://www.elal.com/checkin/home/identification/c?language=eng,24
+1033,LZ,Belle Air,,0
+658,M0,Aero Mongolia,,0
+941,M2,MHS Aviation,,0
+537,M3,North Flying,,0
+364,M4,Mistral Air,,0
+746,M5,Kenmore Air,,0
+523,M6,Amerijet International Inc.,,0
+69,M7,Marsland Aviation,,0
+47,M8,SkyJet,,0
+154,M9,Motor Sich Airlines,,0
+908,MB,MNG Airlines,,0
+145,MC,Air Mobility Command,,0
+392,MD,Air Madagascar,https://checkin.si.amadeus.net/static/PRD/MD/#/checkindirect?ln=en&IFormOfIdentification=PNR&ISurname={LAST}&IIdentification={PNR},24
+483,ME,Middle East Airlines,https://checkin.si.amadeus.net/1ASIHSSCMCIME/sscmme/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+903,MF,Xiamen Airlines,https://ecipuia.xiamenair.com/api/v1/oauth2/authorize?uia_type=st&lang=en-cn,24
+781,MG,Eznis Airways,,0
+505,MH,Malaysia Airlines,https://online.malaysiaairlines.com/ssci/identification?lang=en-GB,48
+148,MI,Silkair,,0
+777,MJ,MyWay Airlines,,0
+330,MK,Air Mauritius,https://checkin.si.amadeus.net/1ASIHSSCMCIMK/sscamk/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&IDate={DEP_DATE_EU}&ln=en,24
+911,ML,Sky Mali,,0
+295,MM,Peach,,0
+340,MN,Comair,,0
+436,MO,Calm Air International,,0
+332,MP,Martinair,,0
+825,MQ,Envoy Air,https://www.aa.com/reservation/view/find-your-reservation?recordLocator={PNR},24
+651,MR,Hunnu Air,,0
+519,MS,EgyptAir,https://checkin.si.amadeus.net/1ASIHSSCMCIMS/sscmms/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+1116,MT,Thomas Cook Airlines,,0
+625,MU,China Eastern Airlines,https://us.ceair.com/en/check-in.html,24
+172,MW,Mokulele Airlines,,0
+367,MX,Breeze Airways,,0
+695,MY,Maya Island Air,,0
+362,MZ,Merpati Nusantara Airlines,,0
+1104,N0,Norse Atlantic Airways,,0
+488,N2,Trans-Mediterranean Airways,,0
+318,N3,Aerolíneas Mas,,0
+753,N4,Nordwind Airlines,https://nordwindairlines.ru/en/online-check-in#/search/{PNR}/{LAST}/submit,24
+350,N5,Nolinor Aviation,,0
+707,N6,Nomad Aviation (PTY) Ltd.,,0
+470,N7,Nordic Regional Airline,,0
+135,N8,National Airlines,,0
+475,N9,Nova Airways,,0
+873,NA,Nesma Airlines,,0
+606,NB,Skypower Express Airways,,0
+599,NC,Cobham Aviation Services Australia,,0
+246,ND,Sky Wings Airlines,,0
+89,NE,Nesma Airlines,,0
+865,NF,Air Vanuatu,https://checkin.si.amadeus.net/static/PRD/NF/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+624,NG,Aero Contractors,,0
+180,NH,All Nippon Airways,https://aswbe-i.ana.co.jp/international_asw/pages/webcheckin/checkin_search_input.xhtml?CONNECTION_KIND=JPN&LANG=en,24
+441,NI,Portugália,,0
+558,NJ,Ghadames Air Transport,,0
+52,NK,Spirit Airlines,https://www.spirit.com/home-check-in,24
+414,NL,Shaheen Air,,0
+1,NM,Manx2,,0
+310,NN,VIM Airlines,,0
+363,NO,Neos,,0
+1087,NP,Nile Air,https://checkin.si.amadeus.net/static/PRD/NP/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+640,NQ,Air Japan,,0
+533,NS,Hebei Airlines,,0
+797,NT,Binter Canarias,https://movil.bintercanarias.com/chkmov/flights?id=&pnr={PNR}&surname={LAST}&lang=en&ticket=,24
+503,NU,Japan Transocean Air,,0
+347,NW,Northwest Airlines,,0
+645,NX,Air Macau,https://www.airmacau.com.cn/#/checkIn/home,24
+1061,NY,Air Iceland,,0
+600,NZ,Air New Zealand,https://flightbookings.airnewzealand.com/vmanage/actions/mobi/webcheck,24
+284,O2,Linear Air,,0
+677,O3,Orange Air, LLCN/A,,0
+91,O4,Antrak Air,,0
+718,O6,Avianca Brazil,,0
+217,O8,Marathon Airlines,,0
+806,O9,NOVA Airlines,,0
+780,OA,Olympic Air,https://mobile.aegeanair.com/cki/deeplink.do?name={LAST}&pnr={PNR}&l=en,24
+29,OB,Boliviana de Aviación,https://checkin.si.amadeus.net/static/PRD/OB/#/checkindirect?ln=en&ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR},24
+356,OC,Oriental Air Bridge,,0
+564,OD,Batik Air,https://dx.checkin.malindoair.com/dx/ODCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+721,OE,Laudamotion,,0
+278,OG,PLAY,,0
+84,OI,Hinterland Aviation,,0
+969,OJ,NYXAIR,,0
+9,OK,Czech Airlines,,0
+247,OL,Polynesian Airlines,,0
+525,OM,MIAT Mongolian Airlines,https://checkin.miat.com/static/PRD/OM/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+874,ON,Nauru Airline,,0
+905,OO,SkyWest Airlines,,0
+104,OQ,Chongqing Airlines,https://www.csair.com/gb/en/online_checkin/,24
+491,OR,TUI Airlines Netherlands,,0
+709,OS,Austrian Airlines,https://m.austrian.com/#checkin/start,24
+266,OT,Aeropelican Air Services,,0
+481,OU,Croatia Airlines,https://wci.croatiaairlines.hr/web?languageChange=true&langCode=en#ck_retrieve,24
+820,OV,SalamAir,,0
+339,OW,Skyward Express,,0
+952,OX,Orient Thai Airlines,,0
+298,OY,Andes Lineas Aereas,,0
+346,OZ,Asiana Airlines,https://m.flyasiana.com/I/GB/EN/CheckIn.do,24
+798,P0,Proflight Zambia,,0
+421,P1,Public Charters,,0
+916,P2,Airkenya Express,,0
+480,P3,Passaredo Linhas Aereas,,0
+655,P4,Aerolíneas Sosa,https://book-airpeace.crane.aero/ibe/checkin/search?{PNR}No=&{LAST}=&lang=en,24
+931,P5,Aerorepublica,,0
+535,P6,Pascan Aviation,,0
+756,P7,Small Planet Airlines,,0
+759,P8,Air Mekong,,0
+1008,P9,Peruvian Airlines,,0
+17,PA,airblue,,0
+984,PB,Provincial Airlines,https://booking.palairlines.ca/check-in/search?language=en,24
+970,PC,Pegasus Airlines,https://web.flypgs.com/check-in?language=EN&pnrNo={PNR}&surname={LAST},168
+508,PD,Porter Airlines,https://www.flyporter.com/en-ca/manage-flights/web-check-in,24
+676,PE,People's Viennaline,,0
+168,PF,Primera Air,,0
+1080,PG,Bangkok Airways,https://digital.bangkokair.com/ssci/identification?lang=en-GB,24
+121,PH,Transavia Denmark,,0
+593,PI,Polar Airlines,,0
+757,PJ,Air Saint Pierre,,0
+790,PK,Pakistan International Airlines,https://book-pia.crane.aero/ibe/checkin/search?language=en&firstname={FIRST}&surname={LAST}&PNRNo={PNR},24
+986,PL,Southern Air Charter,,0
+444,PM,Canaryfly,,0
+893,PN,West Air,,0
+110,PO,Polar Air Cargo Worldwide, Inc.,,0
+373,PP,Jet Aviation Business,,0
+571,PQ,SkyUp Airlines,,0
+63,PR,Philippine Airlines,https://checkin.philippineairlines.com/ssci/identification,24
+715,PS,UIA,,0
+301,PU,Punta Europa,,0
+618,PV,St Barth Commuter,,0
+628,PW,Precision Air,,0
+399,PX,Air Niugini,https://dxcheckin.airniugini.com.pg/dx/PXCI/?#/check-in/deep-link?deepLink=true&locale=en-GB&recordLocator={PNR}&lastName={LAST},24
+398,PY,Surinam Airways,,0
+5,PZ,LATAM Paraguay,,0
+693,Q1,Sqiva Sistem,,0
+568,Q2,Maldivian,https://checkin.si.amadeus.net/static/PRD/Q2/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+461,Q3,Anguilla Air,,0
+452,Q4,Euroairlines,,0
+1058,Q5,40-Mile Air,,0
+437,Q6,Volaris Costa Rica,,0
+576,Q7,SkyBahamas Airlines,,0
+242,Q8,Trans Air Congo,,0
+1057,Q9,Air Liaison,,0
+31,QA,Cimber,,0
+70,QB,Qeshm Air,,0
+116,QC,Camair-Co,,0
+294,QD,Dobrolet,,0
+177,QF,Qantas,https://www.qantas.com/gb/en/travel-info/check-in.html,24
+758,QG,Citilink Airlines,https://book.citilink.co.id/SearchWebCheckin.aspx?culture=en-US,24
+108,QH,Bamboo Airways,,0
+612,QI,Ibom Air,,0
+950,QJ,Jet Airways Inc.,,0
+530,QK,Jazz,https://www.aircanada.com/uk/en/aco/home/ssci.html?lastName={LAST}&staffNumber={PNR},24
+1004,QL,LASER Airlines,https://www.laserairlines.com/checkin.php,24
+899,QM,Monacair,,0
+82,QN,Skytrans,,0
+343,QO,Quikjet Cargo Airlines Pvt. Ltd,,0
+439,QP,Akasa Air,,0
+435,QQ,Alliance Airlines,https://book.allianceairlines.com.au/B2C/en/WebCheckin#!,24
+400,QR,Qatar Airways,https://cki.qatarairways.com/cki/dashboard?hdnFOIDNo={PNR}&hdnLn={LAST},48
+404,QS,SmartWings,https://checkin.si.amadeus.net/static/PRD/QS/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+849,QT,Avianca Cargo,,0
+620,QU,Skyline Express,,0
+1106,QV,Lao Airlines,,0
+1086,QW,Qingdao Airlines,,0
+556,QX,Horizon Air,https://webselfservice.alaskaair.com/checkinweb/findreservation.aspx?cmd=startapplication&language=en_US,24
+14,QY,European Air Transport,,0
+103,QZ,AirAsia Indonesia,https://www.airasia.com/check-in/v2/en/gb,48
+22,R0,Russian Railways,,0
+884,R1,Zapways, Inc.,,0
+264,R2,Transair Senegal,,0
+749,R3,Yakutia Airlines,https://checkin.yakutia.aero/web-checkin/?lang=en#search,24
+994,R4,RUS Aviation,,0
+1023,R5,Jordan Aviation,,0
+428,R6,DOT LT,,0
+191,R7,Aserca Airlines,,0
+842,RA,Royal Nepal Airlines,,0
+225,RB,Syrian Arab Airlines,,0
+370,RC,Atlantic Airways,https://checkin.si.amadeus.net/static/PRD/RC/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+638,RD,French Armed Forces,,0
+164,RE,Stobart Air,,0
+621,RF,Aero K,,0
+543,RG,Rotana Jet,,0
+389,RH,PT Republic Express Airlines,,0
+1003,RI,Tigerair Mandala,,0
+636,RJ,Royal Jordanian,https://checkin.si.amadeus.net/static/PRD/RJ/#/checkindirect?IIdentificationBookingRef={PNR}&ISurname={LAST}&ln=en,24
+472,RK,Ryanair UK,,0
+1049,RL,Royal Flight,,0
+234,RM,Air Dilijans,,0
+840,RN,Eswatini Air,,0
+101,RO,Tarom,https://digital.tarom.ro/ssci/identification?lang=en-GB,24
+878,RP,Chautauqua Airlines,,0
+158,RQ,Kam Air,,0
+132,RR,Buzz,,0
+250,RS,Air Seoul,,0
+321,RT,UVT Aero,https://booking.uvtaero.ru/websky_checkin/?lang=en#search,24
+545,RU,AirBridgeCargo,,0
+1110,RV,8165343 Canada Inc. dba Air Canada rouge,,0
+99,RX,Riyadh Air,,0
+702,RY,Jiangxi Air,,0
+338,RZ,Sansa Airlines,,0
+750,S0,Aerolineas Sosa,,0
+213,S1,Lufthansa Systems,,0
+489,S2,Jet Lite,,0
+540,S3,Santa Barbara Airlines,,0
+776,S4,SATA,https://checkin.si.amadeus.net/static/PRD/SP/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+68,S5,Shuttle America,,0
+174,S6,Sunrise Airways,,0
+61,S7,S7 Airlines,https://myb.s7.ru/find-order,24
+254,S8,Sounds Air Travel & Tourism Ltd.,,0
+863,S9,Starbow,,0
+802,SA,South African Airways,https://checkin.si.amadeus.net/1ASIHSSCMCISA/sscmsa/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+837,SB,Aircalin,https://checkin.si.amadeus.net/1ASIHSSCMCISB/sscmsb/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+831,SC,Shandong Airlines,https://www.sda.cn/en/,24
+544,SD,Sudan Airways,,0
+734,SE,XL Airways France,,0
+1091,SF,Tassili Airlines,,0
+20,SG,SpiceJet,https://www.spicejet.com/checkin/trip-details?pnr={PNR}&last={LAST},48
+395,SH,Sharp Airlines,,0
+300,SI,Blue Islands,,0
+458,SJ,Sriwijaya Air,https://sriwijaya-webcheckin.nieve.id/new/,24
+928,SK,Scandinavian Airlines,https://www.flysas.com/gb-en/checkin/itinerary/?bookingreference={PNR}&names={LAST},24
+552,SL,Thai Lion Air,https://dx.checkin.lionairthai.com/dx/SLCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
+864,SM,AIR CAIRO,,0
+800,SN,Brussels Airlines,https://once.brusselsairlines.com/connect/main-app/identification/main,24
+252,SP,SATA Air Acores,https://checkin.si.amadeus.net/static/PRD/SP/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+201,SQ,Singapore Airlines,https://www.singaporeair.com/en_UK/plan-and-book/your-booking/checkin/,48
+361,SR,Sundair,,0
+474,SS,Corsair International,https://checkin.si.amadeus.net/1ASIHSSCMCISS/sscass/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+41,ST,Germania,,0
+28,SU,Aeroflot,https://www.aeroflot.ru/sb/ckin/app/ru-en#/search_pnrs,24
+357,SV,Saudia,https://checkin.si.amadeus.net/1ASIHSSCMCISV/sscasv/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+554,SW,Air Namibia,,0
+30,SX,SkyWork Airlines,,0
+627,SY,Sun Country Airlines,https://www.suncountry.com/?page=Checkin,24
+34,SZ,Somon Air,,0
+1101,T0,TACA Peru,,0
+303,T1,TIK Systems,,0
+105,T2,Nakina Air Service,,0
+262,T3,Eastern Airways,,0
+872,T4,TRIP Linhas Aéreas,,0
+751,T5,Turkmenistan Airlines,,0
+551,T7,Twin Jet,https://checkin.si.amadeus.net/static/PRD/T7/#/checkin?ln=enISurname{LAST}&IIdentification={PNR}&IFormOfIdentification=PNR,24
+23,T8,Telair International GmbH,,0
+955,TA,TACA Airlines,https://checkin.si.amadeus.net/1ASIHSSCMCIAV/sscmav/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+796,TB,Jetairfly,https://www.tuifly.be/en/webcheckin/login,24
+21,TC,Air Tanzania,,0
+652,TD,Tbilisi Airways,,0
+102,TE,Sky-Taxi,,0
+714,TF,BRA,https://checkin.si.amadeus.net/static/PRD/TF/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+440,TG,Thai Airways,https://checkin.si.amadeus.net/1ASIHSSCMCITG/sscmtg/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+1095,TH,Raya Airways Sdn. Bhd.dba Raya Airways,,0
+424,TI,Tailwind Airlines,,0
+604,TJ,Tradewind Aviation,,0
+1025,TK,Turkish Airlines,https://www.turkishairlines.com/en-us/flights/manage-booking/index.html,24
+422,TL,Airnorth,,0
+297,TM,LAM Mozambique Airlines,https://checkin.si.amadeus.net/static/PRD/TM/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+18,TN,Air Tahiti Nui,https://checkin.si.amadeus.net/static/PRD/TN/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+1089,TO,Transavia,https://www.transavia.com/en-UK/my-transavia/check-in/login/,24
+1105,TP,TAP Portugal,https://checkin.si.amadeus.net/static/PRD/TP/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+151,TQ,Tandem Aero,,0
+847,TR,Scoot,https://checkin.flyscoot.com/,48
+834,TS,Air Transat,https://www.airtransat.com/en-CA/online-check-in,24
+833,TT,Tigerair Australia,,0
+705,TU,Tunisair,https://checkin.si.amadeus.net/1ASIHSSCMCITU/sscmtu/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en&type=A&Redirected=true,24
+924,TV,Tibet Airlines,,0
+342,TW,T'way Air,https://m.twayair.com/app/reservation/searchCheckinItinerary,48
+502,TX,Air Caraibes,https://checkin.si.amadeus.net/static/PRD/TX/#/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+411,TY,Air Caledonie,,0
+162,TZ,Scoot,,0
+224,U1,Videcom International Limited,,0
+468,U2,EasyJet,https://www.easyjet.com/en/?chkin=1,720
+546,U3,As Avies,,0
+578,U5,SkyUp MT,,0
+78,U6,Ural Airlines,https://service.uralairlines.ru/?language=en&pnrOrTicket={PNR}&pnr={PNR}&ticketNumber=&lastName={LAST}&agreementNew=on,24
+1067,U7,Air Uganda,,0
+724,U8,Tus Airways,,0
+731,U9,Tatarstan Airlines,,0
+77,UA,United Airlines,https://www.united.com/en/us/checkin/e/{PNR}/{LAST},24
+218,UB,Myanmar National Airlines,https://www.flymna.com/checkin/,24
+857,UC,LAN Chile Cargo,,0
+668,UD,UR Airline,,0
+37,UE,Ultimate Jetcharters,,0
+779,UF,UM Airlines,,0
+923,UG,Tunisair Express,,0
+384,UH,Atlasjet Ukraine,,0
+240,UI,Auric Air,,0
+541,UJ,Almasria Universal Airlines,,0
+792,UK,Vistara,,0
+982,UL,Srilankan Airlines,https://digital.srilankan.com/ssci/identification?lang=en-GB&lastName={LAST}&identifier={PNR},24
+160,UM,Air Zimbabwe,,0
+426,UN,Transaero Airlines,,0
+774,UO,Hong Kong Express Airways,https://booking.hkexpress.com/en-us/check-in/login,48
+809,UP,Bahamasair,,0
+793,UQ,Urumqi Air,,0
+744,UR,Uganda Airlines,https://checkin.si.amadeus.net/static/PRD/UR/#/checkindirect?IFormOfIdentification=PNR&IGroupTravel=off&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+66,US,US Airways,,0
+980,UT,Utair,,0
+193,UU,Air Austral,https://checkin.si.amadeus.net/static/PRD/UU/#/checkindirect?ln=gb&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+1024,UV,Helicópteros del Sureste,,0
+841,UW,Uni-Top Airlines,,0
+220,UX,Air Europa,https://www.aireuropa.com/uk/en/mytrips/managereservation/checkin?reservationId={PNR}&lastName={LAST}&checkinBox=true&search=true,24
+1114,UY,Air Caucasus,,0
+306,UZ,Buraq Air Transport (BRQ),,0
+1076,V0,Conviasa,https://wc2-v0.kiusys.net/,24
+516,V1,IBS Software Services Americas, Inc.,,0
+989,V2,Vision Airlines,,0
+56,V3,Carpatair,,0
+235,V4,Vieques Air Link,,0
+302,V5,Aerovías DAP,,0
+241,V6,Clairmont Holdings Ltd dba VI Air Link,,0
+631,V7,Volotea,https://www.volotea.com/en/your-booking/check-in-online/,24
+2,V8,Iliamna Air Taxi Inc.,,0
+328,V9,L'Odyssey,,0
+495,VA,Virgin Australia,https://check-in.virginaustralia.com/checkin/index.html#/login?pnr={PNR}&surname={LAST}&port={IATA_DEP},24
+401,VB,VivaAerobus,https://www.vivaaerobus.com/en-us/manage/find-booking,24
+333,VC,Charter Air Transport, Inc.,,0
+199,VE,C.A.I. Second,,0
+886,VF,AJet,,0
+925,VG,VLM Airlines,,0
+118,VH,Viva Air Colombia,,0
+741,VI,Volga-Dnepr Airlines,,0
+591,VJ,VietjetAir,https://www.vietjetair.com/en/checkin,24
+858,VK,Level,,0
+316,VL,Lufthansa City,,0
+460,VN,Vietnam Airlines,https://booking.vietnamairlines.com/ssci/identification?lang=en-GB,24
+876,VO,Universal Air,,0
+762,VP,Villa Air,,0
+662,VQ,Novoair,,0
+64,VR,TACV Cabo Verde Airlines,,0
+1117,VS,Virgin Atlantic,https://www.virginatlantic.com/PCCOciWeb/findBy,24
+892,VT,Air Tahiti,https://checkin.si.amadeus.net/static/PRD/VT/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR}&ln=en,24
+74,VU,Vietravel Airlines,,0
+786,VV,Viva Air,,0
+317,VW,Aeromar,,0
+419,VX,Virgin America ,,0
+485,VY,Vueling,https://tickets.vueling.com/SearchWebCheckin.aspx?culture=en-GB&origin={IATA_DEP}&day{DEP_DATE_EU}&pnr={PNR},24
+917,VZ,Thai Vietjet Air,,0
+720,W1,World Ticket Ltd,,0
+46,W2,FlexFlight,,0
+87,W3,Arik Air,https://arikair.crane.aero/ibe/checkin/search?PNRNo={PNR}&surname={LAST}&lang=en,24
+826,W4,Wizz Air,,0
+845,W5,Mahan Airlines,https://www.mahanair.co.ir/en/checkin,24
+1096,W6,Wizz Air,https://wizzair.com/en-gb/itinerary#{PNR}/{LAST},48
+137,W7,Wings of Lebanon S.a.l,,0
+939,W8,Cargojet Airways Ltd.,,0
+187,W9,Wizz Air,,0
+587,WA,KLM Cityhopper,https://www.klm.co.uk/check-in,24
+16,WB,RwandAir,https://checkin.si.amadeus.net/static/PRD/WB/#/checkindirect?ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR},24
+95,WC,Islena de Inversiones S.A. de C.V.dba Islena Airlines,,0
+1055,WE,Thai Smile,,0
+38,WF,Wideroe,https://checkin.si.amadeus.net/1ASIHSSCWEBWF/sscwwf/checkin?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+513,WG,Sunwing Airlines,https://checkin.sunwing.ca/en-us,24
+965,WH,Webjet Linhas Aereas,,0
+637,WI,White Airways,,0
+801,WJ,JetSMART,,0
+697,WK,Edelweiss Air,https://checkin.flyedelweiss.com/web?languageChange=true&langCode=en#ck_retrieve,24
+431,WM,Winair,,0
+769,WN,Southwest Airlines,https://mobile.southwest.com/check-in,24
+1035,WO,Swoop,,0
+583,WP,Island Air,,0
+236,WS,Westjet,https://checkin.westjet.com/index.html#/,24
+795,WT,Swiftair,,0
+866,WU,Wizz Air Ukraine,,0
+83,WV,Fly Namibia,,0
+73,WW,WOW Air ehf,,0
+456,WX,Cityjet,,0
+397,WY,Oman Air,https://dxcheckin.omanair.com/dx/WYCI/#/check-in/deep-link?deepLink=true&locale=en-GB&recordLocator={PNR}&lastName={LAST},24
+54,WZ,Red Wings,https://flyredwings.com/en/check-in/#/search/{PNR}/{LAST}/submit/,24
+580,X1,Hahn Air Technologies,,0
+957,X3,TUI fly,https://www.tui.co.uk/destinations/your-account/managemybooking/login,24
+829,X4,Air Excursion, LLC,,0
+1083,X5,S.C. Ten Airways S.R.L.,,0
+683,X7,Exec Air, Inc. of Naples,,0
+610,X8,Airmax S.A.,,0
+979,X9,Avion Express,,0
+312,XA,ARINC(Aeronautical Radio, Inc.),,0
+432,XB,IATA - Clearing HouseInternational Air Transport Association,,0
+423,XC,Corendon Airlines,,0
+735,XD,Air Transport Association of Americad\b\a Airlines for America,,0
+907,XE,ExpressJet,,0
+875,XF,Vladivostok Air,,0
+337,XG,SunExpress Deutschland,,0
+726,XH,Special Ground Handling Service -XH,,0
+114,XI,Aeronautical Telecommunications Ltd.(AEROTEL),,0
+767,XJ,Thai AirAsia X,,0
+288,XK,Air Corsica,https://checkin.si.amadeus.net/1ASIHSSCMCIXK/sscmxk/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
+410,XL,LATAM Ecuador,,0
+48,XM,C.A.I. First,,0
+276,XO,South East Asian Airlines (SEAIR)International, Inc.,,0
+1014,XP,Avelo Airlines,,0
+65,XQ,Sun Express,https://www.sunexpress.com/WebCheckIn/web/checkin?firstName={FIRST}&lastName={LAST}&locale=en_US&mode=webCheckIn&pnrNumber={PNR},24
+205,XR,Corendon Airlines Europe,,0
+983,XS,SITA - Airlines WorldwideTelecommunications and Information Svcs,,0
+402,XT,Globus LLС,,0
+272,XU,African Express Airways (K)  Limited,,0
+1038,XV,BVI Airways,,0
+883,XW,NokScoot,,0
+1041,XX,Major Airline,,0
+377,XY,Nas Air,https://booking.flynas.com/#/wci/search?pnr={PNR}&lastName={LAST}&culture=en-US,24
+646,XZ,AeroItalia,,0
+159,Y1,Travel Technology Interactive SA,,0
+810,Y2,Air Century,,0
+261,Y4,Volaris,https://www.volaris.com/mytrips?culture=en-US,24
+1092,Y5,Golden Myanmar Airlines Public Co., Ltd,,0
+161,Y7,NordStar,https://www.nordstar.ru/en/check-in/#/,24
+667,Y8,Yangtze River Express,,0
+598,Y9,Lynx Air,,0
+181,YC,Yamal Airlines,,0
+730,YE,Yan Air Ltd,,0
+309,YF,Department of National Defence,,0
+170,YG,South Airlines,,0
+821,YH,Sunsplash Aviation, LLC.,,0
+336,YI,Air Sunshine Inc.,,0
+50,YJ,Asian Wings Airways Limited,,0
+877,YK,Avia Traffic Company,,0
+449,YL,Libyan Wings,,0
+740,YM,Air Montenegro,,0
+632,YN,Air Creebec,https://aircreebec.inkcloud.io/web_checkin.php,24
+299,YO,Heli Air Monaco,,0
+1107,YP,Air Premia,,0
+44,YQ,TAR Aerolíneas,,0
+670,YR,Grand Canyon Airlines, Inc.dba Scenic Airlines,,0
+355,YS,Flightlink,,0
+659,YT,Yeti Airlines Domestic Pvt. Ltd.,http://res.yetiairlines.com/webcheckin/,24
+1028,YU,EuroAtlantic Airways S.A.,,0
+918,YV,Mesa Airlines,,0
+498,YW,Air Nostrum,https://www.iberia.com/gb/online-checkin/?language=en&market=gb#!/ibcose,24
+819,YX,Republic Airlines,,0
+804,YY,Major Airline,,0
+388,Z0,Norse Atlantic UK,,0
+221,Z2,Philippines AirAsia,https://www.airasia.com/check-in/v2/en/gb,48
+1108,Z3,PM Air LLC,,0
+1036,Z4,Zagros Air Co.,,0
+822,Z6,Dniproavia,,0
+851,Z7,Amaszonas,,0
+708,Z8,Amaszonas,https://checkin.si.amadeus.net/static/PRD/Z8/#/checkindirect?IFormOfIdentification=PNR&IGroupTravel=off&IIdentification={PNR}&ISurname={LAST}&ln=en,24
+1011,Z9,MYAirline,,0
+922,ZA,Skywings Asia Airlines Co., Ltd.,,0
+226,ZB,Air Albania,,0
+827,ZC,Korongo Airlines,,0
+867,ZE,Eastar Jet,,0
+532,ZF,Azur Air,https://booking.azurair.ru/web-checkin/?lang=en&ticketNumber={PNR}&lastName={LAST}&submit=#search,24
+811,ZG,ZIPAIR Tokyo,,0
+285,ZH,Shenzhen Airlines,https://global.shenzhenair.com/zhair/ibe/bookingManagement/toCheckIn.do?language=en&market=GB&RemlanSelect=true,24
+959,ZI,Aigle Azur,,0
+308,ZJ,Zambezi Airlines,,0
+729,ZK,Great Lakes Airlines,,0
+1100,ZL,Regional Express,https://webcheck.rex.com.au/Retrieve,24
+231,ZM,Air Manas,,0
+147,ZN,NAYSA,,0
+785,ZP,Silk Way Airlines,,0
+8,ZR,Aviacon Zitotrans Air Company JSC,,0
+128,ZS,JSC Kazaviaspas,,0
+560,ZT,Titan Airways Limited,,0
+919,ZU,SUN-AIR,,0
+854,ZV,Zagros Airlines,,0
+775,ZW,Air Wisconsin Airlines Corporation(AWAC),,0
+27,ZX,Air Georgian Ltd. dba Air Alliance,,0
+542,ZY,Sky Airlines,,0
+463,ZZ,American Eagle,,0
