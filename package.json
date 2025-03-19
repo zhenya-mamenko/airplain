@@ -1,0 +1,110 @@
+{
+  "name": "airplain",
+  "main": "expo-router/entry",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "expo start --go",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "test": "jest --coverage",
+    "check-updates": "expo install --check"
+  },
+  "jest": {
+    "coverageDirectory": "./__reports__/coverage",
+    "coverageReporters": [
+      "clover",
+      "json",
+      "lcov",
+      [
+        "text",
+        {
+          "skipFull": true
+        }
+      ]
+    ],
+    "preset": "jest-expo",
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "./__reports__/junit"
+        }
+      ]
+    ],
+    "setupFiles": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js",
+      "./tests/jestSetup.js"
+    ]
+  },
+  "dependencies": {
+    "@bwip-js/react-native": "^4.5.1",
+    "@dr.pogodin/react-native-fs": "2.30.3",
+    "@expo/vector-icons": "^14.0.2",
+    "@react-native-community/datetimepicker": "8.2.0",
+    "@react-native-community/netinfo": "11.4.1",
+    "@react-navigation/material-top-tabs": "^7.1.1",
+    "@react-navigation/native": "^7.0.0",
+    "@shopify/react-native-skia": "1.5.0",
+    "bcbp": "^6.0.2",
+    "buffer": "^6.0.3",
+    "csv-parse": "^5.6.0",
+    "expo": "~52.0.38",
+    "expo-application": "~6.0.2",
+    "expo-asset": "~11.0.3",
+    "expo-brightness": "~13.0.3",
+    "expo-camera": "~16.0.18",
+    "expo-dev-client": "~5.0.14",
+    "expo-document-picker": "~13.0.3",
+    "expo-file-system": "~18.0.5",
+    "expo-font": "~13.0.1",
+    "expo-image": "~2.0.6",
+    "expo-image-manipulator": "~13.0.6",
+    "expo-image-picker": "~16.0.6",
+    "expo-linking": "~7.0.5",
+    "expo-localization": "~16.0.1",
+    "expo-network": "~7.0.5",
+    "expo-notifications": "~0.29.14",
+    "expo-router": "~4.0.19",
+    "expo-sharing": "~13.0.1",
+    "expo-splash-screen": "~0.29.22",
+    "expo-sqlite": "~15.1.2",
+    "expo-status-bar": "~2.0.1",
+    "expo-web-browser": "~14.0.2",
+    "fflate": "^0.8.2",
+    "i18n-js": "^4.5.0",
+    "luxon": "^3.5.0",
+    "mitt": "^3.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.7",
+    "react-native-element-dropdown": "^2.12.4",
+    "react-native-gesture-handler": "~2.20.2",
+    "react-native-pager-view": "6.5.1",
+    "react-native-picasso": "^1.1.12",
+    "react-native-reanimated": "~3.16.1",
+    "react-native-reorderable-list": "^0.11.0",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.4.0",
+    "react-native-svg": "15.8.0",
+    "react-native-tab-view": "^4.0.5",
+    "react-native-view-shot": "~4.0.3",
+    "react-native-web": "~0.19.13"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@expo/metro-config": "^0.19.9",
+    "@testing-library/react-native": "^12.9.0",
+    "@types/jest": "^29.5.14",
+    "@types/luxon": "^3.4.2",
+    "@types/react": "~18.3.12",
+    "jest": "^29.2.1",
+    "jest-expo": "~52.0.6",
+    "metro": "^0.81.0",
+    "metro-core": "^0.81.0",
+    "typescript": "~5.3.3"
+  },
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+}
