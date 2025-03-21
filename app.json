@@ -23,6 +23,10 @@
         "backgroundColor": "#33b3df"
       },
       "package": "com.mamenko.AirPlain",
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.USE_EXACT_ALARM"
+      ],
       "useNextNotificationsApi": true
     },
     "web": {

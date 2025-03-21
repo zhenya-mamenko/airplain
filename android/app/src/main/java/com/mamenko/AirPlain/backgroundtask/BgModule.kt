@@ -20,7 +20,7 @@ class AirPlainBgModule(reactContext: ReactApplicationContext) : ReactContextBase
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, BgReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-
+        Log.d("AirPlainBgModule", "startBackgroundTask")
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
             SystemClock.elapsedRealtime() + 60000,
@@ -34,7 +34,7 @@ class AirPlainBgModule(reactContext: ReactApplicationContext) : ReactContextBase
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, BgReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-
+        Log.d("AirPlainBgModule", "stopBackgroundTask")
         alarmManager.cancel(pendingIntent)
     }
 }

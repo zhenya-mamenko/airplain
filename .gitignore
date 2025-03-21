@@ -43,6 +43,7 @@ yarn-error.*
 
 # Native code must be commited
 !android/gradle.properties
+!android/settings.gradle
 !android/app/
 !android/app/build.gradle
 !android/app/src/
