@@ -14,7 +14,8 @@ import * as TaskManager from 'expo-task-manager';
 
 const BACKGROUND_TASK_NAME = 'flightsCheckTask';
 
-const flightCheckTask = async () => {
+const flightsCheckTask = async () => {
+  console.log('BackgroundTask flightsCheckTask')
   const flights = await getActualFlights(settings.FLIGHTS_LIMIT);
   if (flights.length !== 0) {
     await updateFlightsState(flights, new Date(), false);
@@ -23,7 +24,7 @@ const flightCheckTask = async () => {
   }
 };
 
-TaskManager.defineTask(BACKGROUND_TASK_NAME, flightCheckTask);
+TaskManager.defineTask(BACKGROUND_TASK_NAME, flightsCheckTask);
 
 export const getAirportData = (code: string, locale: string = 'en'): AirportData | undefined => {
   const a = airports.find(x => x.iata_code === code) as any;

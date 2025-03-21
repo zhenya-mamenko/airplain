@@ -42,7 +42,6 @@ yarn-error.*
 .data
 
 # Native code must be commited
-!android/gradle.properties
 !android/settings.gradle
 !android/app/
 !android/app/build.gradle
@@ -52,5 +51,5 @@ yarn-error.*
 !android/app/src/main/java/
 !android/app/src/main/java/com/
 !android/app/src/main/java/com/mamenko/
-!android/app/src/main/java/com/mamenko/AirPlain/
-!android/app/src/main/java/com/mamenko/AirPlain/**
+!android/app/src/main/java/com/mamenko/airplain/
+!android/app/src/main/java/com/mamenko/airplain/**

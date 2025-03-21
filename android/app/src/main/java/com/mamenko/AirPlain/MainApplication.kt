@@ -1,4 +1,4 @@
-package com.mamenko.AirPlain
+package com.mamenko.airplain
 
 import android.app.Application
 import android.content.res.Configuration
@@ -16,7 +16,7 @@ import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
-import com.mamenko.AirPlain.backgroundtask.BgPackage
+import com.mamenko.airplain.BgPackage
 
 class MainApplication : Application(), ReactApplication {
 

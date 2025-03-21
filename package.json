@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "build": "cd android && gradlew build",
     "test": "jest --coverage",
-    "check-updates": "expo install --check"
+    "check-updates": "expo install --check",
+    "ios": "expo run:ios"
   },
   "jest": {
     "coverageDirectory": "./__reports__/coverage",

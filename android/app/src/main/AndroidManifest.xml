@@ -5,8 +5,8 @@
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
   <uses-permission android:name="android.permission.RECORD_AUDIO"/>
   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-  <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+  <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
@@ -36,7 +36,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="airplain"/>
-        <data android:scheme="com.mamenko.AirPlain"/>
+        <data android:scheme="com.mamenko.airplain"/>
         <data android:scheme="exp+airplain"/>
       </intent-filter>
     </activity>
@@ -45,5 +45,10 @@
         <action android:name="android.intent.action.BOOT_COMPLETED"/>
       </intent-filter>
     </receiver>
+    <service
+      android:name=".BgTaskService"
+      android:permission="android.permission.BIND_JOB_SERVICE"
+      android:exported="false"
+    />
   </application>
 </manifest>

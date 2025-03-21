@@ -1,4 +1,4 @@
-package com.mamenko.AirPlain.backgroundtask
+package com.mamenko.airplain
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

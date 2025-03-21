@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.mamenko.AirPlain'
+    namespace 'com.mamenko.airplain'
     defaultConfig {
-        applicationId 'com.mamenko.AirPlain'
+        applicationId 'com.mamenko.airplain'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -173,5 +173,4 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    implementation project(':app:src:main:java:com:mamenko:AirPlain:backgroundtask')
 }

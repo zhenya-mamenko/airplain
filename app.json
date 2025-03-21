@@ -2,7 +2,7 @@
   "expo": {
     "jsEngine": "hermes",
     "name": "AirPlain",
-    "slug": "AirPlain",
+    "slug": "airplain",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
@@ -22,8 +22,9 @@
         "foregroundImage": "./src/assets/images/icon.png",
         "backgroundColor": "#33b3df"
       },
-      "package": "com.mamenko.AirPlain",
+      "package": "com.mamenko.airplain",
       "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.USE_EXACT_ALARM"
       ],

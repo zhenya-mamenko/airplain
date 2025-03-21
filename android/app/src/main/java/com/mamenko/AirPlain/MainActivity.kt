@@ -1,4 +1,4 @@
-package com.mamenko.AirPlain
+package com.mamenko.airplain
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
