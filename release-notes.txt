@@ -1,0 +1,5 @@
+The first version of AirPlain: simple, but powerful app for managing your flights.
+
+It displays information about the actual departure/arrival times, terminal data, check-in counters, boarding gates, baggage claim belts, and weather data at the arrival airport.
+Flight data allows you to view interesting statistics for all time or broken down by years: total number of flights, time in the air, distance, etc., as well as information about your average flight.
+In your profile you can view your achievements, which are given both for visiting countries and for specific flights.
