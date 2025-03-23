@@ -20,6 +20,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
 
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadFlightsRef = useRef((refreshAnimation?: boolean) => {});
+  const flightsLoading = useRef(false);
 
   const subscribe = (callback: Function) => {
     const update = () => callback();
@@ -36,6 +37,8 @@ const ActualFlights = memo((props: { now?: Date }) => {
     Notifications.requestPermissionsAsync();
 
     loadFlightsRef.current = async (refreshAnimation) => {
+      if (flightsLoading.current) return;
+      flightsLoading.current = true;
       if (!!timeoutId.current) {
         clearTimeout(timeoutId.current);
         timeoutId.current = null;
@@ -45,17 +48,24 @@ const ActualFlights = memo((props: { now?: Date }) => {
         if (settings.ONLY_MANUAL_REFRESH === 'false' || refreshAnimation) {
           const flights = await fetchActualFlights(props.now ?? new Date(), refreshAnimation);
           if (flights.length !== 0) {
-            if (settings.ONLY_MANUAL_REFRESH === 'false') startBackgroundTask();
+            if (settings.ONLY_MANUAL_REFRESH === 'false') {
+              startBackgroundTask();
+            } else {
+              stopBackgroundTask();
+            }
           } else {
             stopBackgroundTask();
           }
           setFlights(flights);
         }
-        const tId = setTimeout(() => loadFlightsRef.current(false), settings.REFRESH_INTERVAL * 60000);
-        timeoutId.current = tId;
+        if (settings.ONLY_MANUAL_REFRESH !== 'false') {
+          const tId = setTimeout(() => loadFlightsRef.current(false), settings.REFRESH_INTERVAL * 60000);
+          timeoutId.current = tId;
+        }
       } catch (e) {
         console.error(e);
       } finally {
+        flightsLoading.current = false;
         setRefreshing(false);
       }
     };

@@ -1,3 +1,4 @@
+import '@/helpers/backgroundtasks';
 import { StrictMode, useEffect, useState, useContext, useRef, useCallback } from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';

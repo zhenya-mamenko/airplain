@@ -6,7 +6,7 @@ import { deleteFlight } from '@/helpers/sqlite';
 import { router } from 'expo-router';
 import t from '@/helpers/localization';
 import { useThemeColor } from '@/hooks/useColors';
-import { setFlightArchiveState } from '@/helpers/airdata';
+import { flightsCheckTask, setFlightArchiveState } from '@/helpers/airdata';
 import { refreshFlights } from '@/helpers/common';
 
 
@@ -21,7 +21,8 @@ const doEdit = (flightId: number) => {
 
 const doDelete = async (flightId: number) => {
   if (await deleteFlight(flightId)) {
-    refreshFlights(false);
+    flightsCheckTask();
+    refreshFlights(true);
   }
 }
 

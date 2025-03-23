@@ -9,13 +9,9 @@ import { DateTime } from 'luxon';
 import { getCalendars } from 'expo-localization';
 import { getFlightData } from '@/helpers/flights';
 import emitter from '@/helpers/emitter';
-import * as TaskManager from 'expo-task-manager';
 
 
-const BACKGROUND_TASK_NAME = 'flightsCheckTask';
-
-const flightsCheckTask = async () => {
-  console.log('BackgroundTask flightsCheckTask')
+export const flightsCheckTask = async () => {
   const flights = await getActualFlights(settings.FLIGHTS_LIMIT);
   if (flights.length !== 0) {
     await updateFlightsState(flights, new Date(), false);
@@ -23,8 +19,6 @@ const flightsCheckTask = async () => {
     stopBackgroundTask();
   }
 };
-
-TaskManager.defineTask(BACKGROUND_TASK_NAME, flightsCheckTask);
 
 export const getAirportData = (code: string, locale: string = 'en'): AirportData | undefined => {
   const a = airports.find(x => x.iata_code === code) as any;
@@ -73,7 +67,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
 
   const timeSpan = (hours: number): string => {
     if (hours >= 23 && hours < 24) return '24h';
-    if (hours >= 1.9 && hours < 3.1 && hours === Math.floor(hours)) return '3h';
+    if (hours >= 1.9 && hours <= 3 && hours === Math.floor(hours)) return '3h';
     if (hours >= 0.75 && hours <= 1.5 && (Math.ceil(hours * 60) % 5 === 0 || forceRefresh)) return '90m';
     if (hours >= 0.25 && hours < 0.75 && (Math.ceil(hours * 60) % 3 === 0) || forceRefresh) return 'last';
     return '';
