@@ -42,9 +42,7 @@ yarn-error.*
 .data
 
 # Native code must be commited
-!android/settings.gradle
 !android/app/
-!android/app/build.gradle
 !android/app/src/
 !android/app/src/main/
 !android/app/src/main/AndroidManifest.xml
