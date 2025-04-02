@@ -30,7 +30,7 @@ export const getFlightData = async (airline: string, flightNumber: string, date:
     return null;
   }
   const api = getApi();
-  if (!api) {
+  if (!api || !api.key || !api.url || !api.module) {
     return null;
   }
   const flightDate = (date ?? new Date()).toISOString().split('T')[0];

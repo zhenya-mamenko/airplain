@@ -70,7 +70,10 @@ export default function AddFlight(props: { today?: Date }) {
   const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
   const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
 
+  const [processing, setProcessing] = useState(false);
+
   const processManuallyAdd = async () => {
+    setProcessing(true);
     const arrivalAirport = airports.find(x => x.iata_code === state.add.arrivalAirport);
     const departureAirport = airports.find(x => x.iata_code === state.add.departureAirport);
     const arrivalTimezone = arrivalAirport?.timezone ?? 'UTC';
@@ -109,6 +112,7 @@ export default function AddFlight(props: { today?: Date }) {
       router.back();
       refreshFlights(false);
     }
+    setProcessing(false);
   }
 
   const addFlightManually = () => {
@@ -128,6 +132,7 @@ export default function AddFlight(props: { today?: Date }) {
   }
 
   const findFlight = async () => {
+    setProcessing(true);
     const flightId = await isFlightExists(state.search.airline, state.search.flightNumber, state.search.departureDate);
     if (flightId) {
       const value = {
@@ -143,11 +148,13 @@ export default function AddFlight(props: { today?: Date }) {
         value.description += '\n' + t('add.flight_already_added_description_bcbp');
         value.onConfirm = () => updateFlightFromBCBP(flightId);
       }
+      setProcessing(false);
       showConfirmation(value);
     } else {
       const flight = await getFlightData(state.search.airline, state.search.flightNumber, state.search.departureDate);
       if (!!flight) {
         if (await insertFlight(flight)) {
+          setProcessing(false);
           router.back();
           refreshFlights(true);
         }
@@ -171,9 +178,11 @@ export default function AddFlight(props: { today?: Date }) {
             });
           },
         };
+        setProcessing(false);
         showConfirmation(value);
       }
     }
+    setProcessing(false);
   }
 
   const refs = {
@@ -311,7 +320,11 @@ export default function AddFlight(props: { today?: Date }) {
               >
                 <Button
                   className='bg-primary px-lg'
-                  disabled={(state.search.flightNumber ?? '') === '' || (state.search.airline ?? '') === ''}
+                  disabled={
+                    (state.search.flightNumber ?? '') === '' ||
+                    (state.search.airline ?? '') === '' ||
+                    processing
+                  }
                   title={ t('add.search') }
                   onPress={ findFlight }
                 />
@@ -690,7 +703,8 @@ export default function AddFlight(props: { today?: Date }) {
                     (state.add.airline ?? '') === '' ||
                     (state.add.flightNumber ?? '') === '' ||
                     (state.add.departureAirport ?? '') === '' ||
-                    (state.add.arrivalAirport ?? '') === ''
+                    (state.add.arrivalAirport ?? '') === '' ||
+                    processing
                   }
                   title={ t('add.title') }
                   onPress={ processManuallyAdd }
@@ -700,7 +714,7 @@ export default function AddFlight(props: { today?: Date }) {
             </View>
           }
           {/* I don't know why the ScrollView don't allow to scroll to all height, so I need to add useless view */}
-          <View style={{ height: 75, width: '100%', backgroundColor: 'FF0000' }}></View>
+          <View style={{ height: 75, width: '100%' }}></View>
         </ScrollView>
       </KeyboardAvoidingView>
     </ThemeProvider>

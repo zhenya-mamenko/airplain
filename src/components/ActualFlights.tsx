@@ -59,7 +59,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
           setFlights(flights);
         }
         if (settings.ONLY_MANUAL_REFRESH !== 'false') {
-          const tId = setTimeout(() => loadFlightsRef.current(false), settings.REFRESH_INTERVAL * 60000);
+          const tId = setTimeout(() => loadFlightsRef.current(false), 60000);
           timeoutId.current = tId;
         }
       } catch (e) {

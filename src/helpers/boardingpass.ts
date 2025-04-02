@@ -6,6 +6,7 @@ import { decode, type BarcodedBoardingPass as BCBPData } from 'bcbp';
 import type { PKPassAsset, PKPassData, BCBPFormat } from '@/types';
 import { getAirportData, airlineLogoUri } from '@/helpers/airdata';
 import { scanFromURLAsync } from 'expo-camera';
+import { fetch } from '@/helpers/common';
 
 
 export { type BarcodedBoardingPass as BCBPData} from 'bcbp';
@@ -178,8 +179,13 @@ export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcode
     }
     secondaryFields.push({ label: 'Sequence No', value: leg.checkInSequenceNumber ?? '', key: 'seqNo'});
 
-    let image: any = await fetch(airlineLogoUri(airline, true) as string);
-    image = image.ok ? await image.arrayBuffer() : null;
+    let image: any = null;
+    try {
+      image = await fetch(airlineLogoUri(airline, true) as string, { timeout: 1000});
+    } catch (error) {
+      return null;
+    }
+    image = image && image.ok && image.status === 200 ? await image.arrayBuffer() : null;
     let logo: PKPassAsset | undefined = undefined;
     if (image) {
       const base64Content = Buffer.from(image).toString('base64');

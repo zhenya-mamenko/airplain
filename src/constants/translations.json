@@ -271,7 +271,7 @@
       "time": "Time",
       "departure_date": "Departure date",
       "departure_time": "Departure time",
-      "fill_manually": "Заполнить вручную",
+      "fill_manually": "Fill manually",
       "find_flight": "Find flight",
       "flight_number": "Flight number",
       "select_airline": "Select airline",

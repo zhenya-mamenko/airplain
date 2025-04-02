@@ -3,6 +3,7 @@ import { SvgLightWind, SvgModerateWind, SvgHeaveWind } from '@/constants/svg/wea
 import { weatherIcons } from '@/constants/weather';
 import type { WeatherData } from '@/types';
 import { WEATHER_API_URL, settings } from '@/constants/settings';
+import { fetch } from '@/helpers/common';
 
 
 export const parseWeather = (data: any, color: string, iconSize: number = 20): WeatherData | null => {
@@ -58,8 +59,13 @@ export const loadWeather = async (latitude: number, longitude: number): Promise<
     return null;
   }
   const url = `${WEATHER_API_ENDPOINT}${latitude},${longitude}`;
-  const response = await fetch(url);
-  if (response.ok) {
+  let response = null;
+  try {
+    response = await fetch(url, { timeout: 3000 });
+  } catch (e) {
+    return null;
+  }
+  if (response && response.ok && response.status === 200) {
     return await response.json();
   }
   return null;

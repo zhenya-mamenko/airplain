@@ -1,4 +1,5 @@
 import type { Flight, FlightStatus } from '@/types';
+import { fetch } from '@/helpers/common';
 
 const adbFlightStatuses: {[key: string]: FlightStatus} = {
   Approaching: 'en_route',
@@ -21,8 +22,13 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
   const headers = {
     'x-magicapi-key': apiKey,
   };
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
+  let response = null;
+  try {
+    response = await fetch(url, { headers, timeout: 3000 });
+  } catch (error) {
+    return null;
+  }
+  if (!response || !response.ok || response.status !== 200) {
     return null;
   }
   const data = await response.json();
