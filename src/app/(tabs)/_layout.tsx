@@ -11,7 +11,6 @@ import t from '@/helpers/localization'
 import type { TabData } from '@/types';
 import emitter from '@/helpers/emitter';
 import { router } from 'expo-router';
-import { setSetting } from '@/constants/settings';
 
 
 export const unstable_settings = {
@@ -93,7 +92,6 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
           tabBarInactiveTintColor: colorBgSecondary,
           tabBarStyle: {
             backgroundColor: colorBg,
-            height: 56,
           },
       }}>
         {tabs.map((tab) => (

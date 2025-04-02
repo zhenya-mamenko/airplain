@@ -301,11 +301,6 @@ const Settings = React.memo(() => {
           className='flex-row my-sm'
         >
           <Value
-            caption={ `${t('settings.refresh_interval')}, ${t('measurements.m').trim()}` }
-            value={ state['REFRESH_INTERVAL'] }
-            width='50%'
-          />
-          <Value
             caption={ t('settings.flights_limit') }
             value={ state['FLIGHTS_LIMIT'] }
             width='50%'
@@ -326,13 +321,6 @@ const Settings = React.memo(() => {
         <View
           className='flex-row my-sm'
         >
-          <Input
-            caption={ t('settings.refresh_interval') }
-            field='REFRESH_INTERVAL'
-            keyboardType='numeric'
-            value={ state['REFRESH_INTERVAL'].toString() }
-            width='50%'
-          />
           <Input
             caption={ t('settings.flights_limit') }
             field='FLIGHTS_LIMIT'
