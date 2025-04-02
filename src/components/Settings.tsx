@@ -147,6 +147,8 @@ const Settings = React.memo(() => {
         if (data.length > 0) {
           await fillDataFromArray('flights', data);
           emitter.emit('updatePastFlights', false);
+          emitter.emit('updateStats');
+          emitter.emit('refreshAchievements');
         }
         showConfirmation({
           title: t('settings.import_success_title'),
