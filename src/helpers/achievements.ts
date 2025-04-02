@@ -264,7 +264,7 @@ export const prepareAchievements = async (stampsColors: { 'light': {}, 'dark': {
 }
 
 export const createCachedImage = async (width: number, height: number, bgImage: SkImage, stamps: Stamp[], colors: any): Promise<SkImage | null> => {
-  if (width === 0 || height === 0 || !bgImage || stamps.length === 0) return null;
+  if (width === 0 || height === 0 || !bgImage) return null;
   height = Math.max(calcHeight(stamps.map(x => x.hull)) + 50, height);
 
   const skiaCanvas = Skia.Surface.Make(width * 2, height * 2);

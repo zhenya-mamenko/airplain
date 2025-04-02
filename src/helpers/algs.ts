@@ -125,7 +125,7 @@ function doOnVertical(poly1: Polygon, poly2: Polygon): boolean {
 }
 
 export function calcHeight(polys: Array<Polygon>): number {
-  return polys.flat().reduce((acc: number, point: Point) => point.y > acc ? point.y : acc, 0);
+  return polys.length > 0 ? polys.flat().reduce((acc: number, point: Point) => point.y > acc ? point.y : acc, 0) : 0;
 }
 
 export function doPlace(polys: Array<Polygon>, poly: Polygon): boolean {
