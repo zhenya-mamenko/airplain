@@ -45,7 +45,7 @@ const rotatePath = (path: SkPath, left: number, top: number, size: number, radia
 }
 
 const convexHull = (points: Array<PPoint>) => {
-  if (points.length < 3) return points; // Если <3 точек, уже выпуклая оболочка
+  if (points.length < 3) return points;
 
   points.sort(([x1, y1], [x2, y2]) => x1 === x2 ? y1 - y2 : x1 - x2);
 

@@ -21,7 +21,7 @@ export function p2pp(p: Point): PPoint {
   return [ p.x, p.y ];
 }
 
-function findPolygonCenter(poly: Polygon): Point {
+export function findPolygonCenter(poly: Polygon): Point {
   const sum = poly.reduce(
     (acc, point) => ({
       x: acc.x + point.x,
@@ -45,7 +45,7 @@ export function squareToPolygon({ top, left, size }: Square): Polygon {
   ];
 }
 
-function rotatePoint(origin: Point, point: Point, radians: number): Point {
+export function rotatePoint(origin: Point, point: Point, radians: number): Point {
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
   const nx = (cos * (point.x - origin.x)) + (sin * (point.y - origin.y)) + origin.x;
@@ -59,7 +59,7 @@ export function rotatePolygon(poly: Polygon, radians: number): Polygon {
   return result;
 }
 
-function doLinesIntersect(a1: Point,  a2: Point, b1: Point, b2: Point): boolean {
+export function doLinesIntersect(a1: Point,  a2: Point, b1: Point, b2: Point): boolean {
   const area1 = (a2.x - a1.x) * (b1.y - a1.y) - (b1.x - a1.x) * (a2.y - a1.y);
   const area2 = (a2.x - a1.x) * (b2.y - a1.y) - (b2.x - a1.x) * (a2.y - a1.y);
   const area3 = (b2.x - b1.x) * (a1.y - b1.y) - (a1.x - b1.x) * (b2.y - b1.y);
@@ -80,7 +80,7 @@ export function isPointInPolygon(point: Point, polygon: Polygon): boolean {
   return inside;
 }
 
-function doPolygonsIntersect(poly1: Polygon, poly2: Polygon): boolean {
+export function doPolygonsIntersect(poly1: Polygon, poly2: Polygon): boolean {
   for (let i = 0; i < poly1.length; i++) {
     const next1 = (i + 1) % poly1.length;
     for (let j = 0; j < poly2.length; j++) {
@@ -100,7 +100,7 @@ function doPolygonsIntersect(poly1: Polygon, poly2: Polygon): boolean {
     poly2.some(p => isPointInPolygon(p, poly1));
 }
 
-function doesLineIntersectPolygon(lineStart: Point, lineEnd: Point, poly: Polygon): boolean {
+export function doesLineIntersectPolygon(lineStart: Point, lineEnd: Point, poly: Polygon): boolean {
   for (let i = 0; i < poly.length; i++) {
     const next = (i + 1) % poly.length;
     if (doLinesIntersect(lineStart, lineEnd, poly[i], poly[next])) {

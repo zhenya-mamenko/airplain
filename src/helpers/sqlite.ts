@@ -57,6 +57,9 @@ async function fillDataFromFile(table: string, file: any) {
 
 export async function fillDataFromArray(table: string, records: Array<any>) {
   const headers = Object.keys(records[0] || {});
+  if (!headers || records.length === 0) {
+    return;
+  }
   const data = records.map((row: any) => headers.map((header: string) => row[header]));
   const sql = `INSERT OR REPLACE INTO ${table} (${headers.join(', ')}) VALUES ` +
     data.map((row: any) => `(${row.map((v: any) => '?').join(', ')})`).join(', ');

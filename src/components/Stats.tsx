@@ -299,7 +299,7 @@ export default function Stats() {
                     flex={2}
                     year={year}
                     units={t('measurements.km')}
-                    value={stats?.[year]?.distance ? `${stats?.[year]?.distance.toLocaleString(locale)}` : undefined}
+                    value={stats?.[year]?.distance ? `${stats?.[year]?.distance.toLocaleString(locale)}` : '0'}
                   />
                 </View>
                 <View className='flex-row px-md py-sm'>
@@ -375,7 +375,7 @@ export default function Stats() {
                     caption='distance'
                     size='lg'
                     units={t('measurements.km')}
-                    value={stats?.[year]?.avgDistance ? `${stats?.[year]?.avgDistance.toLocaleString(locale)}` : undefined}
+                    value={stats?.[year]?.avgDistance ? `${stats?.[year]?.avgDistance.toLocaleString(locale)}` : 0}
                     year={year}
                   />
                 </View>

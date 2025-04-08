@@ -68,7 +68,7 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
   };
   result.isArchived = (new Date(result.actualEndDatetime ?? result.endDatetime)) < new Date();
   if (flightData.airline.iata !== airline) {
-    flightData.extra = {
+    result.extra = {
       carrier: flightData.airline.iata,
       carrierName: flightData.airline.name,
       carrierFlightNumber: flightData.number?.split(' ')[1] ?? flightData.flightNumber
