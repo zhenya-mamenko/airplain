@@ -7,7 +7,7 @@ export function durationToLocaleString(duration: number, locale: string): string
   // const rtf = new Intl.RelativeTimeFormat(locale, { localeMatcher: 'best fit', style: 'narrow' });
   // const hours = rtf.formatToParts(Math.floor(duration / 60), 'hours');
   // const minutes = rtf.formatToParts(duration % 60, 'minutes');
-  // So I used the following code to get the same result for en and ru locales:
+  // So I used the following code to get the same result
   const h = Math.floor(duration / 60);
   const m = duration % 60;
   const hours = [{}, {value: h}, {value: t('measurements.h')}];
@@ -37,7 +37,7 @@ export function makeDateLabel(
     day: 'numeric',
     timeZone: startTimezone,
   };
-  if (start.year !== currentStart.year) {
+  if (start.year !== currentStart.year && (start.year !== end.year || end.day === start.day)) {
     dateOptions.year = 'numeric';
   }
   let startLabel = startDate.toLocaleString(locale, dateOptions);
@@ -56,7 +56,11 @@ export function makeDateLabel(
 
   const endLabel = endDate.toLocaleString(locale, dateOptions);
   if (end.month === start.month) {
-    return `${start.day} — ${endLabel}`;
+    if (!isNaN(parseInt(startLabel.split(' ')[0]))) {
+      return `${start.day} — ${endLabel}`;
+    } else {
+      return `${startLabel} — ${end.day}`;
+    }
   }
 
   return `${startLabel} — ${endLabel}`;
@@ -70,20 +74,20 @@ export const dateClass = (planned: number, actual?: number): string | null => {
 }
 
 export function fromUTCtoLocalISOString(utcISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(utcISOString.replace('Z', ''), {zone: 'utc'})
+  const result = DateTime.fromISO(utcISOString.replace('Z', ''), { zone: 'utc' })
     .setZone(timezone)
     .toFormat('y-MM-dd HH:mm:ssZZ');
   return result ?? utcISOString;
 }
 
 export function fromLocaltoLocalISOString(utcISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(utcISOString.replace('Z', ''), {zone: timezone})
+  const result = DateTime.fromISO(utcISOString.replace('Z', ''), { zone: timezone })
     .toFormat('y-MM-dd HH:mm:ssZZ');
   return result ?? utcISOString;
 }
 
 export function fromLocalUTCtoUTCISOString(utcISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(utcISOString.replace('Z', ''), {zone: 'utc'})
+  const result = DateTime.fromISO(utcISOString.replace('Z', ''), { zone: 'utc' })
     .setZone(timezone)
     .toFormat('y-MM-dd HH:mm:ss');
   return result ?? utcISOString;

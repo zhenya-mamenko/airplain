@@ -20,7 +20,8 @@ export const useThemeColor = (colorName: string, themeName?: ColorSchemeName): s
 }
 
 export const useThemeColors = (colorNames: Array<string>, themeName?: ColorSchemeName): Array<string> => {
-  return colorNames.map((colorName) => useThemeColor(colorName, themeName));
+  const theme = themeName ?? useDynamicColorScheme() ?? 'light';
+  return colorNames.map((colorName) => useThemeColor(colorName, theme));
 }
 
 const preparedPalette = {} as Record<string, string>;

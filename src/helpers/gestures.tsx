@@ -1,7 +1,6 @@
 import { Alert, Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
 import { useSharedValue, useAnimatedStyle, withTiming, withSpring, runOnJS } from 'react-native-reanimated';
-import emitter from '@/helpers/emitter';
 import { deleteFlight } from '@/helpers/sqlite';
 import { router } from 'expo-router';
 import t from '@/helpers/localization';

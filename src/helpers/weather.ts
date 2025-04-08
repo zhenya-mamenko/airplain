@@ -54,7 +54,7 @@ export const parseWeather = (data: any, color: string, iconSize: number = 20): W
 }
 
 export const loadWeather = async (latitude: number, longitude: number): Promise<any | null> => {
-  const WEATHER_API_ENDPOINT = settings.WEATHER_API_KEY ? `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=` : null
+  const WEATHER_API_ENDPOINT = !!settings.WEATHER_API_KEY ? `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=` : null
   if (!WEATHER_API_ENDPOINT || WEATHER_API_ENDPOINT.length === 0 || !latitude || !longitude) {
     return null;
   }
