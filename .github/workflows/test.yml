@@ -8,6 +8,8 @@ on:
 
   workflow_call:
 
+  workflow_dispatch:
+
 jobs:
   test:
     timeout-minutes: 60
