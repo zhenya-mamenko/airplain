@@ -6,6 +6,9 @@ on:
       - 'v*'
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
   build:
     name: Install and build
     runs-on: ubuntu-latest
@@ -28,8 +31,6 @@ jobs:
           mv android/ android_temp/
           npx expo prebuild --platform android
           \cp -frT android_temp/ android/
-      - name: Install React Native cli
-        run: npm i -D @react-native-community/cli
       - name: Build APK
         run: |
           cd android
