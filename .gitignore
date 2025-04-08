@@ -41,6 +41,9 @@ yarn-error.*
 # Data sources
 .data
 
+# Reports
+__reports__/
+
 # Native code must be commited
 !android/app/
 !android/app/src/

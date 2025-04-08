@@ -76,7 +76,7 @@ All data entered into the application is stored **locally on the device**. No da
 
 ## What's Next
 
-Now it will be necessary to write automated unit and integration tests. FlightAware API will also be added.
+FlightAware API will also be added.
 
 ## Releases
 
