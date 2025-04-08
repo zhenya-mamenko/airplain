@@ -1,0 +1,14 @@
+{
+  "light": {
+    "colors": {
+      "primary": "#30628C",
+      "secondary": "#52606F"
+    }
+  },
+  "dark": {
+    "colors": {
+      "primary": "#9CCBFB",
+      "secondary": "#B9C8DA"
+    }
+  }
+}

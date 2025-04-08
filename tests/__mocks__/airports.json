@@ -1,0 +1,16 @@
+[
+  {
+    "airport_latitude":40.63983,
+    "airport_longitude":-73.77874,
+    "airport_name":"John F. Kennedy International Airport",
+    "airport_name_ru":"Международный аэропорт имени Джона Кеннеди",
+    "country_code":"US",
+    "iata_code":"JFK",
+    "municipality_latitude":40.71427,
+    "municipality_longitude":-74.00597,
+    "municipality_name":"New York",
+    "municipality_name_ru":"Нью-Йорк",
+    "timezone":"America\/New_York",
+    "elevation":4.0
+  }
+]

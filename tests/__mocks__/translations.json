@@ -1,0 +1,17 @@
+{
+  "en": {
+    "test": "Test",
+    "measurements": {
+      "h": "h",
+      "m": "m"
+    }
+  },
+  "ru": {
+    "test": "Тест",
+    "measurements": {
+      "h": " ч",
+      "m": " мин"
+    }
+
+  }
+}
