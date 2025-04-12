@@ -10,7 +10,7 @@ import t from '@/helpers/localization';
 import emitter from '@/helpers/emitter';
 import { getSetting, setSetting, settings } from '@/constants/settings';
 import { exportFlights, isFlightExists, fillDataFromArray } from '@/helpers/sqlite';
-import { readFile, writeFile, DownloadDirectoryPath } from '@dr.pogodin/react-native-fs';
+import { readFile, writeFile, DownloadDirectoryPath, exists } from '@dr.pogodin/react-native-fs';
 import * as DocumentPicker from 'expo-document-picker';
 import { showConfirmation, startBackgroundTask, stopBackgroundTask } from '@/helpers/common';
 import { parse } from 'csv-parse/dist/esm/sync';
@@ -62,10 +62,18 @@ const Settings = React.memo(() => {
       });
       return result.join(',');
     }).join('\n');
-    await writeFile(DownloadDirectoryPath + '/flights.csv', headers.join(',') + '\n' + data, 'utf8');
+    let fileName = 'flights.csv';
+    if (await exists(DownloadDirectoryPath + '/' + fileName)) {
+      let i = 1;
+      while (await exists(DownloadDirectoryPath + '/' + fileName)) {
+        fileName = `flights (${i}).csv`;
+        i++;
+      }
+    }
+    await writeFile(DownloadDirectoryPath + `/${fileName}`, headers.join(',') + '\n' + data, 'utf8');
     showConfirmation({
       title: t('settings.export_finished_title'),
-      description: t('settings.export_finished_description'),
+      description: t('settings.export_finished_description', { fileName }),
       closeButton: t('buttons.close'),
       showOnlyCloseButton: true,
     });
