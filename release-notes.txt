@@ -1,9 +1,3 @@
-Bugfix: Statistics and achievements are not updated after import flights.
-Bugfix: Zero value for distance is not showed on Stats tab if there are no past flights.
-Bugfix: Date label maybe wrong if flight was on month's edge in past year.
-Bugfix: Wrong flight data record if it was codesharing flight.
+Bugfix: export data doesn't work if flights.csv already exists.
 
-Chore: updated dependencies.
-
-Some functions were refactored.
-Unit and integration tests were added.
+Chore: update dependencies.
