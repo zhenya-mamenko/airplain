@@ -8,12 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-tests:
-    uses: zhenya-mamenko/airplain/.github/workflows/test.yml
+  tests:
+    uses: ./.github/workflows/test.yml
 
   build:
     name: Install and build
-    needs: run-tests
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
