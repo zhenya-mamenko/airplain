@@ -5,9 +5,11 @@ on:
     tags:
       - 'v*'
 
+  workflow_dispatch:
+
 jobs:
   run-tests:
-    uses: ./.github/workflows/test.yml
+    uses: zhenya-mamenko/airplain/.github/workflows/test.yml
 
   build:
     name: Install and build
@@ -32,11 +34,21 @@ jobs:
           mv android/ android_temp/
           npx expo prebuild --platform android
           \cp -frT android_temp/ android/
+          sed -i 's/signingConfig signingConfigs.debug/signingConfig null/g' android/app/build.gradle
       - name: Build APK
         run: |
           cd android
           ./gradlew app:assembleRelease --no-daemon
-          cp app/build/outputs/apk/release/app-release.apk ../airplain.apk
+      - name: Sign APK
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > release.keystore
+          $ANDROID_SDK_ROOT/build-tools/36.0.0/apksigner sign \
+            --ks release.keystore \
+            --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --out airplain.apk \
+            android/app/build/outputs/apk/release/app-release-unsigned.apk
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
