@@ -12,7 +12,7 @@ import emitter from '@/helpers/emitter';
 
 
 export const flightsCheckTask = async () => {
-  const flights = await getActualFlights(settings.FLIGHTS_LIMIT);
+  const flights = await getActualFlights(1);
   if (flights.length !== 0) {
     await updateFlightsState(flights, new Date(), false);
   } else {
@@ -91,7 +91,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
     if (flight.recordType === 1) {
       const ts = timeSpan(hours);
       if (ts !== '' && ((flightNotificationsState[ts] ?? -1) !== minutes || forceRefresh)) {
-        flightData = await getFlightData(flight.airline, flight.flightNumber, startDatetime);
+        flightData = await getFlightData(flight.airline, flight.flightNumber, startDatetime.toISOString().substring(0, 10));
         if (!!flightData) {
           const messages = [];
           if (!!flightData.status && flight.status !== flightData.status) {
@@ -233,7 +233,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
     }
 
     if (arrivalMinutes < 30 && arrivalMinutes >= 0 && (arrivalMinutes % 5 === 0 || forceRefresh) && !flight.baggageBelt) {
-      const flightData = await getFlightData(flight.airline, flight.flightNumber, startDatetime);
+      const flightData = await getFlightData(flight.airline, flight.flightNumber, startDatetime.toISOString().substring(0, 10));
       if (!!flightData && !!flightData.baggageBelt && flight.baggageBelt !== flightData.baggageBelt) {
         Notifications.showFlightNotification(
           `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
@@ -258,7 +258,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
     if (arrivalMinutes >= 60) {
       await setFlightArchiveState(flight.flightId, 1);
       flight.isArchived = true;
-      emitter.emit('updatePastFlights', false);
+      emitter.emit('updatePastFlights', { refreshAnimation: false, forceRefresh: false });
     } else {
       result.push(flight);
     }

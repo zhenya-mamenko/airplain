@@ -44,6 +44,9 @@ yarn-error.*
 # Reports
 __reports__/
 
+# Keystore
+release.keystore*
+
 # Native code must be commited
 !android/app/
 !android/app/src/

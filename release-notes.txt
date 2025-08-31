@@ -1,3 +1,8 @@
-Bugfix: export data doesn't work if flights.csv already exists.
+Bugfix: "Export data" action doesn't work if flights.csv already exists.
+Bugfix: "Have a nice flight" shown if online registration is available.
+Bugfix: wrong datetime shown when updating flight information (departure or arrival date).
+Bugfix: flight dat in list don't updated after editing.
+
+Update: Gemini workflows and workflows improvements
 
 Chore: update dependencies.

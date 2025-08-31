@@ -1,7 +1,7 @@
 import Button from '@/components/Button';
 import Separator from '@/components/Separator';
 import DatetimeInput from '@/components/DatetimeInput';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { Select } from '@/components/Select';
 import airports from '@/constants/airports.json';
 import { haversine, showConfirmation } from '@/helpers/common';
@@ -11,7 +11,7 @@ import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import useTheme from '@/hooks/useTheme';
 import { KeyboardAvoidingView, Pressable, ToastAndroid, ScrollView } from 'react-native';
 import { Text, View, ThemeProvider, TextInput } from 'react-native-picasso';
-import { fromLocaltoLocalISOString } from '@/helpers/datetime';
+import { fromLocaltoLocalISOString, fromLocaltoUTCISOString, fromUTCtoLocalISOString, replaceTimeZone } from '@/helpers/datetime';
 import { getFlightData } from '@/helpers/flights';
 import { isFlightExists, inserPassengerFromBCBP, insertFlight } from '@/helpers/sqlite';
 import { router } from 'expo-router';
@@ -24,7 +24,7 @@ import { getAirlineData, getAirlinesData } from '@/helpers/airdata';
 
 
 export default function AddFlight(props: { today?: Date }) {
-  const today = props.today ?? new Date();
+  const today = fromUTCtoLocalISOString((props.today ?? new Date()).toISOString(), 'UTC');
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
@@ -78,15 +78,11 @@ export default function AddFlight(props: { today?: Date }) {
     const departureAirport = airports.find(x => x.iata_code === state.add.departureAirport);
     const arrivalTimezone = arrivalAirport?.timezone ?? 'UTC';
     const departureTimezone = departureAirport?.timezone ?? 'UTC';
-    state.add.arrivalDate.setHours(state.add.arrivalTime.getHours());
-    state.add.arrivalDate.setMinutes(state.add.arrivalTime.getMinutes());
-    state.add.arrivalDate.setSeconds(0);
-    state.add.departureDate.setHours(state.add.departureTime.getHours());
-    state.add.departureDate.setMinutes(state.add.departureTime.getMinutes());
-    state.add.departureDate.setSeconds(0);
+    const endDatetime = fromLocaltoLocalISOString(state.add.arrivalDate.substring(0, 10) + 'T' + state.add.arrivalTime.substring(11, 19), arrivalTimezone);
+    const startDatetime = fromLocaltoLocalISOString(state.add.departureDate.substring(0, 10) + 'T' + state.add.departureTime.substring(11, 19), departureTimezone);
     const flight: Flight = {
-      actualEndDatetime: fromLocaltoLocalISOString(state.add.arrivalDate.toISOString(), arrivalTimezone),
-      actualStartDatetime: fromLocaltoLocalISOString(state.add.departureDate.toISOString(), departureTimezone),
+      actualEndDatetime: endDatetime,
+      actualStartDatetime: startDatetime,
       airline: state.add.airline,
       airlineName: state.add.airlineName,
       arrivalAirport: state.add.arrivalAirport,
@@ -99,18 +95,18 @@ export default function AddFlight(props: { today?: Date }) {
         departureAirport?.airport_latitude ?? 0, departureAirport?.airport_longitude ?? 0,
         arrivalAirport?.airport_latitude ?? 0, arrivalAirport?.airport_longitude ?? 0
       )),
-      endDatetime: fromLocaltoLocalISOString(state.add.arrivalDate.toISOString(), arrivalTimezone),
+      endDatetime: endDatetime,
       extra: {},
       flightNumber: state.add.flightNumber,
       isArchived: state.add.departureDate < today,
       recordType: 2,
-      startDatetime: fromLocaltoLocalISOString(state.add.departureDate.toISOString(), departureTimezone),
+      startDatetime: startDatetime,
       status: 'scheduled' as FlightStatus,
       info: {},
     };
     if (await insertFlight(flight)) {
+      refreshFlights(true, false);
       router.back();
-      refreshFlights(false);
     }
     setProcessing(false);
   }
@@ -133,7 +129,7 @@ export default function AddFlight(props: { today?: Date }) {
 
   const findFlight = async () => {
     setProcessing(true);
-    const flightId = await isFlightExists(state.search.airline, state.search.flightNumber, state.search.departureDate);
+    const flightId = await isFlightExists(state.search.airline, state.search.flightNumber, state.search.departureDate.substring(0, 10));
     if (flightId) {
       const value = {
         closeButton: t('buttons.close'),
@@ -151,12 +147,12 @@ export default function AddFlight(props: { today?: Date }) {
       setProcessing(false);
       showConfirmation(value);
     } else {
-      const flight = await getFlightData(state.search.airline, state.search.flightNumber, state.search.departureDate);
+      const flight = await getFlightData(state.search.airline, state.search.flightNumber, state.search.departureDate.substring(0, 10));
       if (!!flight) {
         if (await insertFlight(flight)) {
           setProcessing(false);
+          refreshFlights(true, false);
           router.back();
-          refreshFlights(true);
         }
       } else {
         const value = {
@@ -309,7 +305,7 @@ export default function AddFlight(props: { today?: Date }) {
                     ref={ refs.searchDate }
                     timezone='UTC'
                     value={ state.search.departureDate }
-                    onChange={ (date: Date) => dispatch({ type: 'search', value: { departureDate: date } }) }
+                    onChange={ (date: string) => dispatch({ type: 'search', value: { departureDate: date } }) }
                   />
                 </View>
               </View>
@@ -551,10 +547,10 @@ export default function AddFlight(props: { today?: Date }) {
                     timezone={ state.add.departureAirportTimezone }
                     title={ `${t('add.departure')} ${t('add.date').toLocaleLowerCase()}` }
                     value={ state.add.departureDate }
-                    onChange={ (date: Date) => {
-                      dispatch({ type: 'add', value: { departureDate: date } });
-                      if (state.add.arrivalDate.toISOString().split('T')[0] < date.toISOString().split('T')[0]) {
-                        dispatch({ type: 'add', value: { arrivalDate: date } });
+                    onChange={ (value: string) => {
+                      dispatch({ type: 'add', value: { departureDate: value } });
+                      if (state.add.arrivalDate === today) {
+                        dispatch({ type: 'add', value: { arrivalDate: state.add.arrivalDate.splice(0, value.substring(0, 10)) } });
                       }
                       refs.departureTime.current?.open();
                     }}
@@ -576,8 +572,8 @@ export default function AddFlight(props: { today?: Date }) {
                     timezone={ state.add.departureAirportTimezone }
                     title={ `${t('add.departure')} ${t('add.time').toLocaleLowerCase()}` }
                     value={ state.add.departureTime }
-                    onChange={ (time: Date) => {
-                      dispatch({ type: 'add', value: { departureTime: time } });
+                    onChange={ (value: string) => {
+                      dispatch({ type: 'add', value: { departureTime: value } });
                       refs.arrivalAirport.current?.open();
                     }}
                   />
@@ -663,11 +659,8 @@ export default function AddFlight(props: { today?: Date }) {
                     timezone={ state.add.arrivalAirportTimezone }
                     title={ `${t('add.arrival')} ${t('add.date').toLocaleLowerCase()}` }
                     value={ state.add.arrivalDate }
-                    onChange={ (date: Date) => {
-                      dispatch({ type: 'add', value: { arrivalDate: date } });
-                      if (state.add.departureDate.toISOString().split('T')[0] > date.toISOString().split('T')[0]) {
-                        dispatch({ type: 'add', value: { departureDate: date } });
-                      }
+                    onChange={ (value: string) => {
+                      dispatch({ type: 'add', value: { arrivalDate: value } });
                       refs.arrivalTime.current?.open();
                     }}
                   />
@@ -688,7 +681,9 @@ export default function AddFlight(props: { today?: Date }) {
                     ref={ refs.arrivalTime }
                     title={ `${t('add.arrival')} ${t('add.time').toLocaleLowerCase()}` }
                     value={ state.add.arrivalTime }
-                    onChange={ (time: Date) => dispatch({ type: 'add', value: { arrivalTime: time } }) }
+                    onChange={ (value: string) => {
+                      dispatch({ type: 'add', value: { arrivalTime: value } });
+                    }}
                   />
                 </View>
               </View>

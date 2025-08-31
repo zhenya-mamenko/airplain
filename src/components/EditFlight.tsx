@@ -28,10 +28,10 @@ const Image = createPicassoComponent(_Image);
 
 const DateTimeRow = ({ type, state }:
   { type: 'Start' | 'End', state: any }) => {
-  const [value, setValue] = useState(new Date(state[`actual${type}Datetime`] ?? state[`${type.toLowerCase()}Datetime`]));
+  const [value, setValue] = useState<string>(state[`actual${type}Datetime`] ?? state[`${type.toLowerCase()}Datetime`]);
   const dispatch = useContext(DataCardContext);
 
-  const handleChange = (date: Date) => {
+  const handleChange = (date: string) => {
     setValue(date);
     dispatch({ field: `actual${type}Datetime`, value: date })
   }
@@ -58,7 +58,7 @@ const DateTimeRow = ({ type, state }:
           mode='date'
           timezone={type === 'End' ? state.arrivalAirportTimezone : state.departureAirportTimezone }
           value={ value }
-          onChange={ (date: Date) => dispatch({ field: `actual${type}Datetime`, value: date }) }
+          onChange={ (date: string) => handleChange(date) }
         />
       </View>
       <View
@@ -79,7 +79,7 @@ const DateTimeRow = ({ type, state }:
           mode='time'
           timezone={type === 'End' ? state.arrivalAirportTimezone : state.departureAirportTimezone }
           value={ value }
-          onChange={ (date: Date) => handleChange(date) }
+          onChange={ (date: string) => handleChange(date) }
         />
       </View>
     </View>
@@ -160,17 +160,11 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const dataCardOnSave = async (values: any) => {
     const result: any = {};
     Object.entries(values).filter(([field, value]) => value !== null && value !== undefined).forEach(([field, value]) => {
-      if (['actualStartDatetime', 'actualEndDatetime'].includes(field)) {
-        value = fromLocaltoLocalISOString(
-          (value as Date).toISOString(),
-          field === 'actualEndDatetime' ? state.arrivalAirportTimezone :  state.departureAirportTimezone
-        );
-      }
       dispatch({ field, value });
       result[field] = value;
     })
     await updateFlight({...state, ...result});
-    refreshFlights(false);
+    refreshFlights(true, false);
   }
 
   const departureFlag = flags.find(x => x.country_code === state.departureCountry)?.flag;
@@ -190,7 +184,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       title: t('edit.update_confirm_title'),
       showOnlyCloseButton: false,
       onConfirm: async () => {
-        const flightData = await getFlightData(state.airline, state.flightNumber, new Date(state.startDatetime));
+        const flightData = await getFlightData(state.airline, state.flightNumber, state.startDatetime.substring(0, 10));
         if (!!flightData) {
           const result: any = {};
           Object.entries(flightData).filter(([field, value]) => value !== null && value !== undefined).forEach(([field, value]) => {

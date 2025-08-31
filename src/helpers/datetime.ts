@@ -80,10 +80,10 @@ export function fromUTCtoLocalISOString(utcISOString: string, timezone: string):
   return result ?? utcISOString;
 }
 
-export function fromLocaltoLocalISOString(utcISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(utcISOString.replace('Z', ''), { zone: timezone })
+export function fromLocaltoLocalISOString(localISOString: string, timezone: string): string {
+  const result = DateTime.fromISO(localISOString.replace('Z', ''), { zone: timezone })
     .toFormat('y-MM-dd HH:mm:ssZZ');
-  return result ?? utcISOString;
+  return result ?? localISOString;
 }
 
 export function fromLocalUTCtoUTCISOString(utcISOString: string, timezone: string): string {
@@ -91,4 +91,17 @@ export function fromLocalUTCtoUTCISOString(utcISOString: string, timezone: strin
     .setZone(timezone)
     .toFormat('y-MM-dd HH:mm:ss');
   return result ?? utcISOString;
+}
+
+export function fromLocaltoUTCISOString(localISOString: string): string {
+  const result = DateTime.fromFormat(localISOString, 'y-MM-dd HH:mm:ssZZ')
+    .setZone('utc')
+    .toFormat('y-MM-dd HH:mm:ss');
+  return result ?? localISOString;
+}
+
+export function replaceTimeZone(localString: string, timezone: string): string {
+  return DateTime.fromFormat(localString, 'y-MM-dd HH:mm:ssZZ')
+    .setZone(timezone, { keepLocalTime: true })
+    .toFormat('y-MM-dd HH:mm:ssZZ');
 }

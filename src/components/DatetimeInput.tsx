@@ -1,8 +1,9 @@
 import React, { useEffect, useImperativeHandle, useState } from 'react';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { DateTime } from 'luxon';
 import { useLocale } from '@/helpers/localization';
-import { fromLocalUTCtoUTCISOString } from '@/helpers/datetime';
 import Button from '@/components/Button';
+import { fromLocaltoUTCISOString } from '@/helpers/datetime';
 
 
 interface Props {
@@ -14,8 +15,8 @@ interface Props {
   timezone: string;
   timeFormatOptions?: Intl.DateTimeFormatOptions;
   title?: string;
-  value?: Date;
-  onChange?: (date: Date) => void;
+  value?: string;
+  onChange?: (date: string) => void;
 }
 
 interface IDatetimeInputRef {
@@ -25,7 +26,8 @@ interface IDatetimeInputRef {
 const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
   ({ className, dateFormatOptions, textClass, timeFormatOptions, onChange, timezone, ...props }: Props, currentRef) => {
 
-  const [value, setValue] = useState<Date>();
+  const [value, setValue] = useState<string>('');
+  const [dateValue, setDateValue] = useState<Date>(new Date());
   const [text, setText] = useState('');
 
   const locale = useLocale();
@@ -43,14 +45,23 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
   };
 
   useEffect(() => {
-    setValue(props.value);
+    const v = props.value ?? '';
+    const dateValue = new Date(v.substring(0, 19));
+    if (!isNaN(dateValue.valueOf())) {
+      setValue(v);
+      setDateValue(dateValue);
+    } else {
+      setValue('');
+      setDateValue(new Date());
+    }
   }, [props.value]);
 
   useEffect(() => {
-    if (!value || !value.toLocaleDateString || !value.toLocaleTimeString) {
+    if (!value) {
       setText(props.mode === 'date' ? ' 📅 ' : ' 🕒 ');
     } else {
-      const text = props.mode === 'date' ? value.toLocaleDateString(locale, dateOptions) : value.toLocaleTimeString(locale, timeOptions);
+      const date = new Date(value);
+      const text = props.mode === 'date' ? date.toLocaleDateString(locale, dateOptions) : date.toLocaleTimeString(locale, timeOptions);
       setText(text);
     }
   }, [props.mode, value]);
@@ -63,14 +74,18 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
 
   const setDate = (event: DateTimePickerEvent, date?: Date) => {
     if (event.type === 'set' && !!date) {
-      setValue(date);
-      if (onChange) onChange(date);
+      const textDate = DateTime.fromJSDate(date, { zone: 'local' })
+        .setZone(timezone, { keepLocalTime: true })
+        .toFormat('y-MM-dd HH:mm:ssZZ');
+      setValue(textDate);
+      setDateValue(new Date(textDate.substring(0, 19)));
+      if (onChange) onChange(textDate);
     }
   }
 
   const params = {
     ...props,
-    value: value ? new Date(fromLocalUTCtoUTCISOString(value.toISOString(), timezone)) : new Date(),
+    value: dateValue,
     design: 'material',
     onChange: setDate,
   };

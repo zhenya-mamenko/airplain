@@ -4,8 +4,8 @@ type Events = {
   setFlightFilterModalState: boolean;
   refreshAchievements: undefined;
   setFlightFilterState: 'filter' | 'filter-outline';
-  updateActualFlights: boolean;
-  updatePastFlights: boolean;
+  updateActualFlights: { refreshAnimation?: boolean, forceRefresh?: boolean };
+  updatePastFlights: { refreshAnimation?: boolean, forceRefresh?: boolean };
   updateSettings: undefined;
   updateStats: undefined;
 }

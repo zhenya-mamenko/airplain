@@ -26,13 +26,20 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
   try {
     response = await fetch(url, { headers, timeout: 3000 });
   } catch (error) {
+    console.debug(`Error fetching flight data from aerodatabox API: ${error}`);
     return null;
   }
   if (!response || !response.ok || response.status !== 200) {
+    console.debug(`Error response from aerodatabox API:\n${url}\nResponse: ${JSON.stringify(response, null, 2)}`);
+    if (response && response.json) {
+      const errorData = await response.json();
+      console.debug(`Error data from aerodatabox API:\n${JSON.stringify(errorData, null, 2)}`);
+    }
     return null;
   }
   const data = await response.json();
   if (!data || !data.length || data.length === 0) {
+    console.debug(`No flight data found for aerodatabox API: ${airline} ${flightNumber} ${flightDate}`);
     return null;
   }
 
@@ -74,5 +81,6 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
       carrierFlightNumber: flightData.number?.split(' ')[1] ?? flightData.flightNumber
     };
   }
+  console.debug(`Fetched flight data from aerodatabox API:\n${JSON.stringify(result, null, 2)}`);
   return result;
 }
