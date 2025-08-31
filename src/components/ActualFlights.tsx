@@ -19,7 +19,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
   const [flights, setFlights] = useState<Flight[]>([]);
 
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const loadFlightsRef = useRef((refreshAnimation?: boolean) => {});
+  const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
   const flightsLoading = useRef(false);
 
   const subscribe = (callback: Function) => {
@@ -36,7 +36,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
   useEffect(() => {
     Notifications.requestPermissionsAsync();
 
-    loadFlightsRef.current = async (refreshAnimation) => {
+    loadFlightsRef.current = async (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {
       if (flightsLoading.current) return;
       flightsLoading.current = true;
       if (!!timeoutId.current) {
@@ -45,8 +45,8 @@ const ActualFlights = memo((props: { now?: Date }) => {
       }
       if (refreshAnimation) setRefreshing(true);
       try {
-        if (settings.ONLY_MANUAL_REFRESH === 'false' || refreshAnimation) {
-          const flights = await fetchActualFlights(props.now ?? new Date(), refreshAnimation);
+        if (settings.ONLY_MANUAL_REFRESH === 'false' || refreshAnimation || forceRefresh) {
+          const flights = await fetchActualFlights(props.now ?? new Date(), forceRefresh);
           if (flights.length !== 0) {
             if (settings.ONLY_MANUAL_REFRESH === 'false') {
               startBackgroundTask();
@@ -59,7 +59,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
           setFlights(flights);
         }
         if (settings.ONLY_MANUAL_REFRESH !== 'false') {
-          const tId = setTimeout(() => loadFlightsRef.current(false), 60000);
+          const tId = setTimeout(() => loadFlightsRef.current(false, false), 60000);
           timeoutId.current = tId;
         }
       } catch (e) {
@@ -69,9 +69,9 @@ const ActualFlights = memo((props: { now?: Date }) => {
         setRefreshing(false);
       }
     };
-    loadFlightsRef.current(true);
+    loadFlightsRef.current(true, false);
 
-    const callback = (refreshing: boolean) => loadFlightsRef.current(refreshing);
+    const callback = ({ refreshAnimation, forceRefresh }: { refreshAnimation?: boolean, forceRefresh?: boolean }) => loadFlightsRef.current(refreshAnimation, forceRefresh);
     emitter.on('updateActualFlights', callback);
 
     return () => emitter.off('updateActualFlights', callback);

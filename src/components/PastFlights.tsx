@@ -17,7 +17,7 @@ export default function PastFlights() {
   const [timeoutId, setTimeoutId] = useState<any | null>(null);
 
   const flightsFilter = useContext(GlobalContext).flightsFilter;
-  const loadFlightsRef = useRef((refreshAnimation?: boolean) => {});
+  const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
 
   const subscribe = (callback: Function) => {
     const update = () => callback();
@@ -31,7 +31,7 @@ export default function PastFlights() {
   const settings = useSyncExternalStore(subscribe, () => _settings );
 
   useEffect(() => {
-    loadFlightsRef.current = async (refreshAnimation) => {
+    loadFlightsRef.current = async (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
@@ -67,7 +67,7 @@ export default function PastFlights() {
   }, [flightsFilter]);
 
   useEffect(() => {
-    const callback = (refreshing: boolean) => loadFlightsRef.current(refreshing);
+    const callback = ({ refreshing, forceRefresh }: { refreshing?: boolean, forceRefresh?: boolean }) => loadFlightsRef.current(refreshing, forceRefresh);
     emitter.on('updatePastFlights', callback);
 
     return () => emitter.off('updatePastFlights', callback);

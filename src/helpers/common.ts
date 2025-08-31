@@ -152,9 +152,9 @@ export function makeCheckInLink(checkInLink: string, date: string, departureAirp
   return link;
 }
 
-export function refreshFlights(refreshing: boolean) {
-  emitter.emit('updateActualFlights', refreshing);
-  emitter.emit('updatePastFlights', refreshing);
+export function refreshFlights(refreshAnimation: boolean = false, forceRefresh: boolean = false) {
+  emitter.emit('updateActualFlights', { refreshAnimation, forceRefresh });
+  emitter.emit('updatePastFlights', { refreshAnimation, forceRefresh });
 }
 
 export const showConfirmation = (confirmationDialog: ConfirmationDialogSettings) => {
@@ -213,3 +213,11 @@ export const fetch = async (
   clearTimeout(abort);
   return response;
 }
+
+Object.defineProperty(String.prototype, "splice", {
+  value: function(start: number, replacement: string) {
+    return this.slice(0, start) + replacement + this.slice(start + replacement.length);
+  },
+  writable: true,
+  configurable: true,
+});

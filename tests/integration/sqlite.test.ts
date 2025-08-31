@@ -162,7 +162,7 @@ describe('SQLite', () => {
     it('should return the flight ID if the flight exists', async () => {
       mockSQLite.getFirstAsync.mockResolvedValueOnce({ flight_id: 1 });
 
-      const result = await db.isFlightExists('AA', '100', new Date('2023-01-01'));
+      const result = await db.isFlightExists('AA', '100', '2023-01-01');
 
       expect(mockSQLite.getFirstAsync).toHaveBeenCalledWith(`
     SELECT
@@ -180,7 +180,7 @@ describe('SQLite', () => {
     it('should return undefined if the flight does not exist', async () => {
       mockSQLite.getFirstAsync.mockResolvedValueOnce(undefined);
 
-      const result = await db.isFlightExists('AA', '100', new Date('2023-01-01'));
+      const result = await db.isFlightExists('AA', '100', '2023-01-01');
 
       expect(result).toBeUndefined();
     });

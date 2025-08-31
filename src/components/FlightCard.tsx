@@ -356,7 +356,7 @@ const FlightCard = React.memo((props: { data: FlightCardData, noGestures?: boole
                 className='size-sm color-primaryContainer ml-xs'
                 style={{ fontVariant: ['small-caps'] }}
               >
-                { !!state ? `${t('flights.statuses.' + state).toLocaleLowerCase()}` : `${t('flights.whishes').toLocaleLowerCase()}` }
+                { !!state ? `${t('flights.statuses.' + state).toLocaleLowerCase()}` : !onlineCheckInText ? `${t('flights.whishes').toLocaleLowerCase()}` : null }
               </Text>
             }
           </View>

@@ -205,4 +205,12 @@ describe('common helper', () => {
     expect(result).toBe('https://example.com/checkin?DEP_DATE_EU=2023-10-26&IATA_DEP=LAX&FIRST=firstname&LAST=surname&PNR=ABCDEF&FLT_NO=123');
   });
 
+  test('String.prototype.splice', () => {
+    const str = 'hello world';
+
+    expect(str.splice(6, 'аwesome')).toBe('hello аwesome');
+    expect(str.splice(0, 'fckin')).toBe('fckin world');
+    expect(str.splice(3, 'LO WO')).toBe('helLO WOrld');
+  });
+
 });

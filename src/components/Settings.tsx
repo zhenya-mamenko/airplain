@@ -154,7 +154,7 @@ const Settings = React.memo(() => {
         }
         if (data.length > 0) {
           await fillDataFromArray('flights', data);
-          emitter.emit('updatePastFlights', false);
+          emitter.emit('updatePastFlights', { refreshAnimation: false, forceRefresh: false });
           emitter.emit('updateStats');
           emitter.emit('refreshAchievements');
         }

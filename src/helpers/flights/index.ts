@@ -24,7 +24,8 @@ function getApi(name: string = settings.CURRENT_API): ApiData | null {
   return api;
 }
 
-export const getFlightData = async (airline: string, flightNumber: string, date: Date): Promise<Flight | null> => {
+export const getFlightData = async (airline: string, flightNumber: string, date: string): Promise<Flight | null> => {
+  console.debug(`Fetching flight data from API: ${airline} ${flightNumber} ${date}`);
   const state = await NetInfo.fetch();
   if (!state.isConnected) {
     return null;
@@ -33,6 +34,5 @@ export const getFlightData = async (airline: string, flightNumber: string, date:
   if (!api || !api.key || !api.url || !api.module) {
     return null;
   }
-  const flightDate = (date ?? new Date()).toISOString().split('T')[0];
-  return await api.module.getFlightData(airline, flightNumber, flightDate, api.url, api.key);
+  return await api.module.getFlightData(airline, flightNumber, date, api.url, api.key);
 }

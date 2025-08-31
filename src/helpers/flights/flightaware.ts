@@ -42,6 +42,9 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
       endDatetime: fromUTCtoLocalISOString(flightData.scheduled_in, flightData.destination.timezone),
       extra: {},
       flightNumber: flightData.flight_number,
+      info: {
+        state: '',
+      },
       isArchived: false,
       recordType: 1,
       startDatetime: fromUTCtoLocalISOString(flightData.scheduled_out, flightData.origin.timezone),

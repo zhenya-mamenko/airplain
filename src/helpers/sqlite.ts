@@ -96,7 +96,6 @@ export async function openDatabase(dbName: string = DBNAME): Promise<boolean> {
     const tables: {[key: string]: any} = {
       'airlines': require('@/assets/sql/data/airlines.csv'),
       'aircraft_types': require('@/assets/sql/data/aircraft_types.csv'),
-      // 'flights': require('@/assets/sql/data/flights.csv'),
     };
     for (const table of Object.keys(tables)) {
       await fillDataFromFile(table, tables[table]);
@@ -175,7 +174,7 @@ export async function getPastFlights(filter: Array<Condition | string>, limit: n
   ], limit, offset, 'DESC');
 }
 
-export async function isFlightExists(airline: string, flightNumber: string, date: Date): Promise<number | undefined> {
+export async function isFlightExists(airline: string, flightNumber: string, date: string): Promise<number | undefined> {
   if (!db) {
     throw new Error('Can\'t select from flights: database not opened');
   }
@@ -186,7 +185,7 @@ export async function isFlightExists(airline: string, flightNumber: string, date
     WHERE airline = ? AND flight_number = ? AND DATE(start_datetime) = ?
   `;
   try {
-    const result: any = await db.getFirstAsync(query, airline, flightNumber, date.toISOString().substring(0, 10));
+    const result: any = await db.getFirstAsync(query, airline, flightNumber, date);
     return result?.flight_id;
   } catch (e) {
     return undefined;
