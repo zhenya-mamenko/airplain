@@ -6,16 +6,16 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { Select as _Select } from '@/components/Select';
 
 
-export const DataCardContext = createContext(({ field, value }: { field: string, value: any }) => {});
+export const DataCardContext = createContext(({ field, value }: { field: string, value: any }) => { });
 
 export interface DataCardProps {
-    caption: string | JSX.Element;
-    children: any;
-    className?: string;
-    dataClassName?: string;
-    rightBlock?: JSX.Element;
-    onLayout?: (event: any) => void;
-    onSave?: (values: any) => void;
+  caption: string | JSX.Element;
+  children: any;
+  className?: string;
+  dataClassName?: string;
+  rightBlock?: JSX.Element;
+  onLayout?: (event: any) => void;
+  onSave?: (values: any) => void;
 }
 
 export const DataCard = forwardRef(({
@@ -38,18 +38,18 @@ export const DataCard = forwardRef(({
   }
 
   return (
-    <DataCardContext.Provider value={ dispatch }>
+    <DataCardContext.Provider value={dispatch}>
       <View
-        className={ `radius-md b-1 bordercolor-outline bg-background flex-column elevated mb-md ${className ?? ''}` }
-        onLayout={ onLayout }
+        className={`radius-md b-1 bordercolor-outline bg-background flex-column elevated mb-md ${className ?? ''}`}
+        onLayout={onLayout}
       >
         <View className='radiustr-md radiustl-md px-md py-sm bb-1 bordercolor-outlineVariant bg-secondaryContainer flex-row justifycontent-between alignitems-center'>
           <View className='flex-row justifycontent-start alignitems-center'>
-            { typeof caption === 'string' ? 
+            {typeof caption === 'string' ?
               <Text
                 className='size-smm weight-bold mt-xs color-secondaryContainer'
               >
-                { caption.toLocaleUpperCase() }
+                {caption.toLocaleUpperCase()}
               </Text>
               :
               caption
@@ -59,14 +59,14 @@ export const DataCard = forwardRef(({
             {
               rightBlock
             }
-            { allowEditing &&
+            {allowEditing &&
               <Pressable
                 hitSlop={5}
-                onPress={ () => press() }
+                onPress={() => press()}
               >
                 <FontAwesome5
-                  color={ colorGray }
-                  name={ editing ? 'check' : 'edit' }
+                  color={colorGray}
+                  name={editing ? 'check' : 'edit'}
                   size={16}
                 />
               </Pressable>
@@ -74,9 +74,9 @@ export const DataCard = forwardRef(({
           </>
         </View>
         <View
-          className={ !!dataClassName ? dataClassName : 'px-md pb-sm radiusbr-md radiusbl-md bg-background' }
+          className={!!dataClassName ? dataClassName : 'px-md pb-sm radiusbr-md radiusbl-md bg-background'}
         >
-          { allowEditing ? (!editing ? children[0] : children[1]) : children }
+          {allowEditing ? (!editing ? children[0] : children[1]) : children}
         </View>
       </View>
     </DataCardContext.Provider>
@@ -98,24 +98,24 @@ export const Value = React.memo(({ caption, value, lines = 1, width = '100%', se
       // @ts-ignore
       style={{ ...(!!width ? { width } : {}) }}
     >
-      { caption.length !== 0 &&
+      {caption.length !== 0 &&
         <Text
           className='size-md color-primaryContainer'
           ellipsizeMode='tail'
           numberOfLines={1}
           style={{ fontVariant: ['small-caps'] }}
         >
-          { caption.toLocaleLowerCase() }
+          {caption.toLocaleLowerCase()}
         </Text>
       }
-      { typeof value === 'string' || typeof value === 'number' ? (
+      {typeof value === 'string' || typeof value === 'number' ? (
         <Text
           className='size-md weight-bold color-surface mt-xs'
           ellipsizeMode='tail'
-          numberOfLines={ lines }
-          selectable={ selectable }
+          numberOfLines={lines}
+          selectable={selectable}
         >
-          { value }
+          {value}
         </Text>
       ) : value}
     </View>
@@ -147,26 +147,26 @@ export const Input = React.memo(({ caption, field, keyboardType, lines = 1, valu
       // @ts-ignore
       style={{ ...(!!width ? { width } : {}) }}
     >
-      { caption.length !== 0 &&
+      {caption.length !== 0 &&
         <Text
           className='size-md color-primaryContainer mb-sm'
           ellipsizeMode='tail'
           numberOfLines={1}
           style={{ fontVariant: ['small-caps'] }}
         >
-          { caption.toLocaleLowerCase() }
+          {caption.toLocaleLowerCase()}
         </Text>
       }
       <TextInput
-        className={`color-surface bg-background b-1 bordercolor-outline radius-sm size-md px-smm py-xs ${width === '100%' ? '' : 'mr-md'}` }
-        key={ field }
-        keyboardType={ keyboardType }
-        numberOfLines={ lines }
-        multiline={ lines !== 1 }
+        className={`color-surface bg-background b-1 bordercolor-outline radius-sm size-md px-smm py-xs ${width === '100%' ? '' : 'mr-md'}`}
+        key={field}
+        keyboardType={keyboardType}
+        numberOfLines={lines}
+        multiline={lines !== 1}
         style={{ textAlignVertical: 'top' }}
         submitBehavior='newline'
-        value={ text }
-        onChangeText={ (v: string) => handleChange(v) }
+        value={text}
+        onChangeText={(v: string) => handleChange(v)}
       />
     </View>
   );
@@ -176,7 +176,7 @@ export interface SelectProps {
   caption: string;
   field: string;
   value: string;
-  data: Array<{ id: string, value: string}>;
+  data: Array<{ id: string, value: string }>;
   width?: string;
 }
 
@@ -185,10 +185,12 @@ export const Select = React.memo(({ caption, field, value, data, width }: Select
   const dispatch = useContext(DataCardContext);
   const [id, setId] = useState(value);
 
-  const handleChange = (item: { id: string, value: string}) => {
+  const handleChange = (item: { id: string, value: string }) => {
     dispatch({ field, value: item.id });
     setId(item.id);
   }
+
+  const colorSurface = useThemeColor('textColors.surface');
 
   return (
     <View
@@ -202,19 +204,19 @@ export const Select = React.memo(({ caption, field, value, data, width }: Select
         numberOfLines={1}
         style={{ fontVariant: ['small-caps'] }}
       >
-        { caption.toLocaleLowerCase() }
+        {caption.toLocaleLowerCase()}
       </Text>
       <KeyboardAvoidingView behavior='height'>
         <_Select
           className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md px-xs'
-          key={ field }
-          data={ data }
+          key={field}
+          data={data}
           labelField='value'
           placeholder=''
-          selectedTextStyle={{ paddingVertical: 4, paddingLeft: 8, paddingRight: 0 }}
-          value={ id }
+          selectedTextStyle={{ paddingVertical: 4, paddingLeft: 8, paddingRight: 0, color: colorSurface }}
+          value={id}
           valueField='id'
-          onChange={ handleChange }
+          onChange={handleChange}
         />
       </KeyboardAvoidingView>
     </View>
@@ -248,31 +250,31 @@ export const Switch = React.memo(({ caption, field, value, valuesCaptions, width
       // @ts-ignore
       style={{ ...(!!width ? { width } : {}) }}
     >
-      { caption.length !== 0 &&
+      {caption.length !== 0 &&
         <Text
           className='size-md color-primaryContainer mb-sm'
           ellipsizeMode='tail'
           numberOfLines={1}
           style={{ fontVariant: ['small-caps'] }}
         >
-          { caption.toLocaleLowerCase() }
+          {caption.toLocaleLowerCase()}
         </Text>
       }
       <View
         className='flex-row alignitems-center justifycontent-start'
       >
         <_Switch
-          key={ field }
+          key={field}
           trackColor={{ false: colorSurfaceVariant, true: colorSurfaceVariant }}
-          thumbColor={ isEnabled ? colorPrimary : colorGray }
-          value={ isEnabled }
-          onValueChange={ (v: boolean) => handleChange(v) }
+          thumbColor={isEnabled ? colorPrimary : colorGray}
+          value={isEnabled}
+          onValueChange={(v: boolean) => handleChange(v)}
         />
-        { valuesCaptions &&
+        {valuesCaptions &&
           <Text
             className='size-md color-primaryContainer ml-xs'
           >
-            { valuesCaptions[isEnabled.toString() as 'true' | 'false'] }
+            {valuesCaptions[isEnabled.toString() as 'true' | 'false']}
           </Text>
         }
       </View>

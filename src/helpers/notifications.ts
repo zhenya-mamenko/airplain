@@ -46,6 +46,7 @@ export const showCommonNotification = async (title: string, body: string, data?:
       channelId: 'common',
     },
   });
+  console.debug(`showCommonNotification ${title} sent`);
 }
 
 export const showFlightNotification = async (title: string, body: string, data?: any) => {
@@ -59,6 +60,7 @@ export const showFlightNotification = async (title: string, body: string, data?:
       channelId: 'flight',
     },
   });
+  console.debug(`showFlightNotification ${title} sent`);
 }
 
 export const showUrgentNotification = async (title: string, body: string, data?: any) => {
@@ -73,4 +75,5 @@ export const showUrgentNotification = async (title: string, body: string, data?:
       channelId: 'urgent',
     },
   });
+  console.debug(`showUrgentNotification ${title} sent`);
 }

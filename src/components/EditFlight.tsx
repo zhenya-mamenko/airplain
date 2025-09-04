@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useContext, useEffect } from 'react';
-import { Pressable, ListRenderItemInfo, Dimensions, KeyboardAvoidingView } from 'react-native';
+import { Pressable, ListRenderItemInfo, KeyboardAvoidingView } from 'react-native';
 import { default as Icon } from '@expo/vector-icons/FontAwesome5';
 import { Image as _Image } from 'expo-image';
 import { View, Text, ThemeProvider, createPicassoComponent } from 'react-native-picasso';
@@ -12,8 +12,7 @@ import t, { useLocale } from '@/helpers/localization';
 import DatetimeInput from '@/components/DatetimeInput';
 import LoadBCBPOptions from '@/components/LoadBCBP';
 import { updateFlight } from '@/helpers/sqlite';
-import emitter from '@/helpers/emitter';
-import { durationToLocaleString, fromLocaltoLocalISOString } from '@/helpers/datetime';
+import { durationToLocaleString } from '@/helpers/datetime';
 import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
 import flags from '@/constants/flags.json';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -22,13 +21,14 @@ import { DataCard, Input, Value, DataCardContext, Select } from '@/components/Da
 import { useNavigation } from 'expo-router';
 import { refreshFlights, showConfirmation } from '@/helpers/common';
 import { getFlightData } from '@/helpers/flights';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 const Image = createPicassoComponent(_Image);
 
 const DateTimeRow = ({ type, state }:
   { type: 'Start' | 'End', state: any }) => {
-  const [value, setValue] = useState<string>(state[`actual${type}Datetime`] ?? state[`${type.toLowerCase()}Datetime`]);
+  const [value, setValue] = useState<string>(state[`actual${type}Datetime`] || state[`${type.toLowerCase()}Datetime`]);
   const dispatch = useContext(DataCardContext);
 
   const handleChange = (date: string) => {
@@ -51,14 +51,14 @@ const DateTimeRow = ({ type, state }:
           numberOfLines={1}
           style={{ fontVariant: ['small-caps'] }}
         >
-          { t('add.date').toLocaleLowerCase() }
+          {t('add.date').toLocaleLowerCase()}
         </Text>
         <DatetimeInput
           className='py-xs mr-md'
           mode='date'
-          timezone={type === 'End' ? state.arrivalAirportTimezone : state.departureAirportTimezone }
-          value={ value }
-          onChange={ (date: string) => handleChange(date) }
+          timezone={type === 'End' ? state.arrivalAirportTimezone : state.departureAirportTimezone}
+          value={value}
+          onChange={(date: string) => handleChange(date)}
         />
       </View>
       <View
@@ -72,28 +72,28 @@ const DateTimeRow = ({ type, state }:
           numberOfLines={1}
           style={{ fontVariant: ['small-caps'] }}
         >
-          { t('add.time').toLocaleLowerCase() }
+          {t('add.time').toLocaleLowerCase()}
         </Text>
         <DatetimeInput
           className='py-xs mr-md'
           mode='time'
-          timezone={type === 'End' ? state.arrivalAirportTimezone : state.departureAirportTimezone }
-          value={ value }
-          onChange={ (date: string) => handleChange(date) }
+          timezone={type === 'End' ? state.arrivalAirportTimezone : state.departureAirportTimezone}
+          value={value}
+          onChange={(date: string) => handleChange(date)}
         />
       </View>
     </View>
   );
 }
 
-const Card: React.FC<{dataCards: any, item: string, dragEnabled: boolean}> = React.memo(({ dataCards, item, dragEnabled }) => {
+const Card: React.FC<{ dataCards: any, item: string, dragEnabled: boolean }> = React.memo(({ dataCards, item, dragEnabled }) => {
   const drag = useReorderableDrag();
   const props = dragEnabled ? { onLongPress: drag } : {};
   return (
     <Pressable
-      { ...props }
+      {...props}
     >
-      { dataCards[item] }
+      {dataCards[item]}
     </Pressable>
   );
 });
@@ -102,13 +102,8 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
-  const [viewHeight, setViewHeight] = useState(0);
   const colorSecondaryContainer = useThemeColor('textColors.secondaryContainer');
   const colorPrimary = useThemeColor('textColors.primary');
-
-  useEffect(() => {
-    setViewHeight(Dimensions.get('window').height - 60);
-  }, []);
 
   const dateOptions: Intl.DateTimeFormatOptions = {
     month: 'long',
@@ -152,7 +147,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       dispatch({ field: 'seatNumber', value: result['seatNumber'] });
       dispatch({ field: 'pnr', value: result['pnr'] });
       dispatch({ field: 'passengerName', value: result['passengerName'] });
-      await updateFlight({...state, ...result});
+      await updateFlight({ ...state, ...result });
       refreshFlights(false);
     }
   }
@@ -163,7 +158,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       dispatch({ field, value });
       result[field] = value;
     })
-    await updateFlight({...state, ...result});
+    await updateFlight({ ...state, ...result });
     refreshFlights(true, false);
   }
 
@@ -193,7 +188,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           });
           dispatch({ field: 'recordType', value: 1 });
           result.recordType = 1;
-          await updateFlight({...state, ...result});
+          await updateFlight({ ...state, ...result });
           refreshFlights(false);
         }
       }
@@ -206,14 +201,14 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       headerRight: () => (
         <>
           <Pressable
-            onPress={ () => getFlightDataFromApi() }
+            onPress={() => getFlightDataFromApi()}
           >
-            <Icon name='cloud-download-alt' size={16} color={ colorPrimary } style={{ marginTop: 4, marginRight: 16 }} />
+            <Icon name='cloud-download-alt' size={16} color={colorPrimary} style={{ marginTop: 4, marginRight: 16 }} />
           </Pressable>
           <Pressable
-            onPress={ () => setDragEnabled(!dragEnabled) }
+            onPress={() => setDragEnabled(!dragEnabled)}
           >
-            <Icon name={ dragEnabled ? 'bars' : 'copy' } size={16} color={ colorPrimary } style={{ marginTop: 4, marginRight: 8 }} />
+            <Icon name={dragEnabled ? 'bars' : 'copy'} size={16} color={colorPrimary} style={{ marginTop: 4, marginRight: 8 }} />
           </Pressable>
         </>
       )
@@ -224,16 +219,16 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     <DataCard
       caption={
         <View className='flex-row alignitems-end'>
-          <Icon name='plane-departure' size={12} color={ colorSecondaryContainer } style={{ marginBottom: 3 }} />
+          <Icon name='plane-departure' size={12} color={colorSecondaryContainer} style={{ marginBottom: 3 }} />
           <Text
             className='size-smm weight-bold mt-xs color-secondaryContainer ml-smm'
           >
-            { t('flights.departure').toLocaleUpperCase() }
+            {t('flights.departure').toLocaleUpperCase()}
           </Text>
         </View>
       }
       key={`departure-${dragEnabled ? 'drag' : 'copy'}`}
-      onSave={ dataCardOnSave }
+      onSave={dataCardOnSave}
     >
       <View
         className='flex-column'
@@ -249,34 +244,34 @@ const EditFlight = React.memo((props: { data: Flight }) => {
               ellipsizeMode='tail'
               numberOfLines={1}
             >
-              { `${departureAirportData?.municipality_name} (${state.departureAirport})` }
+              {`${departureAirportData?.municipality_name} (${state.departureAirport})`}
             </Text>
             <Text
               className='size-sm color-surface mt-xs'
             >
-              { departureAirportData?.airport_name }
+              {departureAirportData?.airport_name}
             </Text>
           </View>
           <Text
             className='alignself-start ml-mdl'
             style={{ lineHeight: 44, fontSize: 40 }}
           >
-            { departureFlag }
+            {departureFlag}
           </Text>
         </View>
         <View
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('add.date') }
-            selectable={ !dragEnabled }
-            value={ departureDate.toLocaleDateString(locale, {...dateOptions, timeZone: state.departureAirportTimezone ?? 'UTC'}) }
+            caption={t('add.date')}
+            selectable={!dragEnabled}
+            value={departureDate.toLocaleDateString(locale, { ...dateOptions, timeZone: state.departureAirportTimezone ?? 'UTC' })}
             width='66%'
           />
           <Value
-            caption={ t('add.time') }
-            selectable={ !dragEnabled }
-            value={ departureDate.toLocaleTimeString(locale, {...timeOptions, timeZone: state.departureAirportTimezone ?? 'UTC'}) }
+            caption={t('add.time')}
+            selectable={!dragEnabled}
+            value={departureDate.toLocaleTimeString(locale, { ...timeOptions, timeZone: state.departureAirportTimezone ?? 'UTC' })}
             width='34%'
           />
         </View>
@@ -285,21 +280,21 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('flights.terminal') }
-            selectable={ !dragEnabled }
-            value={ none(state.departureTerminal) }
+            caption={t('flights.terminal')}
+            selectable={!dragEnabled}
+            value={none(state.departureTerminal)}
             width='33%'
           />
           <Value
-            caption={ t('flights.gate') }
-            selectable={ !dragEnabled }
-            value={ none(state.departureGate) }
+            caption={t('flights.gate')}
+            selectable={!dragEnabled}
+            value={none(state.departureGate)}
             width='33%'
           />
           <Value
-            caption={ t('flights.desk') }
-            selectable={ !dragEnabled }
-            value={ none(state.departureCheckInDesk) }
+            caption={t('flights.desk')}
+            selectable={!dragEnabled}
+            value={none(state.departureCheckInDesk)}
             width='34%'
           />
         </View>
@@ -308,7 +303,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         className='flex-column'
       >
         <DateTimeRow
-          state={ state }
+          state={state}
           type='Start'
         />
 
@@ -316,21 +311,21 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Input
-            caption={ t('flights.terminal') }
+            caption={t('flights.terminal')}
             field='departureTerminal'
-            value={ state['departureTerminal'] }
+            value={state['departureTerminal']}
             width='33%'
           />
           <Input
-            caption={ t('flights.gate') }
+            caption={t('flights.gate')}
             field='departureGate'
-            value={ state['departureGate'] }
+            value={state['departureGate']}
             width='33%'
           />
           <Input
-            caption={ t('flights.desk') }
+            caption={t('flights.desk')}
             field='departureCheckInDesk'
-            value={ state['departureCheckInDesk'] }
+            value={state['departureCheckInDesk']}
             width='34%'
           />
         </View>
@@ -341,16 +336,16 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     <DataCard
       caption={
         <View className='flex-row alignitems-end'>
-          <Icon name='plane-arrival' size={12} color={ colorSecondaryContainer } style={{ marginBottom: 3 }} />
+          <Icon name='plane-arrival' size={12} color={colorSecondaryContainer} style={{ marginBottom: 3 }} />
           <Text
             className='size-smm weight-bold mt-xs color-secondaryContainer ml-smm'
           >
-            { t('flights.arrival').toLocaleUpperCase() }
+            {t('flights.arrival').toLocaleUpperCase()}
           </Text>
         </View>
       }
       key={`arrival-${dragEnabled ? 'drag' : 'copy'}`}
-      onSave={ dataCardOnSave }
+      onSave={dataCardOnSave}
     >
       <View
         className='flex-column'
@@ -364,19 +359,19 @@ const EditFlight = React.memo((props: { data: Flight }) => {
             <Text
               className='size-mdl weight-bold color-surface'
             >
-              { `${arrivalAirportData?.municipality_name} (${state.arrivalAirport})` }
+              {`${arrivalAirportData?.municipality_name} (${state.arrivalAirport})`}
             </Text>
             <Text
               className='size-sm color-surface mt-xs'
             >
-              { arrivalAirportData?.airport_name }
+              {arrivalAirportData?.airport_name}
             </Text>
           </View>
           <Text
             className='lignself-start ml-mdl'
             style={{ lineHeight: 44, fontSize: 40 }}
           >
-            { arrivalFlag }
+            {arrivalFlag}
           </Text>
         </View>
 
@@ -384,15 +379,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('add.date') }
-            selectable={ !dragEnabled }
-            value={ arrivalDate.toLocaleDateString(locale, {...dateOptions, timeZone: state.arrivalAirportTimezone ?? 'UTC'}) }
+            caption={t('add.date')}
+            selectable={!dragEnabled}
+            value={arrivalDate.toLocaleDateString(locale, { ...dateOptions, timeZone: state.arrivalAirportTimezone ?? 'UTC' })}
             width='66%'
           />
           <Value
-            caption={ t('add.time') }
-            selectable={ !dragEnabled }
-            value={ arrivalDate.toLocaleTimeString(locale, {...timeOptions, timeZone: state.arrivalAirportTimezone ?? 'UTC'}) }
+            caption={t('add.time')}
+            selectable={!dragEnabled}
+            value={arrivalDate.toLocaleTimeString(locale, { ...timeOptions, timeZone: state.arrivalAirportTimezone ?? 'UTC' })}
             width='34%'
           />
         </View>
@@ -400,15 +395,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('flights.terminal') }
-            selectable={ !dragEnabled }
-            value={ none(state.arrivalTerminal) }
+            caption={t('flights.terminal')}
+            selectable={!dragEnabled}
+            value={none(state.arrivalTerminal)}
             width='66%'
           />
           <Value
-            caption={ t('flights.baggage_belt') }
-            selectable={ !dragEnabled }
-            value={ none(state.baggageBelt) }
+            caption={t('flights.baggage_belt')}
+            selectable={!dragEnabled}
+            value={none(state.baggageBelt)}
             width='34%'
           />
         </View>
@@ -417,7 +412,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         className='flex-column'
       >
         <DateTimeRow
-          state={ state }
+          state={state}
           type='End'
         />
 
@@ -425,15 +420,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Input
-            caption={ t('flights.terminal') }
+            caption={t('flights.terminal')}
             field='arrivalTerminal'
-            value={ state['arrivalTerminal'] }
+            value={state['arrivalTerminal']}
             width='66%'
           />
           <Input
-            caption={ t('flights.baggage_belt') }
+            caption={t('flights.baggage_belt')}
             field='baggageBelt'
-            value={ state['baggageBelt'] }
+            value={state['baggageBelt']}
             width='34%'
           />
         </View>
@@ -444,16 +439,16 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     <DataCard
       caption={
         <View className='flex-row alignitems-end'>
-          <Icon name='barcode' size={12} color={ colorSecondaryContainer } style={{ marginBottom: 3 }} />
+          <Icon name='barcode' size={12} color={colorSecondaryContainer} style={{ marginBottom: 3 }} />
           <Text
             className='size-smm weight-bold mt-xs color-secondaryContainer ml-smm'
           >
-            { t('boardingpass.title').toLocaleUpperCase() }
+            {t('boardingpass.title').toLocaleUpperCase()}
           </Text>
         </View>
       }
       key={`boardingpass-${dragEnabled ? 'drag' : 'copy'}`}
-      onSave={ dataCardOnSave }
+      onSave={dataCardOnSave}
     >
       <View
         className='flex-column'
@@ -462,15 +457,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row my-sm'
         >
           <Value
-            caption={ t('flights.pnr') }
-            selectable={ !dragEnabled }
-            value={ none(state.pnr) }
+            caption={t('flights.pnr')}
+            selectable={!dragEnabled}
+            value={none(state.pnr)}
             width='66%'
           />
           <Value
-            caption={ t('flights.seat') }
-            selectable={ !dragEnabled }
-            value={ none(state.seatNumber) }
+            caption={t('flights.seat')}
+            selectable={!dragEnabled}
+            value={none(state.seatNumber)}
             width='34%'
           />
         </View>
@@ -482,15 +477,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row my-sm'
         >
           <Input
-            caption={ t('flights.pnr') }
+            caption={t('flights.pnr')}
             field='pnr'
-            value={ state['pnr'] }
+            value={state['pnr']}
             width='66%'
           />
           <Input
-            caption={ t('flights.seat') }
+            caption={t('flights.seat')}
             field='seatNumber'
-            value={ state['seatNumber'] }
+            value={state['seatNumber']}
             width='34%'
           />
         </View>
@@ -498,7 +493,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-column my-sm mr-md'
         >
           <LoadBCBPOptions
-            dispatch={ bcbpDispatch }
+            dispatch={bcbpDispatch}
             showToast={false}
           />
         </View>
@@ -515,8 +510,8 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         className='flex-row my-sm'
       >
         <Value
-          caption={ t('add.airline') }
-          value={ (<View className='flex-row justifycontent-start alignitems-center mt-xs'>
+          caption={t('add.airline')}
+          value={(<View className='flex-row justifycontent-start alignitems-center mt-xs'>
             <Image
               className='radius-xs b-1 bordercolor-secondaryContainer'
               recyclingKey={state.airline}
@@ -527,25 +522,25 @@ const EditFlight = React.memo((props: { data: Flight }) => {
               className='size-smm weight-bold ml-sm color-surface'
               selectable
             >
-              { state.airlineName }
+              {state.airlineName}
             </Text>
-          </View>) }
+          </View>)}
           width='66%'
         />
         <Value
-          caption={ t('add.flight_number') }
-          value={ `${state.airline} ${state.flightNumber}` }
+          caption={t('add.flight_number')}
+          value={`${state.airline} ${state.flightNumber}`}
           width='34%'
         />
       </View>
-      { state.extra.carrier &&
+      {state.extra.carrier &&
         <View
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('flights.carrier') }
-            selectable={ !dragEnabled }
-            value={ (<View className='flex-row justifycontent-start alignitems-center mt-xs'>
+            caption={t('flights.carrier')}
+            selectable={!dragEnabled}
+            value={(<View className='flex-row justifycontent-start alignitems-center mt-xs'>
               <Image
                 className='radius-xs b-1 bordercolor-secondaryContainer'
                 recyclingKey={state.extra.carrier}
@@ -555,15 +550,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
               <Text
                 className='size-smm weight-bold ml-sm color-surface'
               >
-                { state.extra.carrierName }
+                {state.extra.carrierName}
               </Text>
-            </View>) }
+            </View>)}
             width='66%'
           />
           <Value
-            caption={ t('add.flight_number') }
-            selectable={ !dragEnabled }
-            value={ `${state.extra.carrier} ${state.extra.carrierFlightNumber}` }
+            caption={t('add.flight_number')}
+            selectable={!dragEnabled}
+            value={`${state.extra.carrier} ${state.extra.carrierFlightNumber}`}
             width='34%'
           />
         </View>
@@ -572,15 +567,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         className='flex-row mb-sm'
       >
         <Value
-          caption={t('measurements.distance') }
-          selectable={ !dragEnabled }
-          value={ `${state.distance.toLocaleString(locale)}${t('measurements.km')}` }
+          caption={t('measurements.distance')}
+          selectable={!dragEnabled}
+          value={`${state.distance.toLocaleString(locale)}${t('measurements.km')}`}
           width='66%'
         />
         <Value
-          caption={ t('measurements.flight_time') }
-          selectable={ !dragEnabled }
-          value={ durationString }
+          caption={t('measurements.flight_time')}
+          selectable={!dragEnabled}
+          value={durationString}
           width='34%'
         />
       </View>
@@ -590,28 +585,28 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     <DataCard
       caption={
         <View className='flex-row alignitems-end'>
-          <Icon name='route' size={12} color={ colorSecondaryContainer } style={{ marginBottom: 3 }} />
+          <Icon name='route' size={12} color={colorSecondaryContainer} style={{ marginBottom: 3 }} />
           <Text
             className='size-smm weight-bold mt-xs color-secondaryContainer ml-smm'
           >
-            { t('flights.flight').toLocaleUpperCase() }
+            {t('flights.flight').toLocaleUpperCase()}
           </Text>
         </View>
       }
       key={`flight-${dragEnabled ? 'drag' : 'copy'}`}
-      onSave={ dataCardOnSave }
+      onSave={dataCardOnSave}
     >
       <View
         className='flex-column'
       >
-        { flightValues }
+        {flightValues}
         <View
           className='flex-row mb-sm'
         >
           <Value
-            caption={t('flights.status') }
-            selectable={ !dragEnabled }
-            value={ flightStatuses[state.status] ?? flightStatuses['unknown'] }
+            caption={t('flights.status')}
+            selectable={!dragEnabled}
+            value={flightStatuses[state.status] ?? flightStatuses['unknown']}
             width='66%'
           />
         </View>
@@ -619,19 +614,19 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       <View
         className='flex-column'
       >
-        { flightValues }
+        {flightValues}
         <View
           className='flex-row mb-sm'
         >
           <View
-            style={{ width: '100%'}}
+            style={{ width: '100%' }}
             className='pr-md'
           >
             <Select
-              caption={ t('flights.status') }
-              data={ Object.entries(flightStatuses).map(x => ({ id: x[0], value: x[1] })) }
+              caption={t('flights.status')}
+              data={Object.entries(flightStatuses).map(x => ({ id: x[0], value: x[1] }))}
               field='status'
-              value={ state['status'] }
+              value={state['status']}
             />
           </View>
         </View>
@@ -642,16 +637,16 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     <DataCard
       caption={
         <View className='flex-row alignitems-end'>
-          <Icon name='plane' size={12} color={ colorSecondaryContainer } style={{ marginBottom: 3 }} />
+          <Icon name='plane' size={12} color={colorSecondaryContainer} style={{ marginBottom: 3 }} />
           <Text
             className='size-smm weight-bold mt-xs color-secondaryContainer ml-smm'
           >
-            { t('flights.aircraft').toLocaleUpperCase() }
+            {t('flights.aircraft').toLocaleUpperCase()}
           </Text>
         </View>
       }
       key={`aircraft-${dragEnabled ? 'drag' : 'copy'}`}
-      onSave={ dataCardOnSave }
+      onSave={dataCardOnSave}
     >
       <View
         className='flex-column mt-sm'
@@ -660,18 +655,18 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('flights.aircraft_type') }
-            selectable={ !dragEnabled }
-            value={ none(state.aircraftType) }
+            caption={t('flights.aircraft_type')}
+            selectable={!dragEnabled}
+            value={none(state.aircraftType)}
           />
         </View>
         <View
           className='flex-row mb-sm'
         >
           <Value
-            caption={ t('flights.aircraft_registration_number') }
-            selectable={ !dragEnabled }
-            value={ none(state.aircraftRegNumber) }
+            caption={t('flights.aircraft_registration_number')}
+            selectable={!dragEnabled}
+            value={none(state.aircraftRegNumber)}
           />
         </View>
       </View>
@@ -682,9 +677,9 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row my-sm'
         >
           <Input
-            caption={ t('flights.aircraft_type') }
+            caption={t('flights.aircraft_type')}
             field='aircraftType'
-            value={ state['aircraftType'] }
+            value={state['aircraftType']}
             width='100%'
           />
         </View>
@@ -692,9 +687,9 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           className='flex-row mb-sm'
         >
           <Input
-            caption={ t('flights.aircraft_registration_number') }
+            caption={t('flights.aircraft_registration_number')}
             field='aircraftRegNumber'
-            value={ state['aircraftRegNumber'] }
+            value={state['aircraftRegNumber']}
             width='100%'
           />
         </View>
@@ -705,16 +700,16 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     <DataCard
       caption={
         <View className='flex-row alignitems-end'>
-          <Icon name='sticky-note' size={16} color={ colorSecondaryContainer } style={{ marginBottom: 1 }} />
+          <Icon name='sticky-note' size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
           <Text
             className='size-smm weight-bold mt-xs color-secondaryContainer ml-sm'
           >
-            { t('profile.notes').toLocaleUpperCase() }
+            {t('profile.notes').toLocaleUpperCase()}
           </Text>
         </View>
       }
       key={`notes-${dragEnabled ? 'drag' : 'copy'}`}
-      onSave={ dataCardOnSave }
+      onSave={dataCardOnSave}
     >
       <View
         className='flex-row my-sm'
@@ -722,8 +717,8 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         <Value
           caption=''
           lines={4}
-          selectable={ !dragEnabled }
-          value={ none(state['notes']) }
+          selectable={!dragEnabled}
+          value={none(state['notes'])}
         />
       </View>
       <View
@@ -733,7 +728,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           caption=''
           field='notes'
           lines={4}
-          value={ state['notes'] }
+          value={state['notes']}
         />
       </View>
     </DataCard>
@@ -752,9 +747,9 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const [data, setData] = useState<Array<DCType>>(FLIGHT_CARDS.split('|') as Array<DCType>);
 
   const renderItem = ({ item }: ListRenderItemInfo<DCType>) => {
-    return <Card dataCards={ dataCards } item={ item } dragEnabled={ dragEnabled }/>;
+    return <Card dataCards={dataCards} item={item} dragEnabled={dragEnabled} />;
   };
-  const handleReorder = ({from, to}: ReorderableListReorderEvent) => {
+  const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
     setData(value => {
       const newData = reorderItems(value, from, to);
       setSetting('FLIGHT_CARDS', newData.join('|'));
@@ -762,25 +757,31 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     });
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     // @ts-ignore
-    <ThemeProvider theme={ theme }>
-      <GestureHandlerRootView>
-        <KeyboardAvoidingView
-          behavior='height'
-          keyboardVerticalOffset={100}
-          style={{ height: viewHeight }}
+    <ThemeProvider theme={theme}>
+      <GestureHandlerRootView style={{ paddingBottom: insets.bottom }}>
+        <SafeAreaView
+          style={{ flex: 1 }}
         >
-          <ReorderableList
-            cellAnimations={{ opacity: 1, transform: [{ scale: 0.96 }] }}
-            data={ data }
-            keyExtractor={ item => item }
-            keyboardShouldPersistTaps='always'
-            renderItem={ renderItem }
-            style={{ padding: 8 }}
-            onReorder={ handleReorder }
-          />
-        </KeyboardAvoidingView>
+          <KeyboardAvoidingView
+            behavior='position'
+            keyboardVerticalOffset={100}
+            style={{ flex: 1 }}
+          >
+            <ReorderableList
+              cellAnimations={{ opacity: 1, transform: [{ scale: 0.96 }] }}
+              data={data}
+              keyboardShouldPersistTaps='always'
+              keyExtractor={item => item}
+              renderItem={renderItem}
+              style={{ padding: 8 }}
+              onReorder={handleReorder}
+            />
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </GestureHandlerRootView>
     </ThemeProvider>
   )

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
-import { Dropdown, MultiSelect as _MultiSelect} from 'react-native-element-dropdown';
+import { Dropdown, MultiSelect as _MultiSelect } from 'react-native-element-dropdown';
 import { buildStyleSheet } from 'react-native-picasso/build/util/style-helpers';
 import { ThemeContext } from 'react-native-picasso/build/core/theming';
 import { Theme } from 'react-native-picasso/build/styles/defaultTheme';
@@ -13,19 +13,19 @@ const DropdownWrapper = createPicassoComponent(Dropdown);
 const MultiSelectWrapper = createPicassoComponent(_MultiSelect);
 
 export type SelectProps = React.ComponentProps<typeof DropdownWrapper> &
-  { showValue?: boolean, valueFixedWidth?: number, dropdownRef?: any };
+{ showValue?: boolean, valueFixedWidth?: number, dropdownRef?: any };
 
-export const Select: React.FC<SelectProps> = ({showValue, valueFixedWidth, dropdownRef, ...props}: SelectProps) => {
+export const Select: React.FC<SelectProps> = ({ showValue, valueFixedWidth, dropdownRef, ...props }: SelectProps) => {
 
   const renderItem = useCallback((item: any, selected?: boolean): JSX.Element => {
     return (
       <View
-        className={ `flex-row alignitems-end justifycontent-start bg-${selected ? 'surfaceVariant' : 'background'} py-sm pl-xs` }
+        className={`flex-row alignitems-end justifycontent-start bg-${selected ? 'surfaceVariant' : 'background'} py-sm pl-xs`}
       >
-        { showValue &&
+        {showValue &&
           <Text
             className={`weight-bold size-md color-surface ${!valueFixedWidth ? 'mr-sm' : ''}`}
-            style={{...(valueFixedWidth ? {width: valueFixedWidth} : {})}}
+            style={{ ...(valueFixedWidth ? { width: valueFixedWidth } : {}) }}
           >
             {item[props.valueField]}
           </Text>
@@ -57,10 +57,10 @@ export const Select: React.FC<SelectProps> = ({showValue, valueFixedWidth, dropd
             inputSearchStyle={[inputSearchStyle, props.inputSearchStyle]}
             keyboardAvoiding={false}
             placeholderStyle={[selectedTextStyle, props.placeholderStyle]}
-            ref={ dropdownRef }
+            ref={dropdownRef}
             renderItem={props.renderItem ?? renderItem}
             selectedTextStyle={[selectedTextStyle, props.selectedTextStyle]}
-            style={[{width: '100%'}, props.style]}
+            style={[{ width: '100%' }, props.style]}
             {...props}
           />
         );
@@ -69,27 +69,27 @@ export const Select: React.FC<SelectProps> = ({showValue, valueFixedWidth, dropd
   );
 }
 
-export const MultiSelect: React.FC<SelectProps> = ({showValue, valueFixedWidth, dropdownRef, ...props}: SelectProps) => {
+export const MultiSelect: React.FC<SelectProps> = ({ showValue, valueFixedWidth, dropdownRef, ...props }: SelectProps) => {
 
   const iconColor = useThemeColor('textColors.surface');
 
   const renderItem = useCallback((item: any, selected?: boolean): JSX.Element => {
     return (
       <View
-        className={ `flex-row alignitems-end justifycontent-start bg-${selected ? 'surfaceVariant' : 'background'} py-sm pl-xs` }
+        className={`flex-row alignitems-end justifycontent-start bg-${selected ? 'surfaceVariant' : 'background'} py-sm pl-xs`}
       >
-        { showValue &&
+        {showValue &&
           <Text
             className={`weight-bold size-md color-surface ${!valueFixedWidth ? 'mr-sm' : ''}`}
-            style={{...(valueFixedWidth ? {width: valueFixedWidth} : {})}}
+            style={{ ...(valueFixedWidth ? { width: valueFixedWidth } : {}) }}
           >
-            { item[props.valueField] }
+            {item[props.valueField]}
           </Text>
         }
         <Text
           className='size-md color-surface'
         >
-          { item[props.labelField] }
+          {item[props.labelField]}
         </Text>
       </View>
     );
@@ -103,9 +103,9 @@ export const MultiSelect: React.FC<SelectProps> = ({showValue, valueFixedWidth, 
         <Text
           className='size-md color-surface mr-sm'
         >
-          { item[props.valueField] }
+          {item[props.valueField]}
         </Text>
-        <MaterialCommunityIcons name='window-close' size={16} color={ iconColor } />
+        <MaterialCommunityIcons name='window-close' size={16} color={iconColor} />
       </View>
     </Pressable>
   ), [props.labelField, props.valueField])
@@ -125,11 +125,11 @@ export const MultiSelect: React.FC<SelectProps> = ({showValue, valueFixedWidth, 
             inputSearchStyle={[inputSearchStyle, props.inputSearchStyle]}
             keyboardAvoiding={false}
             placeholderStyle={[selectedTextStyle, props.placeholderStyle]}
-            ref={ dropdownRef }
+            ref={dropdownRef}
             renderItem={props.renderItem ?? renderItem}
-            renderSelectedItem={ renderSelectedItem }
+            renderSelectedItem={renderSelectedItem}
             selectedTextStyle={[selectedTextStyle, props.selectedTextStyle]}
-            style={[{width: '100%'}, props.style]}
+            style={[{ width: '100%' }, props.style]}
             {...props}
           />
         );

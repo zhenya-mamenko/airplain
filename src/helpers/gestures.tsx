@@ -11,11 +11,11 @@ import { refreshFlights } from '@/helpers/common';
 
 const changeArchivedState = async (flightId: number, state: number) => {
   await setFlightArchiveState(flightId, state);
-  refreshFlights(false);
+  refreshFlights(true, false);
 }
 
 const doEdit = (flightId: number) => {
-  router.push({ pathname: '/edit', params: { flightId }});
+  router.push({ pathname: '/edit', params: { flightId } });
 }
 
 const doDelete = async (flightId: number) => {

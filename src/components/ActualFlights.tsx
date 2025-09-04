@@ -19,7 +19,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
   const [flights, setFlights] = useState<Flight[]>([]);
 
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
+  const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => { });
   const flightsLoading = useRef(false);
 
   const subscribe = (callback: Function) => {
@@ -31,7 +31,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
     };
   }
 
-  const settings = useSyncExternalStore(subscribe, () => _settings );
+  const settings = useSyncExternalStore(subscribe, () => _settings);
 
   useEffect(() => {
     Notifications.requestPermissionsAsync();
@@ -93,17 +93,17 @@ const ActualFlights = memo((props: { now?: Date }) => {
 
   const renderFlight = ({ item }: { item: Flight }) => {
     if (item.isArchived) {
-      return <FlightCard data={ flightToFlightData(item) } />;
+      return <FlightCard data={flightToFlightData(item)} />;
     }
     const sd = new Date(item.actualStartDatetime ?? item.startDatetime).getTime() / 1000;
     const cd = new Date().getTime() / 1000;
     if ((sd - cd > 0) && (sd - cd < 3600 * 4)) {
-      return <DepartingFlightCard data={ flightToDepartingFlightData(item) } />;
+      return <DepartingFlightCard data={flightToDepartingFlightData(item)} />;
     }
     if (item.status === 'arrived') {
-      return <LandedFlightCard data={ flightToLandedFlightData(item) } />;
+      return <LandedFlightCard data={flightToLandedFlightData(item)} />;
     }
-    return <FlightCard data={ flightToFlightData(item) } />;
+    return <FlightCard data={flightToFlightData(item)} />;
   };
 
   const { flightId } = useLocalSearchParams();
@@ -123,14 +123,14 @@ const ActualFlights = memo((props: { now?: Date }) => {
         className='bg-surfaceVariant flex-1'
       >
         <FlatList
-          data={ flights }
+          data={flights}
           keyboardShouldPersistTaps='always'
-          keyExtractor={ (item: Flight, index: number) => item.flightId?.toString() ?? index.toString() }
-          ref={ ref }
-          refreshing={ refreshing }
-          renderItem={ renderFlight }
+          keyExtractor={(item: Flight, index: number) => item.flightId?.toString() ?? index.toString()}
+          ref={ref}
+          refreshing={refreshing}
+          renderItem={renderFlight}
           style={{ padding: 8 }}
-          onRefresh={ () => loadFlightsRef.current(true) }
+          onRefresh={() => loadFlightsRef.current(true, settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH === 'true')}
         />
       </View>
     </GestureHandlerRootView>
