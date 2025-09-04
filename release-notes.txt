@@ -1,8 +1,7 @@
-Bugfix: "Export data" action doesn't work if flights.csv already exists.
-Bugfix: "Have a nice flight" shown if online registration is available.
-Bugfix: wrong datetime shown when updating flight information (departure or arrival date).
-Bugfix: flight dat in list don't updated after editing.
+Feature: Force the flights API to be requested on manual refresh.
 
-Update: Gemini workflows and workflows improvements
+Refactoring: Extract import and export data logic into helper functions and add unit tests.
 
-Chore: update dependencies.
+Bugfix: Set the correct status and is_archived based on the arrival date in the import task.
+Bugfix: Fix flight existence checking in the import task.
+Bugfix: Fix color issue in selects when Dark theme is used.

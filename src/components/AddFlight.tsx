@@ -21,6 +21,7 @@ import LoadBCBPOptions from '@/components/LoadBCBP';
 import { BCBPData } from '@/helpers/boardingpass';
 import { refreshFlights } from '@/helpers/common';
 import { getAirlineData, getAirlinesData } from '@/helpers/airdata';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default function AddFlight(props: { today?: Date }) {
@@ -62,8 +63,8 @@ export default function AddFlight(props: { today?: Date }) {
   const reducer = (state: any, action: any) => {
     const { type, value } = action;
     const result: any = {};
-    result[type] = {...state[type], ...value };
-    return {...state, ...result};
+    result[type] = { ...state[type], ...value };
+    return { ...state, ...result };
   }
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -76,8 +77,8 @@ export default function AddFlight(props: { today?: Date }) {
     setProcessing(true);
     const arrivalAirport = airports.find(x => x.iata_code === state.add.arrivalAirport);
     const departureAirport = airports.find(x => x.iata_code === state.add.departureAirport);
-    const arrivalTimezone = arrivalAirport?.timezone ?? 'UTC';
-    const departureTimezone = departureAirport?.timezone ?? 'UTC';
+    const arrivalTimezone = arrivalAirport?.timezone || 'UTC';
+    const departureTimezone = departureAirport?.timezone || 'UTC';
     const endDatetime = fromLocaltoLocalISOString(state.add.arrivalDate.substring(0, 10) + 'T' + state.add.arrivalTime.substring(11, 19), arrivalTimezone);
     const startDatetime = fromLocaltoLocalISOString(state.add.departureDate.substring(0, 10) + 'T' + state.add.departureTime.substring(11, 19), departureTimezone);
     const flight: Flight = {
@@ -137,7 +138,7 @@ export default function AddFlight(props: { today?: Date }) {
         description: t('add.flight_already_added_description'),
         title: t('add.flight_already_added_title'),
         showOnlyCloseButton: true,
-        onConfirm: () => {},
+        onConfirm: () => { },
       };
       if (!!state.bcbp.data) {
         value.showOnlyCloseButton = false;
@@ -198,520 +199,529 @@ export default function AddFlight(props: { today?: Date }) {
 
   return (
     // @ts-ignore
-    <ThemeProvider theme={ theme }>
-      <KeyboardAvoidingView behavior='height' style={{ flex: 1 }}>
-        <ScrollView
-          keyboardShouldPersistTaps='always'
-          style={{ flex: 1, backgroundColor: colorSurfaceVariant }}
+    <ThemeProvider theme={theme}>
+      <SafeAreaView
+        style={{ flex: 1 }}
+      >
+        <KeyboardAvoidingView
+          behavior='height'
+          style={{ flex: 1 }}
         >
-          { state.visibility.searchForm &&
-            <View
-              className='bg-surfaceVariant alignitems-start justifycontent-start p-md flex-column flex-1'
-            >
-              <Text
-                className='size-lg color-primaryContainer'
-              >
-                { t('add.find_flight') }
-              </Text>
-
-              <Text
-                className='size-md color-primaryContainer mt-md mb-xs'
-                style={{ fontVariant: ['small-caps'] }}
-              >
-                { t('add.airline').toLocaleLowerCase() }
-              </Text>
+          <ScrollView
+            keyboardShouldPersistTaps='always'
+            style={{ flex: 1, backgroundColor: colorSurfaceVariant }}
+          >
+            {state.visibility.searchForm &&
               <View
-                className='flex-row'
+                className='bg-surfaceVariant alignitems-start justifycontent-start p-md flex-column flex-1'
               >
-                <Pressable
-                  style={{ flex: 1 }}
-                  onPress={ () => refs.searchAirline.current?.open() }
+                <Text
+                  className='size-lg color-primaryContainer'
+                >
+                  {t('add.find_flight')}
+                </Text>
+
+                <Text
+                  className='size-md color-primaryContainer mt-md mb-xs'
+                  style={{ fontVariant: ['small-caps'] }}
+                >
+                  {t('add.airline').toLocaleLowerCase()}
+                </Text>
+                <View
+                  className='flex-row'
+                >
+                  <Pressable
+                    style={{ flex: 1 }}
+                    onPress={() => refs.searchAirline.current?.open()}
+                  >
+                    <View
+                      className='flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg'
+                    >
+                      <Text
+                        className='color-surface weight-bold size-lg'
+                        style={{ letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      >
+                        {state.search.airline}
+                      </Text>
+                    </View>
+                  </Pressable>
+                  <View
+                    className='flex-3'
+                  >
+                    <Select
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm'
+                      data={getAirlinesData().map((x: any) => { x['full'] = `${x.airlineCode} ${x['airlineName']}`; return x })}
+                      dropdownRef={refs.searchAirline}
+                      flatListProps={{}}
+                      labelField='airlineName'
+                      placeholder={t('add.select_airline')}
+                      search
+                      searchField='full'
+                      showValue
+                      value={state.search.airline}
+                      valueField='airlineCode'
+                      valueFixedWidth={40}
+                      onChange={(item: any) => {
+                        dispatch({ type: 'search', value: { airline: item.airlineCode } });
+                        dispatch({ type: 'bcbp', value: { data: undefined, pkpass: undefined } });
+                        refs.searchFlightNumber.current.focus();
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View
+                  className='flex-row'
                 >
                   <View
-                    className='flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg'
+                    className='flex-column flex-1'
                   >
                     <Text
-                      className='color-surface weight-bold size-lg'
-                      style={{ letterSpacing: 1, fontVariant: ['tabular-nums']}}
+                      className='size-md color-primaryContainer mb-sm mt-md'
+                      style={{ fontVariant: ['small-caps'] }}
                     >
-                      { state.search.airline }
+                      {t('add.flight_number').toLocaleLowerCase()}
+                    </Text>
+                    <TextInput
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
+                      inputMode='numeric'
+                      keyboardType='number-pad'
+                      maxLength={4}
+                      ref={refs.searchFlightNumber}
+                      returnKeyType='next'
+                      style={{ width: 75, letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      value={state.search.flightNumber}
+                      onBlur={() => refs.searchDate.current.open()}
+                      onChangeText={(text: string) => {
+                        dispatch({ type: 'search', value: { flightNumber: text } });
+                        dispatch({ type: 'bcbp', value: { data: undefined, pkpass: undefined } });
+                      }}
+                    />
+                  </View>
+                  <View
+                    className='flex-column flex-1'
+                  >
+                    <Text
+                      className='size-md color-primaryContainer mb-sm mt-md'
+                      style={{ fontVariant: ['small-caps'] }}
+                    >
+                      {t('add.departure_date').toLocaleLowerCase()}
+                    </Text>
+                    <DatetimeInput
+                      mode='date'
+                      ref={refs.searchDate}
+                      timezone='UTC'
+                      value={state.search.departureDate}
+                      onChange={(date: string) => dispatch({ type: 'search', value: { departureDate: date } })}
+                    />
+                  </View>
+                </View>
+
+                <View
+                  className='mt-xl mb-sm flex-row justifycontent-between'
+                  style={{ width: '100%' }}
+                >
+                  <Button
+                    className='bg-primary px-lg'
+                    disabled={
+                      (state.search.flightNumber ?? '') === '' ||
+                      (state.search.airline ?? '') === '' ||
+                      processing
+                    }
+                    title={t('add.search')}
+                    onPress={findFlight}
+                  />
+
+                  <Button
+                    className='bg-surfaceVariant px-smm'
+                    textClass='color-secondaryContainer'
+                    textStyle={{ opacity: 0.68 }}
+                    title={t('buttons.add_manually')}
+                    onPress={addFlightManually}
+                  />
+                </View>
+
+                <View
+                  className='flex-row justifycontent-center alignitems-center pt-xl pb-lg'
+                >
+                  <View
+                    className='bg-surfaceVariant px-sm'
+                    style={{ position: 'absolute', top: 20, zIndex: 1 }}
+                  >
+                    <Text
+                      className='size-md color-primaryContainer'
+                      style={{ opacity: 0.6 }}
+                    >
+                      {t('add.or')}
                     </Text>
                   </View>
-                </Pressable>
-                <View
-                  className='flex-3'
-                >
-                  <Select
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm'
-                    data={ getAirlinesData().map((x: any) => { x['full'] = `${x.airlineCode} ${x['airlineName']}`; return x }) }
-                    dropdownRef={ refs.searchAirline }
-                    flatListProps={{}}
-                    labelField='airlineName'
-                    placeholder={t('add.select_airline')}
-                    search
-                    searchField='full'
-                    showValue
-                    value={ state.search.airline }
-                    valueField='airlineCode'
-                    valueFixedWidth={40}
-                    onChange={ (item: any) => {
-                      dispatch({ type: 'search', value: { airline: item.airlineCode } });
-                      dispatch({ type: 'bcbp', value: { data: undefined, pkpass: undefined } });
-                      refs.searchFlightNumber.current.focus();
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View
-                className='flex-row'
-              >
-                <View
-                  className='flex-column flex-1'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm mt-md'
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.flight_number').toLocaleLowerCase() }
-                  </Text>
-                  <TextInput
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
-                    inputMode='numeric'
-                    keyboardType='number-pad'
-                    maxLength={4}
-                    ref={ refs.searchFlightNumber }
-                    returnKeyType='next'
-                    style={{ width: 75, letterSpacing: 1, fontVariant: ['tabular-nums']}}
-                    value={ state.search.flightNumber }
-                    onBlur={ () => refs.searchDate.current.open() }
-                    onChangeText={ (text: string) => {
-                      dispatch({ type: 'search', value: { flightNumber: text } });
-                      dispatch({ type: 'bcbp', value: { data: undefined, pkpass: undefined } });
-                    }}
-                  />
-                </View>
-                <View
-                  className='flex-column flex-1'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm mt-md'
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.departure_date').toLocaleLowerCase() }
-                  </Text>
-                  <DatetimeInput
-                    mode='date'
-                    ref={ refs.searchDate }
-                    timezone='UTC'
-                    value={ state.search.departureDate }
-                    onChange={ (date: string) => dispatch({ type: 'search', value: { departureDate: date } }) }
-                  />
-                </View>
-              </View>
-
-              <View
-                className='mt-xl mb-sm flex-row justifycontent-between'
-                style={{ width: '100%' }}
-              >
-                <Button
-                  className='bg-primary px-lg'
-                  disabled={
-                    (state.search.flightNumber ?? '') === '' ||
-                    (state.search.airline ?? '') === '' ||
-                    processing
-                  }
-                  title={ t('add.search') }
-                  onPress={ findFlight }
-                />
-
-                <Button
-                  className='bg-surfaceVariant px-smm'
-                  textClass='color-secondaryContainer'
-                  textStyle={{ opacity: 0.68 }}
-                  title={ t('buttons.add_manually') }
-                  onPress={ addFlightManually }
-                />
-              </View>
-
-              <View
-                className='flex-row justifycontent-center alignitems-center pt-xl pb-lg'
-              >
-                <View
-                  className='bg-surfaceVariant px-sm'
-                  style={{ position: 'absolute', top: 20, zIndex: 1 }}
-                >
-                  <Text
-                    className='size-md color-primaryContainer'
-                    style={{ opacity: 0.6 }}
-                  >
-                    { t('add.or') }
-                  </Text>
-                </View>
-                <View style={{
-                  height: 1, width: '100%',
-                  borderColor: colorPrimaryContainer,
-                  borderWidth: 0.6, borderStyle:'dotted',
-                  zIndex: 0,
-                  opacity: 0.5
+                  <View style={{
+                    height: 1, width: '100%',
+                    borderColor: colorPrimaryContainer,
+                    borderWidth: 0.6, borderStyle: 'dotted',
+                    zIndex: 0,
+                    opacity: 0.5
                   }}
+                  />
+                </View>
+
+                <Text
+                  className='size-lg color-primaryContainer mb-lg'
+                >
+                  {t('add.load_bp')}
+                </Text>
+
+                <LoadBCBPOptions dispatch={dispatch} />
+
+              </View>
+            }
+            {state.visibility.addManuallyForm &&
+              <View
+                className='bg-surfaceVariant alignitems-start justifycontent-start p-md flex-column flex-1'
+              >
+                <Text
+                  className='size-lg color-primaryContainer'
+                >
+                  {t('add.fill_manually')}
+                </Text>
+
+                <Separator
+                  borderColor={colorPrimaryContainer}
+                  title={t('add.airline').toLocaleLowerCase()}
                 />
-              </View>
 
-              <Text
-                className='size-lg color-primaryContainer mb-lg'
-              >
-                { t('add.load_bp') }
-              </Text>
-
-              <LoadBCBPOptions dispatch={ dispatch } />
-
-            </View>
-          }
-          { state.visibility.addManuallyForm &&
-            <View
-              className='bg-surfaceVariant alignitems-start justifycontent-start p-md flex-column flex-1'
-            >
-              <Text
-                className='size-lg color-primaryContainer'
-              >
-                { t('add.fill_manually') }
-              </Text>
-
-              <Separator
-                borderColor={ colorPrimaryContainer }
-                title={ t('add.airline').toLocaleLowerCase() }
-              />
-
-              <View
-                className='flex-row'
-              >
                 <View
-                  className='flex-column flex-1'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm'
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.airline_code').toLocaleLowerCase() }
-                  </Text>
-                  <TextInput
-                    autoCapitalize='characters'
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
-                    inputMode='text'
-                    maxLength={3}
-                    ref={ refs.airline }
-                    returnKeyType='next'
-                    style={{ letterSpacing: 1, width: 75 }}
-                    value={ state.add.airline }
-                    onBlur={ ()=> {
-                      const airline = getAirlineData(state.add.airline);
-                      if (airline) {
-                        dispatch({ type: 'add', value: { airlineName: airline.airlineName } });
-                      }
-                    }}
-                    onChangeText={ (text: string) => {
-                      dispatch({ type: 'add', value: { airline: text.toLocaleUpperCase() } });
-                    }}
-                    onSubmitEditing={ () => refs.airlineName.current.focus() }
-                  />
-                </View>
-                <View
-                  className='flex-column flex-3'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm'
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.airline_name').toLocaleLowerCase() }
-                  </Text>
-                  <TextInput
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
-                    inputMode='text'
-                    maxLength={50}
-                    ref={ refs.airlineName }
-                    returnKeyType='next'
-                    value={ state.add.airlineName }
-                    onChangeText={ (text: string) => {
-                      dispatch({ type: 'add', value: { airlineName: text } });
-                    }}
-                    onSubmitEditing={ () => refs.flightNumber.current.focus() }
-                  />
-                </View>
-              </View>
-
-              <View
-                className='flex-row mb-md'
-              >
-                <View
-                  className='flex-column flex-1'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm mt-md'
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.flight_number').toLocaleLowerCase() }
-                  </Text>
-                  <TextInput
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
-                    inputMode='numeric'
-                    keyboardType='number-pad'
-                    maxLength={4}
-                    ref={ refs.flightNumber }
-                    returnKeyType='next'
-                    style={{ width: 75, letterSpacing: 1, fontVariant: ['tabular-nums']}}
-                    value={ state.add.flightNumber }
-                    onChangeText={ (text: string) => {
-                      dispatch({ type: 'add', value: { flightNumber: text } });
-                    }}
-                    onSubmitEditing={ () => refs.departureAirport.current?.open() }
-                  />
-                </View>
-              </View>
-
-              <Separator
-                borderColor={ colorPrimaryContainer }
-                title={ t('add.departure').toLocaleLowerCase() }
-              />
-
-              <Text
-                className='size-md color-primaryContainer mt-xs mb-sm'
-                style={{ fontVariant: ['small-caps'] }}
-              >
-                { t('add.airport').toLocaleLowerCase() }
-              </Text>
-              <View
-                className='flex-row'
-              >
-                <Pressable
-                  style={{ flex: 1 }}
-                  onPress={ () => refs.departureAirport.current?.open() }
+                  className='flex-row'
                 >
                   <View
-                    className='flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg'
-                    style={{ width: 75 }}
+                    className='flex-column flex-1'
                   >
                     <Text
-                      className='color-surface weight-bold size-lg'
-                      style={{ letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      className='size-md color-primaryContainer mb-sm'
+                      style={{ fontVariant: ['small-caps'] }}
                     >
-                      { state.add.departureAirport }
+                      {t('add.airline_code').toLocaleLowerCase()}
                     </Text>
+                    <TextInput
+                      autoCapitalize='characters'
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
+                      inputMode='text'
+                      maxLength={3}
+                      ref={refs.airline}
+                      returnKeyType='next'
+                      style={{ letterSpacing: 1, width: 75 }}
+                      value={state.add.airline}
+                      onBlur={() => {
+                        const airline = getAirlineData(state.add.airline);
+                        if (airline) {
+                          dispatch({ type: 'add', value: { airlineName: airline.airlineName } });
+                        }
+                      }}
+                      onChangeText={(text: string) => {
+                        dispatch({ type: 'add', value: { airline: text.toLocaleUpperCase() } });
+                      }}
+                      onSubmitEditing={() => refs.airlineName.current.focus()}
+                    />
                   </View>
-                </Pressable>
-                <View
-                  className='flex-3'
-                >
-                  <Select
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm'
-                    data={ airports.map((x: any) => {
-                      const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
-                      x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
-                      return x;
-                    })}
-                    dropdownRef={ refs.departureAirport }
-                    labelField={ `municipality_name${l !== 'en' ? '_' + l : ''}` }
-                    placeholder={t('add.select_airport')}
-                    search
-                    searchField='full'
-                    showValue
-                    value={ state.add.departureAirport }
-                    valueField='iata_code'
-                    valueFixedWidth={45}
-                    onChange={(item: any) => {
-                      dispatch({ type: 'add', value: {
-                        departureAirport: item.iata_code,
-                        departureAirportTimezone: item.timezone,
-                      }});
-                      refs.departureDate.current?.open();
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View
-                className='flex-row mb-md'
-              >
-                <View
-                  className='flex-column flex-2 pr-xxl'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm mt-md'
-                    style={{ fontVariant: ['small-caps'] }}
+                  <View
+                    className='flex-column flex-3'
                   >
-                    { t('add.date').toLocaleLowerCase() }
-                  </Text>
-                  <DatetimeInput
-                    mode='date'
-                    ref={ refs.departureDate }
-                    timezone={ state.add.departureAirportTimezone }
-                    title={ `${t('add.departure')} ${t('add.date').toLocaleLowerCase()}` }
-                    value={ state.add.departureDate }
-                    onChange={ (value: string) => {
-                      dispatch({ type: 'add', value: { departureDate: value } });
-                      if (state.add.arrivalDate === today) {
-                        dispatch({ type: 'add', value: { arrivalDate: state.add.arrivalDate.splice(0, value.substring(0, 10)) } });
-                      }
-                      refs.departureTime.current?.open();
-                    }}
-                  />
+                    <Text
+                      className='size-md color-primaryContainer mb-sm'
+                      style={{ fontVariant: ['small-caps'] }}
+                    >
+                      {t('add.airline_name').toLocaleLowerCase()}
+                    </Text>
+                    <TextInput
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
+                      inputMode='text'
+                      maxLength={50}
+                      ref={refs.airlineName}
+                      returnKeyType='next'
+                      value={state.add.airlineName}
+                      onChangeText={(text: string) => {
+                        dispatch({ type: 'add', value: { airlineName: text } });
+                      }}
+                      onSubmitEditing={() => refs.flightNumber.current.focus()}
+                    />
+                  </View>
                 </View>
 
                 <View
-                  className='flex-column flex-1'
-                >
-                  <Text
-                    className={`size-md color-primaryContainer mb-sm mt-md`}
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    {t('add.time').toLocaleLowerCase()}
-                  </Text>
-                  <DatetimeInput
-                    mode='time'
-                    ref={ refs.departureTime }
-                    timezone={ state.add.departureAirportTimezone }
-                    title={ `${t('add.departure')} ${t('add.time').toLocaleLowerCase()}` }
-                    value={ state.add.departureTime }
-                    onChange={ (value: string) => {
-                      dispatch({ type: 'add', value: { departureTime: value } });
-                      refs.arrivalAirport.current?.open();
-                    }}
-                  />
-                </View>
-              </View>
-
-              <Separator
-                borderColor={ colorPrimaryContainer }
-                title={ t('add.arrival').toLocaleLowerCase() }
-              />
-
-              <Text
-                className='size-md color-primaryContainer mt-xs mb-sm'
-                style={{ fontVariant: ['small-caps'] }}
-              >
-                { t('add.airport').toLocaleLowerCase() }
-              </Text>
-              <View
-                className='flex-row'
-              >
-                <Pressable
-                  style={{ flex: 1 }}
-                  onPress={ () => refs.arrivalAirport.current?.open() }
+                  className='flex-row mb-md'
                 >
                   <View
-                    className='flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg'
-                    style={{ width: 75 }}
+                    className='flex-column flex-1'
                   >
                     <Text
-                      className='color-surface weight-bold size-lg'
-                      style={{ letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      className='size-md color-primaryContainer mb-sm mt-md'
+                      style={{ fontVariant: ['small-caps'] }}
                     >
-                      { state.add.arrivalAirport }
+                      {t('add.flight_number').toLocaleLowerCase()}
                     </Text>
+                    <TextInput
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm size-md p-smm'
+                      inputMode='numeric'
+                      keyboardType='number-pad'
+                      maxLength={4}
+                      ref={refs.flightNumber}
+                      returnKeyType='next'
+                      style={{ width: 75, letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      value={state.add.flightNumber}
+                      onChangeText={(text: string) => {
+                        dispatch({ type: 'add', value: { flightNumber: text } });
+                      }}
+                      onSubmitEditing={() => refs.departureAirport.current?.open()}
+                    />
                   </View>
-                </Pressable>
-                <View
-                  className='flex-3'
-                >
-                  <Select
-                    className='color-surface bg-background b-1 bordercolor-outline radius-sm'
-                    data={ airports.map((x: any) => {
-                      const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
-                      x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
-                      return x;
-                    })}
-                    dropdownPosition='top'
-                    dropdownRef={ refs.arrivalAirport }
-                    labelField={ `municipality_name${l !== 'en' ? '_' + l : ''}` }
-                    placeholder={t('add.select_airport')}
-                    search
-                    searchField='full'
-                    showValue
-                    value={ state.add.arrivalAirport }
-                    valueField='iata_code'
-                    valueFixedWidth={45}
-                    onChange={ (item: any) => {
-                      dispatch({ type: 'add', value: {
-                        arrivalAirport: item.iata_code,
-                        arrivalAirportTimezone: item.timezone,
-                      }});
-                      refs.arrivalDate.current?.open();
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View
-                className='flex-row'
-              >
-                <View
-                  className='flex-column flex-2 pr-xxl'
-                >
-                  <Text
-                    className='size-md color-primaryContainer mb-sm mt-md'
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.date').toLocaleLowerCase() }
-                  </Text>
-                  <DatetimeInput
-                    mode='date'
-                    ref={ refs.arrivalDate }
-                    timezone={ state.add.arrivalAirportTimezone }
-                    title={ `${t('add.arrival')} ${t('add.date').toLocaleLowerCase()}` }
-                    value={ state.add.arrivalDate }
-                    onChange={ (value: string) => {
-                      dispatch({ type: 'add', value: { arrivalDate: value } });
-                      refs.arrivalTime.current?.open();
-                    }}
-                  />
                 </View>
 
-                <View
-                  className='flex-column flex-1'
-                >
-                  <Text
-                    className={`size-md color-primaryContainer mb-sm mt-md`}
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
-                    { t('add.time').toLocaleLowerCase() }
-                  </Text>
-                  <DatetimeInput
-                    mode='time'
-                    timezone={ state.add.arrivalAirportTimezone }
-                    ref={ refs.arrivalTime }
-                    title={ `${t('add.arrival')} ${t('add.time').toLocaleLowerCase()}` }
-                    value={ state.add.arrivalTime }
-                    onChange={ (value: string) => {
-                      dispatch({ type: 'add', value: { arrivalTime: value } });
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View
-                className='mt-xl flex-row justifycontent-end'
-                style={{ width: '100%' }}
-              >
-                <Button
-                  className='bg-primary px-lg'
-                  disabled={
-                    (state.add.airline ?? '') === '' ||
-                    (state.add.flightNumber ?? '') === '' ||
-                    (state.add.departureAirport ?? '') === '' ||
-                    (state.add.arrivalAirport ?? '') === '' ||
-                    processing
-                  }
-                  title={ t('add.title') }
-                  onPress={ processManuallyAdd }
+                <Separator
+                  borderColor={colorPrimaryContainer}
+                  title={t('add.departure').toLocaleLowerCase()}
                 />
-              </View>
 
-            </View>
-          }
-          {/* I don't know why the ScrollView don't allow to scroll to all height, so I need to add useless view */}
-          <View style={{ height: 75, width: '100%' }}></View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+                <Text
+                  className='size-md color-primaryContainer mt-xs mb-sm'
+                  style={{ fontVariant: ['small-caps'] }}
+                >
+                  {t('add.airport').toLocaleLowerCase()}
+                </Text>
+                <View
+                  className='flex-row'
+                >
+                  <Pressable
+                    style={{ flex: 1 }}
+                    onPress={() => refs.departureAirport.current?.open()}
+                  >
+                    <View
+                      className='flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg'
+                      style={{ width: 75 }}
+                    >
+                      <Text
+                        className='color-surface weight-bold size-lg'
+                        style={{ letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      >
+                        {state.add.departureAirport}
+                      </Text>
+                    </View>
+                  </Pressable>
+                  <View
+                    className='flex-3'
+                  >
+                    <Select
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm'
+                      data={airports.map((x: any) => {
+                        const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
+                        x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
+                        return x;
+                      })}
+                      dropdownRef={refs.departureAirport}
+                      labelField={`municipality_name${l !== 'en' ? '_' + l : ''}`}
+                      placeholder={t('add.select_airport')}
+                      search
+                      searchField='full'
+                      showValue
+                      value={state.add.departureAirport}
+                      valueField='iata_code'
+                      valueFixedWidth={45}
+                      onChange={(item: any) => {
+                        dispatch({
+                          type: 'add', value: {
+                            departureAirport: item.iata_code,
+                            departureAirportTimezone: item.timezone,
+                          }
+                        });
+                        refs.departureDate.current?.open();
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View
+                  className='flex-row mb-md'
+                >
+                  <View
+                    className='flex-column flex-2 pr-xxl'
+                  >
+                    <Text
+                      className='size-md color-primaryContainer mb-sm mt-md'
+                      style={{ fontVariant: ['small-caps'] }}
+                    >
+                      {t('add.date').toLocaleLowerCase()}
+                    </Text>
+                    <DatetimeInput
+                      mode='date'
+                      ref={refs.departureDate}
+                      timezone={state.add.departureAirportTimezone}
+                      title={`${t('add.departure')} ${t('add.date').toLocaleLowerCase()}`}
+                      value={state.add.departureDate}
+                      onChange={(value: string) => {
+                        dispatch({ type: 'add', value: { departureDate: value } });
+                        if (state.add.arrivalDate === today) {
+                          dispatch({ type: 'add', value: { arrivalDate: state.add.arrivalDate.splice(0, value.substring(0, 10)) } });
+                        }
+                        refs.departureTime.current?.open();
+                      }}
+                    />
+                  </View>
+
+                  <View
+                    className='flex-column flex-1'
+                  >
+                    <Text
+                      className={`size-md color-primaryContainer mb-sm mt-md`}
+                      style={{ fontVariant: ['small-caps'] }}
+                    >
+                      {t('add.time').toLocaleLowerCase()}
+                    </Text>
+                    <DatetimeInput
+                      mode='time'
+                      ref={refs.departureTime}
+                      timezone={state.add.departureAirportTimezone}
+                      title={`${t('add.departure')} ${t('add.time').toLocaleLowerCase()}`}
+                      value={state.add.departureTime}
+                      onChange={(value: string) => {
+                        dispatch({ type: 'add', value: { departureTime: value } });
+                        refs.arrivalAirport.current?.open();
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <Separator
+                  borderColor={colorPrimaryContainer}
+                  title={t('add.arrival').toLocaleLowerCase()}
+                />
+
+                <Text
+                  className='size-md color-primaryContainer mt-xs mb-sm'
+                  style={{ fontVariant: ['small-caps'] }}
+                >
+                  {t('add.airport').toLocaleLowerCase()}
+                </Text>
+                <View
+                  className='flex-row'
+                >
+                  <Pressable
+                    style={{ flex: 1 }}
+                    onPress={() => refs.arrivalAirport.current?.open()}
+                  >
+                    <View
+                      className='flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg'
+                      style={{ width: 75 }}
+                    >
+                      <Text
+                        className='color-surface weight-bold size-lg'
+                        style={{ letterSpacing: 1, fontVariant: ['tabular-nums'] }}
+                      >
+                        {state.add.arrivalAirport}
+                      </Text>
+                    </View>
+                  </Pressable>
+                  <View
+                    className='flex-3'
+                  >
+                    <Select
+                      className='color-surface bg-background b-1 bordercolor-outline radius-sm'
+                      data={airports.map((x: any) => {
+                        const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
+                        x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
+                        return x;
+                      })}
+                      dropdownPosition='top'
+                      dropdownRef={refs.arrivalAirport}
+                      labelField={`municipality_name${l !== 'en' ? '_' + l : ''}`}
+                      placeholder={t('add.select_airport')}
+                      search
+                      searchField='full'
+                      showValue
+                      value={state.add.arrivalAirport}
+                      valueField='iata_code'
+                      valueFixedWidth={45}
+                      onChange={(item: any) => {
+                        dispatch({
+                          type: 'add', value: {
+                            arrivalAirport: item.iata_code,
+                            arrivalAirportTimezone: item.timezone,
+                          }
+                        });
+                        refs.arrivalDate.current?.open();
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View
+                  className='flex-row'
+                >
+                  <View
+                    className='flex-column flex-2 pr-xxl'
+                  >
+                    <Text
+                      className='size-md color-primaryContainer mb-sm mt-md'
+                      style={{ fontVariant: ['small-caps'] }}
+                    >
+                      {t('add.date').toLocaleLowerCase()}
+                    </Text>
+                    <DatetimeInput
+                      mode='date'
+                      ref={refs.arrivalDate}
+                      timezone={state.add.arrivalAirportTimezone}
+                      title={`${t('add.arrival')} ${t('add.date').toLocaleLowerCase()}`}
+                      value={state.add.arrivalDate}
+                      onChange={(value: string) => {
+                        dispatch({ type: 'add', value: { arrivalDate: value } });
+                        refs.arrivalTime.current?.open();
+                      }}
+                    />
+                  </View>
+
+                  <View
+                    className='flex-column flex-1'
+                  >
+                    <Text
+                      className={`size-md color-primaryContainer mb-sm mt-md`}
+                      style={{ fontVariant: ['small-caps'] }}
+                    >
+                      {t('add.time').toLocaleLowerCase()}
+                    </Text>
+                    <DatetimeInput
+                      mode='time'
+                      timezone={state.add.arrivalAirportTimezone}
+                      ref={refs.arrivalTime}
+                      title={`${t('add.arrival')} ${t('add.time').toLocaleLowerCase()}`}
+                      value={state.add.arrivalTime}
+                      onChange={(value: string) => {
+                        dispatch({ type: 'add', value: { arrivalTime: value } });
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View
+                  className='mt-xl flex-row justifycontent-end'
+                  style={{ width: '100%' }}
+                >
+                  <Button
+                    className='bg-primary px-lg'
+                    disabled={
+                      (state.add.airline ?? '') === '' ||
+                      (state.add.flightNumber ?? '') === '' ||
+                      (state.add.departureAirport ?? '') === '' ||
+                      (state.add.arrivalAirport ?? '') === '' ||
+                      processing
+                    }
+                    title={t('add.title')}
+                    onPress={processManuallyAdd}
+                  />
+                </View>
+
+              </View>
+            }
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </ThemeProvider>
   );
 }

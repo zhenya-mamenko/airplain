@@ -3,7 +3,7 @@
     "jsEngine": "hermes",
     "name": "AirPlain",
     "slug": "airplain",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "airplain",

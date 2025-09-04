@@ -7,11 +7,12 @@ import type { Flight } from '@/types';
 import { useThemeColor } from '@/hooks/useColors';
 import { makeDateLabel } from '@/helpers/datetime';
 import { useLocale } from '@/helpers/localization';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 export default function Edit() {
   const { flightId } = useLocalSearchParams<{ flightId: string }>();
-  const [ flight, setFlight ] = useState<Flight>();
+  const [flight, setFlight] = useState<Flight>();
   const navigation = useNavigation();
 
   const colorPrimary = useThemeColor('colors.primary');
@@ -29,26 +30,28 @@ export default function Edit() {
           arrivalDate, flight.arrivalAirportTimezone ?? 'UTC',
           locale
         );
-        navigation?.setOptions({ title: `${flight.airline} ${flight.flightNumber}, ${dateLabel}`});
+        navigation?.setOptions({ title: `${flight.airline} ${flight.flightNumber}, ${dateLabel}` });
         setFlight(flight);
       }
     });
   }, [flightId, navigation]);
 
   return (
-    <View
-      style={{ backgroundColor: colorSurfaceVariant, flex: 1, alignItems: 'center', justifyContent: 'center', padding: 0, margin: 0 }}
-    >
-      { !!flight ?
-        <EditFlight
-          data={flight}
-        />
-        :
-        <ActivityIndicator
-          size='large'
-          color={ colorPrimary }
-        />
-      }
-    </View>
+    <SafeAreaProvider>
+      <View
+        style={{ backgroundColor: colorSurfaceVariant, flex: 1, alignItems: 'center', justifyContent: 'center', padding: 0, margin: 0 }}
+      >
+        {!!flight ?
+          <EditFlight
+            data={flight}
+          />
+          :
+          <ActivityIndicator
+            size='large'
+            color={colorPrimary}
+          />
+        }
+      </View>
+    </SafeAreaProvider>
   );
 }
