@@ -6,7 +6,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import t from '@/helpers/localization';
 import { DataCard, Input, Value } from '@/components/DataCard';
 import { useThemeColor } from '@/hooks/useColors';
-import { Canvas, Image, Path} from '@shopify/react-native-skia';
+import { Canvas, Image, Path } from '@shopify/react-native-skia';
 import { isPointInPolygon } from '@/helpers/algs';
 import { GlobalContext } from '@/components/GlobalContext';
 import emitter from '@/helpers/emitter';
@@ -48,7 +48,7 @@ export default function Profile() {
       const cachedImage = achievements.image;
       if (!!cachedImage) {
         setCanvasHeight(cachedImage.height() / 2);
-        setContent(<Image image={ cachedImage } x={0} y={0} width={ cachedImage.width() / 2 } height={ cachedImage.height() / 2 } />);
+        setContent(<Image image={cachedImage} x={0} y={0} width={cachedImage.width() / 2} height={cachedImage.height() / 2} />);
       } else if (cachedImage === null) {
         setCanvasHeight(0);
         setContent(<View />);
@@ -104,17 +104,17 @@ export default function Profile() {
       <DataCard
         caption={
           <View className='flex-row alignitems-end'>
-            <Icon name='notebook-outline' size={16} color={ colorSecondaryContainer } style={{ marginBottom: 1 }} />
+            <Icon name='notebook-outline' size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
             <Text
               className='size-smm weight-bold mt-xs color-secondaryContainer ml-sm'
             >
-              { t('profile.data').toLocaleUpperCase() }
+              {t('profile.data').toLocaleUpperCase()}
             </Text>
           </View>
         }
         key='data'
-        onLayout={ handleLayout }
-        onSave={ dataCardOnSave }
+        onLayout={handleLayout}
+        onSave={dataCardOnSave}
       >
         <View
           className='flex-column'
@@ -123,13 +123,13 @@ export default function Profile() {
             className='flex-row my-sm'
           >
             <Value
-              caption={ t('profile.firstname') }
-              value={ firstname }
+              caption={t('profile.firstname')}
+              value={firstname}
               width='50%'
             />
             <Value
-              caption={ t('profile.surname') }
-              value={ surname }
+              caption={t('profile.surname')}
+              value={surname}
               width='50%'
             />
           </View>
@@ -137,9 +137,9 @@ export default function Profile() {
             className='flex-row mb-sm'
           >
             <Value
-              caption={ t('profile.notes') }
+              caption={t('profile.notes')}
               lines={4}
-              value={ notes }
+              value={notes}
             />
           </View>
         </View>
@@ -150,15 +150,15 @@ export default function Profile() {
             className='flex-row my-sm'
           >
             <Input
-              caption={ t('profile.firstname') }
+              caption={t('profile.firstname')}
               field='firstname'
-              value={ firstname }
+              value={firstname}
               width='50%'
             />
             <Input
-              caption={ t('profile.surname') }
+              caption={t('profile.surname')}
               field='surname'
-              value={ surname }
+              value={surname}
               width='50%'
             />
           </View>
@@ -166,10 +166,10 @@ export default function Profile() {
             className='flex-row mb-sm'
           >
             <Input
-              caption={ t('profile.notes') }
+              caption={t('profile.notes')}
               field='notes'
               lines={4}
-              value={ notes }
+              value={notes}
             />
           </View>
         </View>
@@ -177,11 +177,11 @@ export default function Profile() {
       <DataCard
         caption={
           <View className='flex-row alignitems-end'>
-            <Icon name='podium-gold' size={16} color={ colorSecondaryContainer } style={{ marginBottom: 1 }} />
+            <Icon name='podium-gold' size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
             <Text
               className='size-smm weight-bold mt-xs color-secondaryContainer ml-sm'
             >
-              { t('profile.achievements').toLocaleUpperCase() }
+              {t('profile.achievements').toLocaleUpperCase()}
             </Text>
           </View>
         }
@@ -189,25 +189,25 @@ export default function Profile() {
         key='achievements'
         rightBlock={(
           <View className='flex-row'>
-            { canShare &&
+            {canShare &&
               <Pressable
                 hitSlop={5}
-                onPress={ async () => {
-                  await Sharing.shareAsync(`${FileSystem.cacheDirectory}achievements-share.png`, { mimeType: 'image/png'});
+                onPress={async () => {
+                  await Sharing.shareAsync(`${FileSystem.cacheDirectory}achievements-share.png`, { mimeType: 'image/png' });
                 }}
               >
-                <Icon name='share-variant' size={16} color={ colorGray } style={{ marginTop: 4, marginRight: 16 }} />
+                <Icon name='share-variant' size={16} color={colorGray} style={{ marginTop: 4, marginRight: 16 }} />
               </Pressable>
             }
             <Pressable
               hitSlop={5}
-              onPress={ () => {
+              onPress={() => {
                 setSetting('achievements_hash', 'refresh');
                 setContent(undefined);
                 emitter.emit('refreshAchievements');
               }}
             >
-              <Icon name='refresh' size={20} color={ colorGray } style={{ marginTop: 2 }} />
+              <Icon name='refresh' size={20} color={colorGray} style={{ marginTop: 2 }} />
             </Pressable>
           </View>
         )}
@@ -215,20 +215,20 @@ export default function Profile() {
         <ScrollView
           style={{ height: achievementsHeight }}
         >
-          { !content ?
+          {!content ?
             <ActivityIndicator
-              color={ colorPrimary }
+              color={colorPrimary}
               size='large'
               style={{ height: achievementsHeight, width: '100%' }}
             />
-          :
+            :
             <Pressable
-              onPress={ (e) => handleTouchStart(e.nativeEvent.locationX, e.nativeEvent.locationY) }
+              onPress={(e) => handleTouchStart(e.nativeEvent.locationX, e.nativeEvent.locationY)}
             >
               <Canvas
                 style={{ width: '100%', height: canvasHeight }}
               >
-                { content }
+                {content}
               </Canvas>
             </Pressable>
           }
@@ -237,25 +237,25 @@ export default function Profile() {
       <Modal
         animationType='slide'
         transparent={true}
-        visible={ !!achievement }
-        onRequestClose={ () => setAchievement(undefined) }
+        visible={!!achievement}
+        onRequestClose={() => setAchievement(undefined)}
       >
         <Pressable
-          onPress={ () => setAchievement(undefined) }
+          onPress={() => setAchievement(undefined)}
         >
           <View
             className='flex-row justifycontent-end'
             style={{ width: '100%', position: 'absolute', top: modalContentTop + 16, right: 16, zIndex: 1 }}
           >
-            { canShare &&
+            {canShare &&
               <Pressable
                 hitSlop={5}
-                onPress={ async () => {
+                onPress={async () => {
                   const uri = await captureRef(ref, { format: 'png', result: 'tmpfile' });
-                  await Sharing.shareAsync(uri, { mimeType: 'image/png'});
+                  await Sharing.shareAsync(uri, { mimeType: 'image/png' });
                 }}
               >
-                <Icon name='share-variant' size={20} color={ colorPrimary } style={{  }} />
+                <Icon name='share-variant' size={20} color={colorPrimary} style={{}} />
               </Pressable>
             }
           </View>
@@ -263,7 +263,7 @@ export default function Profile() {
             className='flex-column p-md bg-background alignitems-center justifycontent-start b-1 bordercolor-outline radius-md elevated'
             ref={ref}
             style={{ top: modalContentTop }}
-            onLayout={ handleLayoutModal }
+            onLayout={handleLayoutModal}
           >
             <View
               className='flex-row pb-sm mt-md bg-background alignitems-between justifycontent-center'
@@ -271,24 +271,24 @@ export default function Profile() {
               <Text
                 className='flex-column size-xxl weight-bold color-surface'
               >
-                { !!achievement ? achievement.achievement.departureAirport : '' }
+                {!!achievement ? achievement.achievement.departureAirport : ''}
               </Text>
               <FontAwesome5
-                color={ colorSurface }
+                color={colorSurface}
                 name='plane'
                 size={24}
-                style={{ width: 26, height: 26 , marginBottom: 12, marginHorizontal: 24 }}
+                style={{ width: 26, height: 26, marginBottom: 12, marginHorizontal: 24 }}
               />
               <Text
                 className='flex-column size-xxl weight-bold color-surface'
               >
-                { !!achievement ? achievement.achievement.arrivalAirport : '' }
+                {!!achievement ? achievement.achievement.arrivalAirport : ''}
               </Text>
             </View>
             <Text
               className='size-md color-primaryContainer mb-xl'
             >
-              { !!achievement ? achievement.achievement.date : '' }
+              {!!achievement ? achievement.achievement.date : ''}
             </Text>
             <Canvas
               style={{ width: 256, height: 256 }}
@@ -296,9 +296,9 @@ export default function Profile() {
               {
                 !!achievement && achievement.achievement.svg.map((path: any, index: number) => (
                   <Path
-                    color={ stampsColors[themeName][achievement.color] }
-                    key={ `path-${index}` }
-                    path={ path }
+                    color={stampsColors[themeName][achievement.color]}
+                    key={`path-${index}`}
+                    path={path}
                   />
                 ))
               }
@@ -306,7 +306,7 @@ export default function Profile() {
             <Text
               className='size-md color-primaryContainer my-xl'
             >
-              { !!achievement ? achievement.achievement.name : '' }
+              {!!achievement ? achievement.achievement.name : ''}
             </Text>
           </View>
         </Pressable>

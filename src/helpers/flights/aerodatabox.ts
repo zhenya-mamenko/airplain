@@ -31,9 +31,12 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
   }
   if (!response || !response.ok || response.status !== 200) {
     console.debug(`Error response from aerodatabox API:\n${url}\nResponse: ${JSON.stringify(response, null, 2)}`);
-    if (response && response.json) {
-      const errorData = await response.json();
-      console.debug(`Error data from aerodatabox API:\n${JSON.stringify(errorData, null, 2)}`);
+    try {
+      if (response && response.json) {
+        const errorData = await response.json();
+        console.debug(`Error data from aerodatabox API:\n${JSON.stringify(errorData, null, 2)}`);
+      }
+    } catch (error) {
     }
     return null;
   }

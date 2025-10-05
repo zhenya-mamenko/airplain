@@ -1,7 +1,9 @@
-Feature: Force the flights API to be requested on manual refresh.
+Bugfix: Corrected boarding pass barcode format for camera scanning.
+Bugfix: Resolved incorrect colors in dark mode.
+Bugfix: Fixed timezone validation on arrival.
 
-Refactoring: Extract import and export data logic into helper functions and add unit tests.
+Feature: Display boarding pass from the flight details card.
 
-Bugfix: Set the correct status and is_archived based on the arrival date in the import task.
-Bugfix: Fix flight existence checking in the import task.
-Bugfix: Fix color issue in selects when Dark theme is used.
+Update: Set online check-in start time to 24 hours for Ryanair.
+
+Chore: Updated dependencies.

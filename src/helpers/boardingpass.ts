@@ -222,7 +222,7 @@ export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcode
   }
 }
 
-export const BCBPFormatMap: { [key: string]: BCBPFormat } = {
+const BCBPFormatMap: { [key: string]: BCBPFormat } = {
   4096: 'PKBarcodeFormatAztec',
   16: 'PKBarcodeFormatDataMatrix',
   2048: 'PKBarcodeFormatPDF417',

@@ -21,7 +21,8 @@ import { DataCard, Input, Value, DataCardContext, Select } from '@/components/Da
 import { useNavigation } from 'expo-router';
 import { refreshFlights, showConfirmation } from '@/helpers/common';
 import { getFlightData } from '@/helpers/flights';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
 
 const Image = createPicassoComponent(_Image);
@@ -104,6 +105,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const locale = useLocale();
   const colorSecondaryContainer = useThemeColor('textColors.secondaryContainer');
   const colorPrimary = useThemeColor('textColors.primary');
+  const colorGray = useThemeColor('textColors.gray');
 
   const dateOptions: Intl.DateTimeFormatOptions = {
     month: 'long',
@@ -169,7 +171,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const arrivalAirportData = getAirportData(state.arrivalAirport, locale);
 
   const navigation = useNavigation();
-  const [dragEnabled, setDragEnabled] = useState(true);
+  const [dragEnabled, setDragEnabled] = useState(false);
 
   const getFlightDataFromApi = () => {
     const confirmationDialog: ConfirmationDialogSettings = {
@@ -208,7 +210,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           <Pressable
             onPress={() => setDragEnabled(!dragEnabled)}
           >
-            <Icon name={dragEnabled ? 'bars' : 'copy'} size={16} color={colorPrimary} style={{ marginTop: 4, marginRight: 8 }} />
+            <Icon name={!dragEnabled ? 'bars' : 'copy'} size={16} color={colorPrimary} style={{ marginTop: 4, marginRight: 8 }} />
           </Pressable>
         </>
       )
@@ -238,6 +240,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         >
           <View
             className='flex-column'
+            style={{ maxWidth: '80%' }}
           >
             <Text
               className='size-mdl weight-bold color-surface'
@@ -332,6 +335,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       </View>
     </DataCard>
   );
+
   const arrivalDataCard = () => (
     <DataCard
       caption={
@@ -355,6 +359,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         >
           <View
             className='flex-column'
+            style={{ maxWidth: '80%' }}
           >
             <Text
               className='size-mdl weight-bold color-surface'
@@ -435,6 +440,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       </View>
     </DataCard>
   );
+
   const boardingpassDataCard = () => (
     <DataCard
       caption={
@@ -449,6 +455,17 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       }
       key={`boardingpass-${dragEnabled ? 'drag' : 'copy'}`}
       onSave={dataCardOnSave}
+      rightBlock={!!props.data.bcbpPkpass ?
+        <Pressable
+          hitSlop={5}
+          onPress={() => {
+            router.push({ pathname: '/pass', params: { pkpass: JSON.stringify(props.data.bcbpPkpass) } });
+          }}
+        >
+          <Icon name='barcode' size={16} color={colorGray} style={{ marginTop: 4, marginRight: 16 }} />
+        </Pressable>
+        : undefined
+      }
     >
       <View
         className='flex-column'
@@ -490,7 +507,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           />
         </View>
         <View
-          className='flex-column my-sm mr-md'
+          className='flex-column my-sm'
         >
           <LoadBCBPOptions
             dispatch={bcbpDispatch}
@@ -580,7 +597,8 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         />
       </View>
     </>
-  )
+  );
+
   const flightDataCard = () => (
     <DataCard
       caption={
@@ -633,6 +651,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       </View>
     </DataCard>
   );
+
   const aircraftDataCard = () => (
     <DataCard
       caption={
@@ -696,6 +715,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       </View>
     </DataCard>
   );
+
   const notesDataCard = () => (
     <DataCard
       caption={
@@ -733,6 +753,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       </View>
     </DataCard>
   );
+
   const dataCards = {
     departure: departureDataCard,
     arrival: arrivalDataCard,
@@ -740,16 +761,18 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     flight: flightDataCard,
     aircraft: aircraftDataCard,
     notes: notesDataCard,
-  }
+    none: null
+  };
   type DCType = keyof typeof dataCards;
 
-  const FLIGHT_CARDS = getSetting('FLIGHT_CARDS', 'departure|arrival|boardingpass|flight|aircraft|notes');
+  const FLIGHT_CARDS = getSetting('FLIGHT_CARDS', 'departure|arrival|boardingpass|flight|aircraft|notes|none');
   const [data, setData] = useState<Array<DCType>>(FLIGHT_CARDS.split('|') as Array<DCType>);
 
   const renderItem = ({ item }: ListRenderItemInfo<DCType>) => {
-    return <Card dataCards={dataCards} item={item} dragEnabled={dragEnabled} />;
+    return item == 'none' ? <View style={{ height: 75, width: '100%', backgroundColor: 'transparent' }} /> : <Card dataCards={dataCards} item={item} dragEnabled={dragEnabled} />;
   };
   const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
+    if ([from, to].includes(FLIGHT_CARDS.split('|').length-1)) return;
     setData(value => {
       const newData = reorderItems(value, from, to);
       setSetting('FLIGHT_CARDS', newData.join('|'));
@@ -757,19 +780,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     });
   };
 
-  const insets = useSafeAreaInsets();
-
   return (
     // @ts-ignore
     <ThemeProvider theme={theme}>
-      <GestureHandlerRootView style={{ paddingBottom: insets.bottom }}>
+      <GestureHandlerRootView>
         <SafeAreaView
           style={{ flex: 1 }}
         >
           <KeyboardAvoidingView
-            behavior='position'
-            keyboardVerticalOffset={100}
-            style={{ flex: 1 }}
+            behavior='padding'
           >
             <ReorderableList
               cellAnimations={{ opacity: 1, transform: [{ scale: 0.96 }] }}
