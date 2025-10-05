@@ -80,7 +80,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
     const flightNotificationsState = JSON.parse(getSetting(`flight-notifications-${flight.flightId}`, '{}'));
 
     const tz = getCalendars()[0]?.timeZone || 'UTC';
-    const isDifferentTimezone =  DateTime.now().setZone(tz).toFormat('ZZ') !== flight.endDatetime.substring(19);
+    const isDifferentTimezone = DateTime.now().setZone(tz).toFormat('ZZ') !== flight.endDatetime.slice(-6);
     flight.isDifferentTimezone = isDifferentTimezone;
 
     const startDatetime = new Date(flight.actualStartDatetime ?? flight.startDatetime);
@@ -171,7 +171,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
       flight.info.state = 'checkin_end';
       flight.info.stateTime = minutes - 40;
     }
-    if (minutes > 40 && !!flight.seatNumber) {
+    if (minutes > 40 && hours <= 3 && !!flight.seatNumber) {
       flight.info.state = 'boarding_start';
       flight.info.stateTime = minutes - 40;
     }

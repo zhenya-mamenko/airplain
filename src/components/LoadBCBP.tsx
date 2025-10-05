@@ -5,10 +5,11 @@ import * as ImagePicker from 'expo-image-picker';
 import Button from '@/components/Button';
 import { CameraView, BarcodeScanningResult, useCameraPermissions } from 'expo-camera';
 import { View } from 'react-native-picasso';
-import { loadPKPass, createPKPass, scanBarcode as scan, decodeBCBP, BCBPFormatMap } from '@/helpers/boardingpass';
+import { loadPKPass, createPKPass, scanBarcode as scan, decodeBCBP } from '@/helpers/boardingpass';
 import { useThemeColor } from '@/hooks/useColors';
 import t from '@/helpers/localization';
 import { Dimensions, Modal, StyleSheet, ToastAndroid } from 'react-native';
+import { BCBPFormat } from '@/types';
 
 
 const LoadBCBPOptions = (props: {today?: Date, dispatch: any, showToast?: boolean}) => {
@@ -87,6 +88,13 @@ const LoadBCBPOptions = (props: {today?: Date, dispatch: any, showToast?: boolea
   }
 
   const scanBarcode = async (result: BarcodeScanningResult) => {
+    const BCBPFormatMap: { [key: string]: BCBPFormat } = {
+      'aztec': 'PKBarcodeFormatAztec',
+      'datamatrix': 'PKBarcodeFormatDataMatrix',
+      'pdf417': 'PKBarcodeFormatPDF417',
+      'qr': 'PKBarcodeFormatQR',
+    };
+  
     const { data, type, raw } = result;
     const bcbp = raw ?? data;
     if (!!bcbp && !!type) {

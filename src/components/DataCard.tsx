@@ -55,7 +55,7 @@ export const DataCard = forwardRef(({
               caption
             }
           </View>
-          <>
+          <View className='flex-row alignitems-center'>
             {
               rightBlock
             }
@@ -71,7 +71,7 @@ export const DataCard = forwardRef(({
                 />
               </Pressable>
             }
-          </>
+          </View>
         </View>
         <View
           className={!!dataClassName ? dataClassName : 'px-md pb-sm radiusbr-md radiusbl-md bg-background'}
