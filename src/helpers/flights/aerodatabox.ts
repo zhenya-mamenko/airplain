@@ -1,7 +1,7 @@
 import type { Flight, FlightStatus } from '@/types';
 import { fetch } from '@/helpers/common';
 
-const adbFlightStatuses: {[key: string]: FlightStatus} = {
+const adbFlightStatuses: { [key: string]: FlightStatus } = {
   Approaching: 'en_route',
   Arrived: 'arrived',
   Boarding: 'boarding',
@@ -15,9 +15,15 @@ const adbFlightStatuses: {[key: string]: FlightStatus} = {
   Expected: 'scheduled',
   GateClosed: 'gateclosed',
   Unknown: 'unknown',
-}
+};
 
-export async function getFlightData(airline: string, flightNumber: string, flightDate: string, apiUrl: string, apiKey: string): Promise<Flight | null> {
+export async function getFlightData(
+  airline: string,
+  flightNumber: string,
+  flightDate: string,
+  apiUrl: string,
+  apiKey: string,
+): Promise<Flight | null> {
   const url = `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`;
   const headers = {
     'x-magicapi-key': apiKey,
@@ -30,19 +36,24 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
     return null;
   }
   if (!response || !response.ok || response.status !== 200) {
-    console.debug(`Error response from aerodatabox API:\n${url}\nResponse: ${JSON.stringify(response, null, 2)}`);
+    console.debug(
+      `Error response from aerodatabox API:\n${url}\nResponse: ${JSON.stringify(response, null, 2)}`,
+    );
     try {
       if (response && response.json) {
         const errorData = await response.json();
-        console.debug(`Error data from aerodatabox API:\n${JSON.stringify(errorData, null, 2)}`);
+        console.debug(
+          `Error data from aerodatabox API:\n${JSON.stringify(errorData, null, 2)}`,
+        );
       }
-    } catch (error) {
-    }
+    } catch (error) {}
     return null;
   }
   const data = await response.json();
   if (!data || !data.length || data.length === 0) {
-    console.debug(`No flight data found for aerodatabox API: ${airline} ${flightNumber} ${flightDate}`);
+    console.debug(
+      `No flight data found for aerodatabox API: ${airline} ${flightNumber} ${flightDate}`,
+    );
     return null;
   }
 
@@ -69,21 +80,29 @@ export async function getFlightData(airline: string, flightNumber: string, fligh
     extra: {},
     flightNumber,
     info: {
-      state: ['checkin', 'boarding', 'gateclosed'].includes(flightData.status.toLowerCase()) ? flightData.status.toLowerCase() : '',
+      state: ['checkin', 'boarding', 'gateclosed'].includes(
+        flightData.status.toLowerCase(),
+      )
+        ? flightData.status.toLowerCase()
+        : '',
     },
     isArchived: false,
     recordType: 1,
     startDatetime: flightData.departure.scheduledTime.local,
     status: adbFlightStatuses[flightData.status] ?? 'unknown',
   };
-  result.isArchived = (new Date(result.actualEndDatetime ?? result.endDatetime)) < new Date();
+  result.isArchived =
+    new Date(result.actualEndDatetime ?? result.endDatetime) < new Date();
   if (flightData.airline.iata !== airline) {
     result.extra = {
       carrier: flightData.airline.iata,
       carrierName: flightData.airline.name,
-      carrierFlightNumber: flightData.number?.split(' ')[1] ?? flightData.flightNumber
+      carrierFlightNumber:
+        flightData.number?.split(' ')[1] ?? flightData.flightNumber,
     };
   }
-  console.debug(`Fetched flight data from aerodatabox API:\n${JSON.stringify(result, null, 2)}`);
+  console.debug(
+    `Fetched flight data from aerodatabox API:\n${JSON.stringify(result, null, 2)}`,
+  );
   return result;
 }

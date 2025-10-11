@@ -25,14 +25,22 @@ describe('Aerodatabox API', () => {
         arrival: {
           revisedTime: { local: '2024-01-01T15:00:00' },
           scheduledTime: { local: '2024-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
           terminal: '4',
           baggageBelt: '1',
         },
         departure: {
           revisedTime: { local: '2024-01-01T10:00:00' },
           scheduledTime: { local: '2024-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
           terminal: 'B',
           checkInDesk: '1-10',
           gate: '42',
@@ -80,22 +88,34 @@ describe('Aerodatabox API', () => {
       status: 'arrived',
     };
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight).toEqual(expectedFlight);
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
-      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 }
+      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 },
     );
   });
 
   test('getFlightData return null when the API call fails', async () => {
     mockFetch.mockRejectedValue(new Error('API Error'));
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
-      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 }
+      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 },
     );
   });
 
@@ -105,11 +125,17 @@ describe('Aerodatabox API', () => {
       status: 404,
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
-      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 }
+      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 },
     );
   });
 
@@ -120,11 +146,17 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue([]),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
-      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 }
+      { headers: { 'x-magicapi-key': apiKey }, timeout: 3000 },
     );
   });
 
@@ -134,12 +166,20 @@ describe('Aerodatabox API', () => {
         arrival: {
           revisedTime: { local: '2024-01-01T15:00:00' },
           scheduledTime: { local: '2024-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2024-01-01T10:00:00' },
           scheduledTime: { local: '2024-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -156,7 +196,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.status).toBe('en_route');
   });
 
@@ -166,12 +212,20 @@ describe('Aerodatabox API', () => {
         arrival: {
           revisedTime: { local: '2024-01-01T15:00:00' },
           scheduledTime: { local: '2024-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2024-01-01T10:00:00' },
           scheduledTime: { local: '2024-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -188,7 +242,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.status).toBe('unknown');
   });
 
@@ -198,12 +258,20 @@ describe('Aerodatabox API', () => {
         arrival: {
           revisedTime: { local: '2023-01-01T15:00:00' },
           scheduledTime: { local: '2023-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2023-01-01T10:00:00' },
           scheduledTime: { local: '2023-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -220,7 +288,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.isArchived).toBe(true);
   });
 
@@ -230,12 +304,20 @@ describe('Aerodatabox API', () => {
         arrival: {
           revisedTime: { local: '2055-01-01T15:00:00' },
           scheduledTime: { local: '2055-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2025-01-01T10:00:00' },
           scheduledTime: { local: '2025-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -252,7 +334,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.isArchived).toBe(false);
   });
 
@@ -261,12 +349,20 @@ describe('Aerodatabox API', () => {
       {
         arrival: {
           scheduledTime: { local: '2055-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2025-01-01T10:00:00' },
           scheduledTime: { local: '2025-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -283,7 +379,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.isArchived).toBe(false);
   });
 
@@ -292,12 +394,20 @@ describe('Aerodatabox API', () => {
       {
         arrival: {
           scheduledTime: { local: '2023-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2023-01-01T10:00:00' },
           scheduledTime: { local: '2023-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -314,7 +424,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.isArchived).toBe(true);
   });
 
@@ -324,12 +440,20 @@ describe('Aerodatabox API', () => {
         arrival: {
           revisedTime: { local: '2024-01-01T15:00:00' },
           scheduledTime: { local: '2024-01-01T14:00:00' },
-          airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
         },
         departure: {
           revisedTime: { local: '2024-01-01T10:00:00' },
           scheduledTime: { local: '2024-01-01T09:00:00' },
-          airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
         },
         aircraft: { reg: 'N123AA', model: 'Boeing 737' },
         greatCircleDistance: { km: 3940 },
@@ -346,7 +470,13 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(
+      airline,
+      flightNumber,
+      flightDate,
+      apiUrl,
+      apiKey,
+    );
     expect(flight?.extra).toEqual({
       carrier: 'DL',
       carrierName: 'Delta Airlines',
@@ -362,12 +492,20 @@ describe('Aerodatabox API', () => {
           arrival: {
             revisedTime: { local: '2024-01-01T15:00:00' },
             scheduledTime: { local: '2024-01-01T14:00:00' },
-            airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+            airport: {
+              iata: 'JFK',
+              timeZone: 'America/New_York',
+              countryCode: 'US',
+            },
           },
           departure: {
             revisedTime: { local: '2024-01-01T10:00:00' },
             scheduledTime: { local: '2024-01-01T09:00:00' },
-            airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+            airport: {
+              iata: 'LAX',
+              timeZone: 'America/Los_Angeles',
+              countryCode: 'US',
+            },
           },
           aircraft: { reg: 'N123AA', model: 'Boeing 737' },
           greatCircleDistance: { km: 3940 },
@@ -384,7 +522,13 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+      const flight = await getFlightData(
+        airline,
+        flightNumber,
+        flightDate,
+        apiUrl,
+        apiKey,
+      );
       expect(flight?.info.state).toBe(status);
     }
   });
@@ -397,12 +541,20 @@ describe('Aerodatabox API', () => {
           arrival: {
             revisedTime: { local: '2024-01-01T15:00:00' },
             scheduledTime: { local: '2024-01-01T14:00:00' },
-            airport: { iata: 'JFK', timeZone: 'America/New_York', countryCode: 'US' },
+            airport: {
+              iata: 'JFK',
+              timeZone: 'America/New_York',
+              countryCode: 'US',
+            },
           },
           departure: {
             revisedTime: { local: '2024-01-01T10:00:00' },
             scheduledTime: { local: '2024-01-01T09:00:00' },
-            airport: { iata: 'LAX', timeZone: 'America/Los_Angeles', countryCode: 'US' },
+            airport: {
+              iata: 'LAX',
+              timeZone: 'America/Los_Angeles',
+              countryCode: 'US',
+            },
           },
           aircraft: { reg: 'N123AA', model: 'Boeing 737' },
           greatCircleDistance: { km: 3940 },
@@ -419,9 +571,14 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+      const flight = await getFlightData(
+        airline,
+        flightNumber,
+        flightDate,
+        apiUrl,
+        apiKey,
+      );
       expect(flight?.info.state).toBe('');
     }
   });
-
 });

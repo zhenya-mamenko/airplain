@@ -9,7 +9,6 @@ import { makeDateLabel } from '@/helpers/datetime';
 import { useLocale } from '@/helpers/localization';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-
 export default function Edit() {
   const { flightId } = useLocalSearchParams<{ flightId: string }>();
   const [flight, setFlight] = useState<Flight>();
@@ -23,14 +22,22 @@ export default function Edit() {
   useEffect(() => {
     getFlight(parseInt(flightId)).then((flight) => {
       if (!!flight) {
-        const departureDate = new Date(flight.actualStartDatetime ?? flight.startDatetime);
-        const arrivalDate = new Date(flight.actualEndDatetime ?? flight.endDatetime);
-        const dateLabel = makeDateLabel(
-          departureDate, flight.departureAirportTimezone ?? 'UTC',
-          arrivalDate, flight.arrivalAirportTimezone ?? 'UTC',
-          locale
+        const departureDate = new Date(
+          flight.actualStartDatetime ?? flight.startDatetime,
         );
-        navigation?.setOptions({ title: `${flight.airline} ${flight.flightNumber}, ${dateLabel}` });
+        const arrivalDate = new Date(
+          flight.actualEndDatetime ?? flight.endDatetime,
+        );
+        const dateLabel = makeDateLabel(
+          departureDate,
+          flight.departureAirportTimezone ?? 'UTC',
+          arrivalDate,
+          flight.arrivalAirportTimezone ?? 'UTC',
+          locale,
+        );
+        navigation?.setOptions({
+          title: `${flight.airline} ${flight.flightNumber}, ${dateLabel}`,
+        });
         setFlight(flight);
       }
     });
@@ -39,18 +46,20 @@ export default function Edit() {
   return (
     <SafeAreaProvider>
       <View
-        style={{ backgroundColor: colorSurfaceVariant, flex: 1, alignItems: 'center', justifyContent: 'center', padding: 0, margin: 0 }}
+        style={{
+          backgroundColor: colorSurfaceVariant,
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0,
+          margin: 0,
+        }}
       >
-        {!!flight ?
-          <EditFlight
-            data={flight}
-          />
-          :
-          <ActivityIndicator
-            size='large'
-            color={colorPrimary}
-          />
-        }
+        {!!flight ? (
+          <EditFlight data={flight} />
+        ) : (
+          <ActivityIndicator size="large" color={colorPrimary} />
+        )}
       </View>
     </SafeAreaProvider>
   );

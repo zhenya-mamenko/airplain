@@ -1,10 +1,16 @@
-import type { ConfirmationDialogSettings, DepartingFlightCardData, Flight, FlightCardData, FlightStatus, LandedFlightCardData } from '@/types';
+import type {
+  ConfirmationDialogSettings,
+  DepartingFlightCardData,
+  Flight,
+  FlightCardData,
+  FlightStatus,
+  LandedFlightCardData,
+} from '@/types';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import { Alert, Linking, AlertButton, NativeModules } from 'react-native';
 import { getSetting, setSetting } from '@/constants/settings';
 import emitter from '@/helpers/emitter';
-
 
 const { AirPlainBgModule } = NativeModules;
 
@@ -12,7 +18,7 @@ export function camelCase(obj: any) {
   const result: any = {};
   for (let d in obj) {
     if (obj.hasOwnProperty(d)) {
-      const k: string = d.replace(/(\_\w)/g, function(k) {
+      const k: string = d.replace(/(\_\w)/g, function (k) {
         return k[1].toUpperCase();
       });
       result[k] = obj[d];
@@ -34,15 +40,19 @@ export function snakeCase(obj: any) {
 
 export function flightToFlightData(flight: Flight): FlightCardData {
   const data = {
-    actualEndDatetime: flight.actualEndDatetime ? new Date(flight.actualEndDatetime).getTime() / 1000 : undefined,
-    actualStartDatetime: flight.actualStartDatetime ? new Date(flight.actualStartDatetime).getTime() / 1000 : undefined,
+    actualEndDatetime: flight.actualEndDatetime
+      ? new Date(flight.actualEndDatetime).getTime() / 1000
+      : undefined,
+    actualStartDatetime: flight.actualStartDatetime
+      ? new Date(flight.actualStartDatetime).getTime() / 1000
+      : undefined,
     airline: flight.airline,
     arrivalAirport: flight.arrivalAirport,
     arrivalAirportTimezone: flight.arrivalAirportTimezone,
     departureAirport: flight.departureAirport,
     departureAirportTimezone: flight.departureAirportTimezone,
     distance: flight.distance,
-    endDatetime:  new Date(flight.endDatetime).getTime() / 1000,
+    endDatetime: new Date(flight.endDatetime).getTime() / 1000,
     flightId: flight.flightId,
     flightNumber: flight.flightNumber,
     isArchived: flight.isArchived,
@@ -57,10 +67,16 @@ export function flightToFlightData(flight: Flight): FlightCardData {
   return data;
 }
 
-export function flightToDepartingFlightData(flight: Flight): DepartingFlightCardData {
+export function flightToDepartingFlightData(
+  flight: Flight,
+): DepartingFlightCardData {
   const data = {
-    actualEndDatetime: flight.actualEndDatetime ? new Date(flight.actualEndDatetime).getTime() / 1000 : undefined,
-    actualStartDatetime: flight.actualStartDatetime ? new Date(flight.actualStartDatetime).getTime() / 1000 : undefined,
+    actualEndDatetime: flight.actualEndDatetime
+      ? new Date(flight.actualEndDatetime).getTime() / 1000
+      : undefined,
+    actualStartDatetime: flight.actualStartDatetime
+      ? new Date(flight.actualStartDatetime).getTime() / 1000
+      : undefined,
     airline: flight.airline,
     arrivalAirport: flight.arrivalAirport,
     arrivalAirportTimezone: flight.arrivalAirportTimezone,
@@ -72,7 +88,7 @@ export function flightToDepartingFlightData(flight: Flight): DepartingFlightCard
     departureGate: flight.departureGate,
     departureTerminal: flight.departureTerminal,
     distance: flight.distance,
-    endDatetime:  new Date(flight.endDatetime).getTime() / 1000,
+    endDatetime: new Date(flight.endDatetime).getTime() / 1000,
     flightId: flight.flightId,
     flightNumber: flight.flightNumber,
     isArchived: flight.isArchived,
@@ -89,8 +105,12 @@ export function flightToDepartingFlightData(flight: Flight): DepartingFlightCard
 
 export function flightToLandedFlightData(flight: Flight): LandedFlightCardData {
   const data = {
-    actualEndDatetime: flight.actualEndDatetime ? new Date(flight.actualEndDatetime).getTime() / 1000 : undefined,
-    actualStartDatetime: flight.actualStartDatetime ? new Date(flight.actualStartDatetime).getTime() / 1000 : undefined,
+    actualEndDatetime: flight.actualEndDatetime
+      ? new Date(flight.actualEndDatetime).getTime() / 1000
+      : undefined,
+    actualStartDatetime: flight.actualStartDatetime
+      ? new Date(flight.actualStartDatetime).getTime() / 1000
+      : undefined,
     airline: flight.airline,
     arrivalAirport: flight.arrivalAirport,
     arrivalAirportTimezone: flight.arrivalAirportTimezone,
@@ -102,7 +122,7 @@ export function flightToLandedFlightData(flight: Flight): LandedFlightCardData {
     departureGate: flight.departureGate,
     departureTerminal: flight.departureTerminal,
     distance: flight.distance,
-    endDatetime:  new Date(flight.endDatetime).getTime() / 1000,
+    endDatetime: new Date(flight.endDatetime).getTime() / 1000,
     flightId: flight.flightId,
     flightNumber: flight.flightNumber,
     isArchived: flight.isArchived,
@@ -113,16 +133,24 @@ export function flightToLandedFlightData(flight: Flight): LandedFlightCardData {
   return data;
 }
 
-export function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+export function haversine(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): number {
   const R = 6371;
   const toRadians = (angle: number) => angle * (Math.PI / 180);
 
   const dLat = toRadians(lat2 - lat1);
   const dLon = toRadians(lon2 - lon1);
 
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
@@ -136,7 +164,13 @@ export function openUrl(url: string) {
   Linking.openURL(url);
 }
 
-export function makeCheckInLink(checkInLink: string, date: string, departureAirport: string, pnr: string, flightNumber: string): string {
+export function makeCheckInLink(
+  checkInLink: string,
+  date: string,
+  departureAirport: string,
+  pnr: string,
+  flightNumber: string,
+): string {
   const fields = [
     { field: 'DEP_DATE_EU', value: date },
     { field: 'IATA_DEP', value: departureAirport },
@@ -152,12 +186,17 @@ export function makeCheckInLink(checkInLink: string, date: string, departureAirp
   return link;
 }
 
-export function refreshFlights(refreshAnimation: boolean = false, forceRefresh: boolean = false) {
+export function refreshFlights(
+  refreshAnimation: boolean = false,
+  forceRefresh: boolean = false,
+) {
   emitter.emit('updateActualFlights', { refreshAnimation, forceRefresh });
   emitter.emit('updatePastFlights', { refreshAnimation, forceRefresh });
 }
 
-export const showConfirmation = (confirmationDialog: ConfirmationDialogSettings) => {
+export const showConfirmation = (
+  confirmationDialog: ConfirmationDialogSettings,
+) => {
   const buttons: Array<AlertButton> = [
     {
       text: confirmationDialog.closeButton,
@@ -165,39 +204,37 @@ export const showConfirmation = (confirmationDialog: ConfirmationDialogSettings)
     },
   ];
   if (!confirmationDialog.showOnlyCloseButton) {
-    buttons.push(
-      {
-        text: confirmationDialog.confirmButton,
-        style: 'default',
-        onPress: () => confirmationDialog.onConfirm?.(),
-      }
-    );
+    buttons.push({
+      text: confirmationDialog.confirmButton,
+      style: 'default',
+      onPress: () => confirmationDialog.onConfirm?.(),
+    });
   }
   Alert.alert(
     confirmationDialog.title,
     confirmationDialog.description,
     buttons,
-    { cancelable: true }
+    { cancelable: true },
   );
-}
+};
 
 export const startBackgroundTask = () => {
   if (getSetting('backgroundTaskStarted', 'false') === 'false') {
     AirPlainBgModule.startBackgroundTask();
     setSetting('backgroundTaskStarted', 'true');
   }
-}
+};
 
 export const stopBackgroundTask = () => {
   if (getSetting('backgroundTaskStarted', 'false') === 'true') {
     AirPlainBgModule.stopBackgroundTask();
     setSetting('backgroundTaskStarted', 'false');
   }
-}
+};
 
 export const fetch = async (
   url: string,
-  { timeout = 5000, ...fetchOptions }: RequestInit & { timeout?: number } = {}
+  { timeout = 5000, ...fetchOptions }: RequestInit & { timeout?: number } = {},
 ) => {
   const controller = new AbortController();
 
@@ -212,11 +249,15 @@ export const fetch = async (
 
   clearTimeout(abort);
   return response;
-}
+};
 
-Object.defineProperty(String.prototype, "splice", {
-  value: function(start: number, replacement: string) {
-    return this.slice(0, start) + replacement + this.slice(start + replacement.length);
+Object.defineProperty(String.prototype, 'splice', {
+  value: function (start: number, replacement: string) {
+    return (
+      this.slice(0, start) +
+      replacement +
+      this.slice(start + replacement.length)
+    );
   },
   writable: true,
   configurable: true,

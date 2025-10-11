@@ -1,6 +1,5 @@
 import { processExportData, processImportData } from '@/helpers/import-export';
 
-
 jest.mock('@/helpers/sqlite', () => ({
   __esModule: true,
   isFlightExists: jest.fn(),
@@ -9,29 +8,31 @@ jest.mock('@/helpers/sqlite', () => ({
 const mockedAirlines = [
   {
     airlineId: 175,
-    airlineCode: "BA",
-    airlineName: "British Airways",
-    checkInLink: "https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile",
-    checkInTime: 24
+    airlineCode: 'BA',
+    airlineName: 'British Airways',
+    checkInLink:
+      'https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile',
+    checkInTime: 24,
   },
   {
     airlineId: 406,
-    airlineCode: "F9",
-    airlineName: "Frontier Airlines",
-    checkInLink: "https://www.flyfrontier.com/travel/my-trips/manage-trip/",
-    checkInTime: 24
-  }
+    airlineCode: 'F9',
+    airlineName: 'Frontier Airlines',
+    checkInLink: 'https://www.flyfrontier.com/travel/my-trips/manage-trip/',
+    checkInTime: 24,
+  },
 ];
 
 jest.mock('@/helpers/airdata', () => ({
   __esModule: true,
-  getAirlineData: jest.fn((code: string) => mockedAirlines.find(x => x.airlineCode === code)),
+  getAirlineData: jest.fn((code: string) =>
+    mockedAirlines.find((x) => x.airlineCode === code),
+  ),
 }));
 
 import { isFlightExists } from '@/helpers/sqlite';
 
 const mockedIsFlightExists = jest.mocked(isFlightExists);
-
 
 describe('processExportData', () => {
   it('should return empty string for empty flights array', () => {
@@ -53,20 +54,24 @@ describe('processExportData', () => {
         check_in_time: 'time',
         departure_airport: 'JFK',
         arrival_airport: 'LAX',
-        status: 'arrived'
-      }
+        status: 'arrived',
+      },
     ];
     const result = processExportData(flights);
-    expect(result).toBe('departure_airport,arrival_airport,status\nJFK,LAX,arrived');
+    expect(result).toBe(
+      'departure_airport,arrival_airport,status\nJFK,LAX,arrived',
+    );
   });
 
   it('should handle multiple flights', () => {
     const flights = [
       { departure_airport: 'JFK', arrival_airport: 'LAX', status: 'arrived' },
-      { departure_airport: 'LAX', arrival_airport: 'SFO', status: 'scheduled' }
+      { departure_airport: 'LAX', arrival_airport: 'SFO', status: 'scheduled' },
     ];
     const result = processExportData(flights);
-    expect(result).toBe('departure_airport,arrival_airport,status\nJFK,LAX,arrived\nLAX,SFO,scheduled');
+    expect(result).toBe(
+      'departure_airport,arrival_airport,status\nJFK,LAX,arrived\nLAX,SFO,scheduled',
+    );
   });
 
   it('should exclude specified fields from export', () => {
@@ -83,14 +88,24 @@ describe('processExportData', () => {
         check_in_time: 'time',
         departure_airport: 'JFK',
         arrival_airport: 'LAX',
-        status: 'arrived'
-      }
+        status: 'arrived',
+      },
     ];
     const result = processExportData(flights);
     const lines = result.split('\n');
     const headers = lines[0].split(',');
-    const excludedFields = ['flight_id', 'airline_id', 'airline_name', 'is_archived', 'record_type', 'extra', 'notes', 'check_in_link', 'check_in_time'];
-    excludedFields.forEach(field => {
+    const excludedFields = [
+      'flight_id',
+      'airline_id',
+      'airline_name',
+      'is_archived',
+      'record_type',
+      'extra',
+      'notes',
+      'check_in_link',
+      'check_in_time',
+    ];
+    excludedFields.forEach((field) => {
       expect(headers).not.toContain(field);
     });
   });
@@ -131,8 +146,8 @@ describe('processImportData', () => {
         baggage_belt: 'B1',
         aircraft_type: 'Boeing 737',
         aircraft_reg_number: 'N123AA',
-        status: 'arrived'
-      }
+        status: 'arrived',
+      },
     ];
 
     const result = await processImportData(records);
@@ -144,7 +159,7 @@ describe('processImportData', () => {
       airline_id: 175,
       status: 'arrived',
       record_type: 0,
-      is_archived: 1
+      is_archived: 1,
     });
   });
 
@@ -159,8 +174,8 @@ describe('processImportData', () => {
         arrival_country: 'US',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -178,8 +193,8 @@ describe('processImportData', () => {
         arrival_country: 'US',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -197,8 +212,8 @@ describe('processImportData', () => {
         arrival_country: 'US',
         start_datetime: 'invalid-date',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -216,8 +231,8 @@ describe('processImportData', () => {
         arrival_country: 'US',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: 'invalid-date',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -237,8 +252,8 @@ describe('processImportData', () => {
         arrival_country: 'US',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -260,8 +275,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -285,8 +300,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: pastDate,
         end_datetime: pastDate,
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -310,8 +325,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: futureDate,
         end_datetime: futureDate,
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -335,8 +350,8 @@ describe('processImportData', () => {
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
         distance: '2475',
-        status: 'canceled'
-      }
+        status: 'canceled',
+      },
     ];
 
     const result = await processImportData(records);
@@ -359,8 +374,8 @@ describe('processImportData', () => {
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
         distance: '2475',
-        status: 'diverted'
-      }
+        status: 'diverted',
+      },
     ];
 
     const result = await processImportData(records);
@@ -382,8 +397,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -405,8 +420,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -428,8 +443,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -451,8 +466,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
 
     const result = await processImportData(records);
@@ -475,8 +490,8 @@ describe('processImportData', () => {
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
         distance: '2475',
-        extra_field: 'should be removed'
-      }
+        extra_field: 'should be removed',
+      },
     ];
 
     const result = await processImportData(records);
@@ -495,8 +510,8 @@ describe('processImportData', () => {
         arrival_country: 'US',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
-      }
+        distance: '2475',
+      },
     ];
     const result = await processImportData(records);
     expect(result).toEqual([]);
@@ -516,8 +531,8 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: 'invalid'
-      }
+        distance: 'invalid',
+      },
     ];
     const result = await processImportData(records);
     expect(result[0].distance).toBe(0);
@@ -537,8 +552,8 @@ describe('processImportData', () => {
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
         distance: '2475',
-        actual_start_datetime: 'invalid-date'
-      }
+        actual_start_datetime: 'invalid-date',
+      },
     ];
     const result = await processImportData(records);
     expect(result).toEqual([]);
@@ -558,8 +573,8 @@ describe('processImportData', () => {
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
         distance: '2475',
-        actual_end_datetime: 'invalid-date'
-      }
+        actual_end_datetime: 'invalid-date',
+      },
     ];
     const result = await processImportData(records);
     expect(result).toEqual([]);
@@ -579,9 +594,9 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
+        distance: '2475',
         // actual_start_datetime missing
-      }
+      },
     ];
     const result = await processImportData(records);
     expect(result[0].actual_start_datetime).toBe('2023-01-01T10:00:00Z');
@@ -601,9 +616,9 @@ describe('processImportData', () => {
         arrival_airport_timezone: 'PST',
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
-        distance: '2475'
+        distance: '2475',
         // actual_end_datetime missing
-      }
+      },
     ];
     const result = await processImportData(records);
     expect(result[0].actual_end_datetime).toBe('2023-01-01T13:00:00Z');
@@ -624,8 +639,8 @@ describe('processImportData', () => {
         start_datetime: '2023-01-01T10:00:00Z',
         end_datetime: '2023-01-01T13:00:00Z',
         distance: '2475',
-        status: 'invalid-status'
-      }
+        status: 'invalid-status',
+      },
     ];
     const result = await processImportData(records);
     expect(result[0].status).toBe('arrived');
@@ -648,8 +663,8 @@ describe('processImportData', () => {
         distance: '2475',
         departure_terminal: null,
         baggage_belt: undefined,
-        aircraft_type: 'null'
-      }
+        aircraft_type: 'null',
+      },
     ];
     const result = await processImportData(records);
     expect(result[0]).not.toHaveProperty('departure_terminal');

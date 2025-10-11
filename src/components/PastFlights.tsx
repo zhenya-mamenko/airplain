@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, useContext, useSyncExternalStore } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  useSyncExternalStore,
+} from 'react';
 import { AppState, FlatList } from 'react-native';
 import { View } from 'react-native-picasso';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -10,14 +16,15 @@ import emitter from '@/helpers/emitter';
 import { settings as _settings } from '@/constants/settings';
 import { GlobalContext } from '@/components/GlobalContext';
 
-
 export default function PastFlights() {
   const [refreshing, setRefreshing] = useState(false);
   const [flights, setFlights] = useState<Flight[]>([]);
   const [timeoutId, setTimeoutId] = useState<any | null>(null);
 
   const flightsFilter = useContext(GlobalContext).flightsFilter;
-  const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
+  const loadFlightsRef = useRef(
+    (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {},
+  );
 
   const subscribe = (callback: Function) => {
     const update = () => callback();
@@ -26,12 +33,15 @@ export default function PastFlights() {
     return () => {
       emitter.off('updateSettings', update);
     };
-  }
+  };
 
-  const settings = useSyncExternalStore(subscribe, () => _settings );
+  const settings = useSyncExternalStore(subscribe, () => _settings);
 
   useEffect(() => {
-    loadFlightsRef.current = async (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {
+    loadFlightsRef.current = async (
+      refreshAnimation: boolean = false,
+      forceRefresh: boolean = false,
+    ) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
@@ -41,22 +51,34 @@ export default function PastFlights() {
         if (!!flightsFilter) {
           if (!!flightsFilter.dateFrom) {
             const value = flightsFilter.dateFrom.toISOString().substring(0, 10);
-            filter.push({ field: 'substr(start_datetime, 1, 10)', operator: '>=', value });
+            filter.push({
+              field: 'substr(start_datetime, 1, 10)',
+              operator: '>=',
+              value,
+            });
           }
           if (!!flightsFilter.dateTo) {
             const value = flightsFilter.dateTo.toISOString().substring(0, 10);
-            filter.push({ field: 'substr(start_datetime, 1, 10)', operator: '<=', value });
+            filter.push({
+              field: 'substr(start_datetime, 1, 10)',
+              operator: '<=',
+              value,
+            });
           }
           if (!!flightsFilter.airports && flightsFilter.airports.length > 0) {
             const value = flightsFilter.airports.join("','");
-            filter.push(`((departure_airport IN ('${value}')) OR (arrival_airport IN ('${value}')))`);
+            filter.push(
+              `((departure_airport IN ('${value}')) OR (arrival_airport IN ('${value}')))`,
+            );
           }
-        };
+        }
         const flights = await getPastFlights(filter, settings.FLIGHTS_LIMIT);
         setFlights(flights);
-        setTimeoutId(setTimeout(() => {
-          loadFlightsRef.current(false);
-        }, settings.REFRESH_INTERVAL * 60000));
+        setTimeoutId(
+          setTimeout(() => {
+            loadFlightsRef.current(false);
+          }, settings.REFRESH_INTERVAL * 60000),
+        );
       } catch (e) {
         console.error(e);
       } finally {
@@ -67,7 +89,13 @@ export default function PastFlights() {
   }, [flightsFilter]);
 
   useEffect(() => {
-    const callback = ({ refreshing, forceRefresh }: { refreshing?: boolean, forceRefresh?: boolean }) => loadFlightsRef.current(refreshing, forceRefresh);
+    const callback = ({
+      refreshing,
+      forceRefresh,
+    }: {
+      refreshing?: boolean;
+      forceRefresh?: boolean;
+    }) => loadFlightsRef.current(refreshing, forceRefresh);
     emitter.on('updatePastFlights', callback);
 
     return () => emitter.off('updatePastFlights', callback);
@@ -75,16 +103,22 @@ export default function PastFlights() {
 
   const appState = useRef(AppState.currentState);
   useEffect(() => {
-    const appStateListener = AppState.addEventListener('change', (nextAppState) => {
-      if (nextAppState === 'active' && ['background', 'inactive'].includes(appState.current)) {
-        loadFlightsRef.current(false);
-      }
-      appState.current = nextAppState;
-    });
+    const appStateListener = AppState.addEventListener(
+      'change',
+      (nextAppState) => {
+        if (
+          nextAppState === 'active' &&
+          ['background', 'inactive'].includes(appState.current)
+        ) {
+          loadFlightsRef.current(false);
+        }
+        appState.current = nextAppState;
+      },
+    );
 
     return () => {
       appStateListener.remove();
-    }
+    };
   }, []);
 
   const renderFlight = ({ item }: { item: Flight }) => {
@@ -93,17 +127,17 @@ export default function PastFlights() {
 
   return (
     <GestureHandlerRootView>
-      <View
-        className='bg-surfaceVariant flex-1'
-      >
+      <View className="bg-surfaceVariant flex-1">
         <FlatList
-          data={ flights }
-          keyboardShouldPersistTaps='always'
-          keyExtractor={ (item: Flight, index: number) => item.flightId?.toString() ?? index.toString() }
-          refreshing={ refreshing }
-          renderItem={ renderFlight }
+          data={flights}
+          keyboardShouldPersistTaps="always"
+          keyExtractor={(item: Flight, index: number) =>
+            item.flightId?.toString() ?? index.toString()
+          }
+          refreshing={refreshing}
+          renderItem={renderFlight}
           style={{ padding: 8 }}
-          onRefresh={ () => loadFlightsRef.current(true) }
+          onRefresh={() => loadFlightsRef.current(true)}
         />
       </View>
     </GestureHandlerRootView>

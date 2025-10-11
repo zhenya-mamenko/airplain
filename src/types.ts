@@ -2,14 +2,13 @@ import React from 'react';
 import { SkPath } from '@shopify/react-native-skia';
 import { Point } from '@/helpers/algs';
 
-
 export interface AirlineData {
   airlineId: number;
   airlineCode: string;
   airlineName: string;
   checkInLink: string;
   checkInTime: string;
-};
+}
 
 export interface AirportData {
   airport_latitude: number;
@@ -20,7 +19,7 @@ export interface AirportData {
   municipality_latitude: number;
   municipality_longitude: number;
   municipality_name: string;
-};
+}
 
 export interface Achievement {
   arrivalAirport: string;
@@ -29,16 +28,20 @@ export interface Achievement {
   id: string;
   name: string;
   svg: Array<SkPath>;
-};
+}
 
 export interface AchievementData {
   name: string;
   flightDate: string;
   departureAirport: string;
   arrivalAirport: string;
-};
+}
 
-export type BCBPFormat = 'PKBarcodeFormatAztec' | 'PKBarcodeFormatDataMatrix' | 'PKBarcodeFormatPDF417' | 'PKBarcodeFormatQR';
+export type BCBPFormat =
+  | 'PKBarcodeFormatAztec'
+  | 'PKBarcodeFormatDataMatrix'
+  | 'PKBarcodeFormatPDF417'
+  | 'PKBarcodeFormatQR';
 
 export interface ConfirmationDialogSettings {
   closeButton: string;
@@ -47,13 +50,13 @@ export interface ConfirmationDialogSettings {
   title: string;
   showOnlyCloseButton: boolean;
   onConfirm?: () => void;
-};
+}
 
 export interface ContextData {
   achievement: Achievement;
   color: string;
   hull: Point[];
-};
+}
 
 export interface DepartingFlightCardData {
   actualEndDatetime?: number;
@@ -80,7 +83,7 @@ export interface DepartingFlightCardData {
   state?: FlightState;
   stateTime?: number;
   status: FlightStatus;
-};
+}
 
 export interface Flight {
   actualEndDatetime?: string;
@@ -122,12 +125,34 @@ export interface Flight {
   seatNumber?: string;
   startDatetime: string;
   status: FlightStatus;
-};
+}
 
-export type FlightState = 'gateclosed' | 'boarding_start' | 'boarding' | 'boarding_end' | 'checkin_end' | 'checkin' | 'flight_end' | 'flight_start' | 'lastcall';
+export type FlightState =
+  | 'gateclosed'
+  | 'boarding_start'
+  | 'boarding'
+  | 'boarding_end'
+  | 'checkin_end'
+  | 'checkin'
+  | 'flight_end'
+  | 'flight_start'
+  | 'lastcall';
 
-export const FlightStatusValues = ['scheduled', 'checkin', 'on_time', 'gateclosed', 'boarding', 'delayed', 'canceled', 'departed', 'en_route', 'arrived', 'diverted', 'unknown'] as const;
-export type FlightStatus = typeof FlightStatusValues[number];
+export const FlightStatusValues = [
+  'scheduled',
+  'checkin',
+  'on_time',
+  'gateclosed',
+  'boarding',
+  'delayed',
+  'canceled',
+  'departed',
+  'en_route',
+  'arrived',
+  'diverted',
+  'unknown',
+] as const;
+export type FlightStatus = (typeof FlightStatusValues)[number];
 
 export interface FlightCardData {
   actualEndDatetime?: number;
@@ -149,13 +174,13 @@ export interface FlightCardData {
   state?: FlightState;
   stateTime?: number;
   status: FlightStatus;
-};
+}
 
 export interface FlightsFilter {
   dateFrom: Date | undefined;
   dateTo: Date | undefined;
   airports: Array<string>;
-};
+}
 
 export interface LandedFlightCardData {
   actualEndDatetime: number;
@@ -175,12 +200,12 @@ export interface LandedFlightCardData {
   isArchived: boolean;
   isDifferentTimezone: boolean;
   startDatetime: number;
-};
+}
 
 export interface PKPassAsset {
   image: string;
   ratio: number;
-};
+}
 
 export interface PKPassData {
   airline: string;
@@ -202,13 +227,13 @@ export interface PKPassData {
     backgroundColor: string;
     foregroundColor: string;
     labelColor: string;
-  },
+  };
   images: {
     footer?: PKPassAsset;
     icon?: PKPassAsset;
     logo?: PKPassAsset;
-  },
-};
+  };
+}
 
 export interface StatsData {
   [key: string]: {
@@ -227,13 +252,13 @@ export interface StatsData {
     internationalFlights: number;
     longHaulFlights: number;
   };
-};
+}
 
 export interface TabData {
   icon: string;
   route: string;
   title: string;
-};
+}
 
 export interface ThemeData {
   colors: {
@@ -264,11 +289,11 @@ export interface ThemeData {
   spacing: {
     [key: string]: number;
   };
-};
+}
 
 export interface WeatherData {
   code: number;
   icons: Array<React.JSX.Element>;
   temperature: number;
   temperatureOut: string;
-};
+}

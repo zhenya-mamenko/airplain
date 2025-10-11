@@ -1,6 +1,10 @@
 import { parseWeather, loadWeather } from '@/helpers/weather';
 import { fetch } from '@/helpers/common';
-import { SvgLightWind, SvgModerateWind, SvgHeaveWind } from '@/constants/svg/weather';
+import {
+  SvgLightWind,
+  SvgModerateWind,
+  SvgHeaveWind,
+} from '@/constants/svg/weather';
 import { weatherIcons } from '@/constants/weather';
 import { settings, WEATHER_API_URL } from '@/constants/settings';
 
@@ -24,7 +28,6 @@ describe('weather helper', () => {
   beforeEach(() => {
     mockFetch.mockClear();
   });
-
 
   describe('parseWeather', () => {
     test('parseWeather return null if data is null', () => {
@@ -154,7 +157,6 @@ describe('weather helper', () => {
       expect(result?.temperature).toBe(59);
       expect(result?.temperatureOut).toBe('+59°');
     });
-
   });
 
   describe('loadWeather', () => {
@@ -171,7 +173,7 @@ describe('weather helper', () => {
       expect(result).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
         `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=10,20`,
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
     });
 
@@ -184,7 +186,7 @@ describe('weather helper', () => {
       expect(result).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
         `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=10,20`,
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
     });
 
@@ -196,7 +198,7 @@ describe('weather helper', () => {
           wind_kph: 25,
           temp_c: 15,
           temp_f: 59,
-        }
+        },
       };
       mockFetch.mockResolvedValue({
         ok: true,
@@ -207,7 +209,7 @@ describe('weather helper', () => {
       expect(result).toEqual(mockWeatherData);
       expect(mockFetch).toHaveBeenCalledWith(
         `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=10,20`,
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
     });
 
@@ -216,7 +218,5 @@ describe('weather helper', () => {
       const result = await loadWeather(10, 20);
       expect(result).toBeNull();
     });
-
   });
-
 });

@@ -1,8 +1,10 @@
 import t from '@/helpers/localization';
 import { DateTime } from 'luxon';
 
-
-export function durationToLocaleString(duration: number, locale: string): string {
+export function durationToLocaleString(
+  duration: number,
+  locale: string,
+): string {
   // This is a workaround for the lack of support for Intl.RelativeTimeFormat in Expo.
   // const rtf = new Intl.RelativeTimeFormat(locale, { localeMatcher: 'best fit', style: 'narrow' });
   // const hours = rtf.formatToParts(Math.floor(duration / 60), 'hours');
@@ -10,8 +12,8 @@ export function durationToLocaleString(duration: number, locale: string): string
   // So I used the following code to get the same result
   const h = Math.floor(duration / 60);
   const m = duration % 60;
-  const hours = [{}, {value: h}, {value: t('measurements.h')}];
-  const minutes = [{}, {value: m}, {value: t('measurements.m')}];
+  const hours = [{}, { value: h }, { value: t('measurements.h') }];
+  const minutes = [{}, { value: m }, { value: t('measurements.m') }];
   let result = '';
   if (h !== 0) {
     result += `${hours[1].value}${hours[2].value}`;
@@ -23,9 +25,12 @@ export function durationToLocaleString(duration: number, locale: string): string
 }
 
 export function makeDateLabel(
-  startDate: Date, startTimezone: string,
-  endDate: Date, endTimezone: string,
-  locale: string, shortMonth?: boolean
+  startDate: Date,
+  startTimezone: string,
+  endDate: Date,
+  endTimezone: string,
+  locale: string,
+  shortMonth?: boolean,
 ): string {
   const currentStart = DateTime.now().setZone(startTimezone);
   const currentEnd = DateTime.now().setZone(endTimezone);
@@ -37,7 +42,10 @@ export function makeDateLabel(
     day: 'numeric',
     timeZone: startTimezone,
   };
-  if (start.year !== currentStart.year && (start.year !== end.year || end.day === start.day)) {
+  if (
+    start.year !== currentStart.year &&
+    (start.year !== end.year || end.day === start.day)
+  ) {
     dateOptions.year = 'numeric';
   }
   let startLabel = startDate.toLocaleString(locale, dateOptions);
@@ -71,23 +79,37 @@ export const dateClass = (planned: number, actual?: number): string | null => {
     return null;
   }
   return actual > planned ? 'red' : 'green';
-}
+};
 
-export function fromUTCtoLocalISOString(utcISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(utcISOString.replace('Z', ''), { zone: 'utc' })
+export function fromUTCtoLocalISOString(
+  utcISOString: string,
+  timezone: string,
+): string {
+  const result = DateTime.fromISO(utcISOString.replace('Z', ''), {
+    zone: 'utc',
+  })
     .setZone(timezone)
     .toFormat('y-MM-dd HH:mm:ssZZ');
   return result ?? utcISOString;
 }
 
-export function fromLocaltoLocalISOString(localISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(localISOString.replace('Z', ''), { zone: timezone })
-    .toFormat('y-MM-dd HH:mm:ssZZ');
+export function fromLocaltoLocalISOString(
+  localISOString: string,
+  timezone: string,
+): string {
+  const result = DateTime.fromISO(localISOString.replace('Z', ''), {
+    zone: timezone,
+  }).toFormat('y-MM-dd HH:mm:ssZZ');
   return result ?? localISOString;
 }
 
-export function fromLocalUTCtoUTCISOString(utcISOString: string, timezone: string): string {
-  const result = DateTime.fromISO(utcISOString.replace('Z', ''), { zone: 'utc' })
+export function fromLocalUTCtoUTCISOString(
+  utcISOString: string,
+  timezone: string,
+): string {
+  const result = DateTime.fromISO(utcISOString.replace('Z', ''), {
+    zone: 'utc',
+  })
     .setZone(timezone)
     .toFormat('y-MM-dd HH:mm:ss');
   return result ?? utcISOString;

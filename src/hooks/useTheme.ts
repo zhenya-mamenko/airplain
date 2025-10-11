@@ -3,7 +3,6 @@ import themes from '@/constants/themes.json';
 import { defaultTheme } from 'react-native-picasso';
 import type { ThemeData } from '@/types';
 
-
 const additions = {
   spacing: {
     xs: 4,
@@ -19,10 +18,13 @@ const additions = {
   radius: {
     xs: 3,
   },
-}
+};
 
 const useTheme = (theme?: string): ThemeData => {
-  const colors = themes[(theme || useDynamicColorScheme() || 'light') as keyof typeof themes];
+  const colors =
+    themes[
+      (theme || useDynamicColorScheme() || 'light') as keyof typeof themes
+    ];
   const result = {
     ...defaultTheme,
     ...colors,
@@ -31,6 +33,6 @@ const useTheme = (theme?: string): ThemeData => {
   result.font = { ...result.font, ...additions.font };
   result.radius = { ...result.radius, ...additions.radius };
   return result;
-}
+};
 
 export default useTheme;

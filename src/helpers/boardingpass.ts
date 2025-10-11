@@ -8,8 +8,7 @@ import { getAirportData, airlineLogoUri } from '@/helpers/airdata';
 import { scanFromURLAsync } from 'expo-camera';
 import { fetch } from '@/helpers/common';
 
-
-export { type BarcodedBoardingPass as BCBPData} from 'bcbp';
+export { type BarcodedBoardingPass as BCBPData } from 'bcbp';
 
 export function getColor(color: string): string | null {
   if (!color) return null;
@@ -25,19 +24,27 @@ export function getColor(color: string): string | null {
       return `#${r}${g}${b}`.toUpperCase();
     }
   }
-  return null
+  return null;
 }
 
 export async function loadPKPass(uri: string): Promise<PKPassData | null> {
-
-  const loadAsset = async (filename: string, ratio: number): Promise<PKPassAsset | undefined> => {
+  const loadAsset = async (
+    filename: string,
+    ratio: number,
+  ): Promise<PKPassAsset | undefined> => {
     ratio = Math.floor(ratio);
     let base64Content = null;
     while (ratio >= 1) {
-      let filepath = ratio > 1 ? `${unzipDir}${filename}@${ratio}x.png` : `${unzipDir}${filename}.png`;
+      let filepath =
+        ratio > 1
+          ? `${unzipDir}${filename}@${ratio}x.png`
+          : `${unzipDir}${filename}.png`;
       let fileInfo = await FileSystem.getInfoAsync(filepath);
       if (!fileInfo.exists) {
-        filepath = ratio > 1 ? `${unzipDir}en.lproj/${filename}@${ratio}x.png` : `${unzipDir}en.lproj/${filename}.png`;
+        filepath =
+          ratio > 1
+            ? `${unzipDir}en.lproj/${filename}@${ratio}x.png`
+            : `${unzipDir}en.lproj/${filename}.png`;
         fileInfo = await FileSystem.getInfoAsync(filepath);
         if (!fileInfo.exists) {
           ratio--;
@@ -45,7 +52,9 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
         }
       }
       try {
-        base64Content = await FileSystem.readAsStringAsync(filepath, { encoding: FileSystem.EncodingType.Base64 });
+        base64Content = await FileSystem.readAsStringAsync(filepath, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
         break;
       } catch (error) {
         console.error('Error reading file:', error);
@@ -56,7 +65,7 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
       return undefined;
     }
     return { image: `data:image/png;base64,${base64Content}`, ratio };
-  }
+  };
 
   const unzipDir = FileSystem.cacheDirectory + 'pkpass/';
 
@@ -95,9 +104,18 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
     console.error('Error unzipping file:', error);
     return null;
   }
-  const pass = JSON.parse(await FileSystem.readAsStringAsync(unzipDir + 'pass.json', { encoding: FileSystem.EncodingType.UTF8 }));
-  if (pass.formatVersion !== 1 || pass.boardingPass.transitType !== 'PKTransitTypeAir') {
-    console.error(`Unsupported pass format version: ${pass.formatVersion} or transitType: ${pass.boardingPass.transitType}`);
+  const pass = JSON.parse(
+    await FileSystem.readAsStringAsync(unzipDir + 'pass.json', {
+      encoding: FileSystem.EncodingType.UTF8,
+    }),
+  );
+  if (
+    pass.formatVersion !== 1 ||
+    pass.boardingPass.transitType !== 'PKTransitTypeAir'
+  ) {
+    console.error(
+      `Unsupported pass format version: ${pass.formatVersion} or transitType: ${pass.boardingPass.transitType}`,
+    );
     return null;
   }
 
@@ -105,7 +123,9 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
 
   const result: PKPassData = {
     airline: pass.organizationName,
-    barcode: pass.barcode ?? (pass.barcodes && pass.barcodes.length > 0 ? pass.barcodes[0] : ''),
+    barcode:
+      pass.barcode ??
+      (pass.barcodes && pass.barcodes.length > 0 ? pass.barcodes[0] : ''),
     boardingPass: pass.boardingPass,
     colors: {
       backgroundColor: getColor(pass.backgroundColor) ?? '#ffffff',
@@ -122,15 +142,18 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
 }
 
 export const parsefncMessage = (message: string): string => {
-  return message.split('').map((c) => {
-    if (c === '^') {
-      return '^^';
-    } else if (c.charCodeAt(0) > 255) {
-      return `^ECI${c.charCodeAt(0).toString(10).padStart(6, '0')}`;
-    }
-    return c;
-  }).join('');
-}
+  return message
+    .split('')
+    .map((c) => {
+      if (c === '^') {
+        return '^^';
+      } else if (c.charCodeAt(0) > 255) {
+        return `^ECI${c.charCodeAt(0).toString(10).padStart(6, '0')}`;
+      }
+      return c;
+    })
+    .join('');
+};
 
 export function decodeBCBP(bcbp: string): BCBPData | null {
   try {
@@ -141,7 +164,10 @@ export function decodeBCBP(bcbp: string): BCBPData | null {
   }
 }
 
-export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcodeFormatQR'): Promise<PKPassData | null> {
+export async function createPKPass(
+  bcbp: string,
+  format: BCBPFormat = 'PKBarcodeFormatQR',
+): Promise<PKPassData | null> {
   const bpData = decodeBCBP(bcbp);
   if (!bpData || !bpData.data || !bpData.data.legs || !bpData.data.legs[0]) {
     return null;
@@ -153,39 +179,81 @@ export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcode
     const departureAirportData = getAirportData(leg.departureAirport as string);
     const arrivalAirportData = getAirportData(leg.arrivalAirport as string);
     const primaryFields = [
-      { label: departureAirportData?.airport_name, value: departureAirportData?.iata_code ?? '', key: 'departureAirportCode'},
-      { label: arrivalAirportData?.airport_name, value: arrivalAirportData?.iata_code ?? '', key: 'arrivalAirportCode'},
+      {
+        label: departureAirportData?.airport_name,
+        value: departureAirportData?.iata_code ?? '',
+        key: 'departureAirportCode',
+      },
+      {
+        label: arrivalAirportData?.airport_name,
+        value: arrivalAirportData?.iata_code ?? '',
+        key: 'arrivalAirportCode',
+      },
     ];
     const auxiliaryFields = [
-      { label: 'Passenger', value: bpData.data.passengerName?.trim() ?? '', key: 'passenger'},
-      { label: 'Seat', value: (leg.seatNumber ?? '').replace(/^0+/, ''), key: 'seat'},
-      { label: 'Gate', value: '—', key: 'gate'},
+      {
+        label: 'Passenger',
+        value: bpData.data.passengerName?.trim() ?? '',
+        key: 'passenger',
+      },
+      {
+        label: 'Seat',
+        value: (leg.seatNumber ?? '').replace(/^0+/, ''),
+        key: 'seat',
+      },
+      { label: 'Gate', value: '—', key: 'gate' },
     ];
     if (leg.fastTrack !== undefined && leg.fastTrack) {
-      auxiliaryFields.push({ label: 'Fast track', value: 'Yes', key: 'fastTrack'});
+      auxiliaryFields.push({
+        label: 'Fast track',
+        value: 'Yes',
+        key: 'fastTrack',
+      });
     }
     const headerFields = [
-      { label: 'Flight number', value: `${leg.operatingCarrierDesignator?.trim()} ${leg.flightNumber?.replace(/^0+/, '')}`, key: 'flightNumber'},
+      {
+        label: 'Flight number',
+        value: `${leg.operatingCarrierDesignator?.trim()} ${leg.flightNumber?.replace(/^0+/, '')}`,
+        key: 'flightNumber',
+      },
     ];
-    const date = (leg.flightDate ?? new Date()).toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
-    const secondaryFields = [
-      { label: 'Date', value: date, key: 'date'},
-    ];
+    const date = (leg.flightDate ?? new Date()).toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+    });
+    const secondaryFields = [{ label: 'Date', value: date, key: 'date' }];
     if (!!leg.compartmentCode && leg.compartmentCode !== '') {
-      secondaryFields.push({ label: 'Cabin', value: leg.compartmentCode, key: 'cabinType'});
+      secondaryFields.push({
+        label: 'Cabin',
+        value: leg.compartmentCode,
+        key: 'cabinType',
+      });
     }
     if (!!leg.selecteeIndicator && leg.selecteeIndicator !== '') {
-      secondaryFields.push({ label: 'Vetting status', value: leg.selecteeIndicator, key: 'vettingStatus'});
+      secondaryFields.push({
+        label: 'Vetting status',
+        value: leg.selecteeIndicator,
+        key: 'vettingStatus',
+      });
     }
-    secondaryFields.push({ label: 'Sequence No', value: leg.checkInSequenceNumber ?? '', key: 'seqNo'});
+    secondaryFields.push({
+      label: 'Sequence No',
+      value: leg.checkInSequenceNumber ?? '',
+      key: 'seqNo',
+    });
 
     let image: any = null;
     try {
-      image = await fetch(airlineLogoUri(airline, true) as string, { timeout: 1000});
+      image = await fetch(airlineLogoUri(airline, true) as string, {
+        timeout: 1000,
+      });
     } catch (error) {
       return null;
     }
-    image = image && image.ok && image.status === 200 ? await image.arrayBuffer() : null;
+    image =
+      image && image.ok && image.status === 200
+        ? await image.arrayBuffer()
+        : null;
     let logo: PKPassAsset | undefined = undefined;
     if (image) {
       const base64Content = Buffer.from(image).toString('base64');
@@ -213,7 +281,7 @@ export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcode
       },
       images: {
         logo,
-        },
+      },
     };
     return result;
   } catch (error) {
@@ -227,13 +295,23 @@ const BCBPFormatMap: { [key: string]: BCBPFormat } = {
   16: 'PKBarcodeFormatDataMatrix',
   2048: 'PKBarcodeFormatPDF417',
   256: 'PKBarcodeFormatQR',
-}
+};
 
-export async function scanBarcode(uri: string): Promise<{ bcbp: string | null, format: BCBPFormat | null }> {
-  const scanResult = await scanFromURLAsync(uri, ['aztec', 'datamatrix', 'qr', 'pdf417']);
+export async function scanBarcode(
+  uri: string,
+): Promise<{ bcbp: string | null; format: BCBPFormat | null }> {
+  const scanResult = await scanFromURLAsync(uri, [
+    'aztec',
+    'datamatrix',
+    'qr',
+    'pdf417',
+  ]);
   if (!scanResult || scanResult.length === 0) {
-    return { bcbp: null, format: null }
+    return { bcbp: null, format: null };
   }
 
-  return { bcbp: scanResult[0].raw ?? scanResult[0].data, format: BCBPFormatMap[scanResult[0].type as keyof typeof BCBPFormatMap] };
+  return {
+    bcbp: scanResult[0].raw ?? scanResult[0].data,
+    format: BCBPFormatMap[scanResult[0].type as keyof typeof BCBPFormatMap],
+  };
 }

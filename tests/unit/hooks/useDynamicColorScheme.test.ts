@@ -1,7 +1,6 @@
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import { act, renderHook } from '@testing-library/react-native';
 
-
 const mockAddChangeListener = jest.fn();
 
 jest.mock('react-native', () => ({
@@ -9,13 +8,12 @@ jest.mock('react-native', () => ({
     getColorScheme: () => 'light',
     addChangeListener: (cb: Function) => {
       mockAddChangeListener(cb);
-      return { remove: jest.fn() }
+      return { remove: jest.fn() };
     },
   },
 }));
 
 describe('useDynamicColorScheme', () => {
-
   test('Get color scheme', () => {
     const colorScheme = renderHook(() => useDynamicColorScheme());
 
@@ -36,5 +34,4 @@ describe('useDynamicColorScheme', () => {
 
     expect(colorScheme.result.current).toBe('dark');
   });
-
 });

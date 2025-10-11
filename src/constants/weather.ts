@@ -1,6 +1,5 @@
 import * as svg from '@/constants/svg/weather';
 
-
 export const weatherIcons = {
   day: {
     '1000': svg.SvgDaySunny,

@@ -13,7 +13,7 @@ No payment card is required.
 1. Register on API.market at [https://api.market/auth/login](https://api.market/auth/login) to obtain a key.
 
 ![image](https://github.com/user-attachments/assets/e6384f60-96f4-4b2c-8743-9cef0629a71f)
- 
+
 2. Then connect to the Basic plan in AeroDataBox API at [https://api.market/store/aedbx/aerodatabox](https://api.market/store/aedbx/aerodatabox), no payment card is required.
 
 ![image](https://github.com/user-attachments/assets/1d5656c8-bf74-44ce-b7ba-ef273000111c)

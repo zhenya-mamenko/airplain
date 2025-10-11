@@ -416,7 +416,7 @@
       "flights_limit": "Flights in list",
       "force_request_api_on_manual_refresh": "Request API on manual refresh",
       "import": "Import",
-      "import_error_title" : "Import error",
+      "import_error_title": "Import error",
       "import_error_description": "This file can't be imported, check format and requirements.",
       "import_success_title": "Import was successful",
       "import_success_description": "Flights data was imported, %{count} flights were added.",

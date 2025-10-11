@@ -1,7 +1,16 @@
-import { findPolygonCenter, squareToPolygon, rotatePoint, rotatePolygon, doLinesIntersect, isPointInPolygon, doPolygonsIntersect, doesLineIntersectPolygon, calcHeight } from '@/helpers/algs';
+import {
+  findPolygonCenter,
+  squareToPolygon,
+  rotatePoint,
+  rotatePolygon,
+  doLinesIntersect,
+  isPointInPolygon,
+  doPolygonsIntersect,
+  doesLineIntersectPolygon,
+  calcHeight,
+} from '@/helpers/algs';
 
 describe('algs helper', () => {
-
   test('findPolygonCenter', () => {
     const polygon = [
       { x: 0, y: 0 },
@@ -108,13 +117,21 @@ describe('algs helper', () => {
     expect(doesLineIntersectPolygon(line2Start, line2End, polygon)).toBe(false);
   });
 
-
   test('calcHeight', () => {
     const polygons = [
-      [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 10 }, { x: 0, y: 10 }],
-      [{ x: 15, y: 20 }, { x: 25, y: 20 }, { x: 25, y: 30 }, { x: 15, y: 30 }],
+      [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+        { x: 10, y: 10 },
+        { x: 0, y: 10 },
+      ],
+      [
+        { x: 15, y: 20 },
+        { x: 25, y: 20 },
+        { x: 25, y: 30 },
+        { x: 15, y: 30 },
+      ],
     ];
     expect(calcHeight(polygons)).toBe(30);
   });
-
 });
