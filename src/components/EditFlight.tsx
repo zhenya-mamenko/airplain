@@ -57,7 +57,7 @@ const DateTimeRow = ({
   state: any;
 }) => {
   const [value, setValue] = useState<string>(
-    state[`actual${type}Datetime`] || state[`${type.toLowerCase()}Datetime`],
+    state[`actual${type}Datetime`] || state[`${type.toLowerCase()}Datetime`]
   );
   const dispatch = useContext(DataCardContext);
 
@@ -133,8 +133,9 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
+  const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
   const colorSecondaryContainer = useThemeColor(
-    'textColors.secondaryContainer',
+    'textColors.secondaryContainer'
   );
   const colorPrimary = useThemeColor('textColors.primary');
   const colorGray = useThemeColor('textColors.gray');
@@ -164,12 +165,12 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const [state, dispatch] = useReducer(reducer, props.data);
 
   const departureDate = new Date(
-    state.actualStartDatetime ?? state.startDatetime,
+    state.actualStartDatetime ?? state.startDatetime
   );
   const arrivalDate = new Date(state.actualEndDatetime ?? state.endDatetime);
   const durationString = durationToLocaleString(
     Math.round((arrivalDate.getTime() - departureDate.getTime()) / 60000),
-    locale,
+    locale
   );
 
   const bcbpDispatch = async (action: any) => {
@@ -204,10 +205,10 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   };
 
   const departureFlag = flags.find(
-    (x) => x.country_code === state.departureCountry,
+    (x) => x.country_code === state.departureCountry
   )?.flag;
   const arrivalFlag = flags.find(
-    (x) => x.country_code === state.arrivalCountry,
+    (x) => x.country_code === state.arrivalCountry
   )?.flag;
 
   const departureAirportData = getAirportData(state.departureAirport, locale);
@@ -227,7 +228,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         const flightData = await getFlightData(
           state.airline,
           state.flightNumber,
-          state.startDatetime.substring(0, 10),
+          state.startDatetime.substring(0, 10)
         );
         if (!!flightData) {
           const result: any = {};
@@ -352,6 +353,36 @@ const EditFlight = React.memo((props: { data: Flight }) => {
             width="34%"
           />
         </View>
+
+        <View
+          className="flex-row bt-1 bordercolor-outlineVariant"
+          style={{
+            marginHorizontal: -16,
+            paddingHorizontal: 16,
+            paddingTop: 4,
+          }}
+        >
+          <Icon
+            name="clock"
+            size={13}
+            color={colorPrimaryContainer}
+            style={{ marginTop: 6 }}
+          />
+          <Text
+            className="size-smm color-primaryContainer ml-sm"
+            ellipsizeMode="tail"
+            numberOfLines={1}
+            style={{
+              fontWeight: 'bold',
+              marginTop: 2,
+              fontVariant: ['small-caps'],
+            }}
+          >
+            {`UTC ${props.data.startDatetime
+              .slice(-6)
+              .replace('-', '–')}`.toLocaleLowerCase()}
+          </Text>
+        </View>
       </View>
       <View className="flex-column">
         <DateTimeRow state={state} type="Start" />
@@ -449,6 +480,36 @@ const EditFlight = React.memo((props: { data: Flight }) => {
             value={none(state.baggageBelt)}
             width="34%"
           />
+        </View>
+
+        <View
+          className="flex-row bt-1 bordercolor-outlineVariant"
+          style={{
+            marginHorizontal: -16,
+            paddingHorizontal: 16,
+            paddingTop: 4,
+          }}
+        >
+          <Icon
+            name="clock"
+            size={13}
+            color={colorPrimaryContainer}
+            style={{ marginTop: 6 }}
+          />
+          <Text
+            className="size-smm color-primaryContainer ml-sm"
+            ellipsizeMode="tail"
+            numberOfLines={1}
+            style={{
+              fontWeight: 'bold',
+              marginTop: 2,
+              fontVariant: ['small-caps'],
+            }}
+          >
+            {`UTC ${props.data.endDatetime
+              .slice(-6)
+              .replace('-', '–')}`.toLocaleLowerCase()}
+          </Text>
         </View>
       </View>
       <View className="flex-column">
@@ -616,7 +677,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
           caption={t('measurements.distance')}
           selectable={!dragEnabled}
           value={`${state.distance.toLocaleString(locale)}${t(
-            'measurements.km',
+            'measurements.km'
           )}`}
           width="66%"
         />
@@ -778,10 +839,10 @@ const EditFlight = React.memo((props: { data: Flight }) => {
 
   const FLIGHT_CARDS = getSetting(
     'FLIGHT_CARDS',
-    'departure|arrival|boardingpass|flight|aircraft|notes|none',
+    'departure|arrival|boardingpass|flight|aircraft|notes|none'
   );
   const [data, setData] = useState<Array<DCType>>(
-    FLIGHT_CARDS.split('|') as Array<DCType>,
+    FLIGHT_CARDS.split('|') as Array<DCType>
   );
 
   const renderItem = ({ item }: ListRenderItemInfo<DCType>) => {
@@ -794,9 +855,11 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     );
   };
   const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
-    if ([from, to].includes(FLIGHT_CARDS.split('|').length - 1)) return;
     setData((value) => {
-      const newData = reorderItems(value, from, to);
+      const newData =
+        to === FLIGHT_CARDS.split('|').length - 1
+          ? [...value]
+          : reorderItems(value, from, to);
       setSetting('FLIGHT_CARDS', newData.join('|'));
       return newData;
     });

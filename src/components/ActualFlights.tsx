@@ -25,7 +25,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
 
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadFlightsRef = useRef(
-    (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {},
+    (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {}
   );
   const flightsLoading = useRef(false);
 
@@ -45,7 +45,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
 
     loadFlightsRef.current = async (
       refreshAnimation: boolean = false,
-      forceRefresh: boolean = false,
+      forceRefresh: boolean = false
     ) => {
       if (flightsLoading.current) return;
       flightsLoading.current = true;
@@ -62,7 +62,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
         ) {
           const flights = await fetchActualFlights(
             props.now ?? new Date(),
-            forceRefresh,
+            forceRefresh
           );
           if (flights.length !== 0) {
             if (settings.ONLY_MANUAL_REFRESH === 'false') {
@@ -75,10 +75,10 @@ const ActualFlights = memo((props: { now?: Date }) => {
           }
           setFlights(flights);
         }
-        if (settings.ONLY_MANUAL_REFRESH !== 'false') {
+        if (settings.ONLY_MANUAL_REFRESH === 'false') {
           const tId = setTimeout(
             () => loadFlightsRef.current(false, false),
-            60000,
+            60000
           );
           timeoutId.current = tId;
         }
@@ -115,7 +115,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
           loadFlightsRef.current(true);
         }
         appState.current = nextAppState;
-      },
+      }
     );
 
     return () => {
@@ -171,7 +171,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
           onRefresh={() =>
             loadFlightsRef.current(
               true,
-              settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH === 'true',
+              settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH === 'true'
             )
           }
         />
