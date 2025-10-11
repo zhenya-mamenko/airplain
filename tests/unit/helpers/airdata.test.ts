@@ -1,21 +1,27 @@
-import { getAirportData, loadAirlines, getAirlineData, getAirlinesData, airlineLogoUri } from '@/helpers/airdata';
-
+import {
+  getAirportData,
+  loadAirlines,
+  getAirlineData,
+  getAirlinesData,
+  airlineLogoUri,
+} from '@/helpers/airdata';
 
 const mockedAirlines = [
   {
     airlineId: 175,
-    airlineCode: "BA",
-    airlineName: "British Airways",
-    checkInLink: "https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile",
-    checkInTime: 24
+    airlineCode: 'BA',
+    airlineName: 'British Airways',
+    checkInLink:
+      'https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile',
+    checkInTime: 24,
   },
   {
     airlineId: 406,
-    airlineCode: "F9",
-    airlineName: "Frontier Airlines",
-    checkInLink: "https://www.flyfrontier.com/travel/my-trips/manage-trip/",
-    checkInTime: 24
-  }
+    airlineCode: 'F9',
+    airlineName: 'Frontier Airlines',
+    checkInLink: 'https://www.flyfrontier.com/travel/my-trips/manage-trip/',
+    checkInTime: 24,
+  },
 ];
 
 jest.mock('@/helpers/sqlite', () => ({
@@ -31,7 +37,7 @@ jest.mock('@/constants/settings', () => ({
   deleteSetting: jest.fn(),
   getSetting: jest.fn(),
   setSetting: jest.fn(),
-  settings: {}
+  settings: {},
 }));
 
 jest.mock('@/helpers/common', () => ({
@@ -51,16 +57,14 @@ jest.mock('expo-notifications', () => ({
   cancelScheduledNotificationAsync: jest.fn(),
   setNotificationChannelAsync: jest.fn(),
   AndroidImportance: {
-    DEFAULT: 1
+    DEFAULT: 1,
   },
   AndroidNotificationVisibility: {
-    PUBLIC: 1
+    PUBLIC: 1,
   },
 }));
 
-
 describe('airdata helper', () => {
-
   loadAirlines();
 
   test('getAirportData', () => {
@@ -105,8 +109,11 @@ describe('airdata helper', () => {
   });
 
   test('airlineLogoUri', () => {
-    expect(airlineLogoUri('BA')).toEqual({ uri: 'https://images.kiwi.com/airlines/64x64/BA.png' });
-    expect(airlineLogoUri('BA', true)).toBe('https://images.kiwi.com/airlines/64x64/BA.png');
+    expect(airlineLogoUri('BA')).toEqual({
+      uri: 'https://images.kiwi.com/airlines/64x64/BA.png',
+    });
+    expect(airlineLogoUri('BA', true)).toBe(
+      'https://images.kiwi.com/airlines/64x64/BA.png',
+    );
   });
-
 });

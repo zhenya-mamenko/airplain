@@ -57,10 +57,10 @@ Here you can set the maximum number of flights displayed in the list and enable 
 
 ## Additional Information
 
-* The application can work without API access and internet, so you can use it as a simple and convenient storage for flight information.
-* Notifications for actual flights are grouped into several channels; for each, you can set your own display conditions or completely disable them. This feature is available through the application's system settings.
-* A flight can be deleted by long-pressing on the card.
-* In the flight card, blocks can be moved (use long press). Copy mode is also available — then you can select any text with a long press.
+- The application can work without API access and internet, so you can use it as a simple and convenient storage for flight information.
+- Notifications for actual flights are grouped into several channels; for each, you can set your own display conditions or completely disable them. This feature is available through the application's system settings.
+- A flight can be deleted by long-pressing on the card.
+- In the flight card, blocks can be moved (use long press). Copy mode is also available — then you can select any text with a long press.
 
 ## System Requirements
 

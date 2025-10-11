@@ -1,14 +1,14 @@
 import useTheme from '@/hooks/useTheme';
 import { renderHook } from '@testing-library/react-native';
-import mockedThemes from '../../__mocks__/themes.json'
-
+import mockedThemes from '../../__mocks__/themes.json';
 
 jest.mock('@/hooks/useDynamicColorScheme', () => ({
   __esModule: true,
-  default: jest.fn()
+  default: jest
+    .fn()
     .mockReturnValueOnce('light')
     .mockReturnValueOnce('dark')
-    .mockReturnValueOnce(undefined)
+    .mockReturnValueOnce(undefined),
 }));
 
 jest.mock('@/hooks/useTheme', () => ({
@@ -26,7 +26,7 @@ jest.mock('@/hooks/useTheme', () => ({
     radius: {
       xs: 3,
     },
-  }
+  },
 }));
 
 describe('useTheme', () => {

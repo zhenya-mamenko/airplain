@@ -1,10 +1,12 @@
 import React, { useEffect, useImperativeHandle, useState } from 'react';
-import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import {
+  DateTimePickerAndroid,
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import { DateTime } from 'luxon';
 import { useLocale } from '@/helpers/localization';
 import Button from '@/components/Button';
 import { fromLocaltoUTCISOString } from '@/helpers/datetime';
-
 
 interface Props {
   className?: string;
@@ -21,11 +23,21 @@ interface Props {
 
 interface IDatetimeInputRef {
   open: () => void;
-};
+}
 
 const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
-  ({ className, dateFormatOptions, textClass, timeFormatOptions, onChange, timezone, ...props }: Props, currentRef) => {
-
+  (
+    {
+      className,
+      dateFormatOptions,
+      textClass,
+      timeFormatOptions,
+      onChange,
+      timezone,
+      ...props
+    }: Props,
+    currentRef,
+  ) => {
     const [value, setValue] = useState<string>('');
     const [dateValue, setDateValue] = useState<Date>(new Date());
     const [text, setText] = useState('');
@@ -61,7 +73,10 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
         setText(props.mode === 'date' ? ' 📅 ' : ' 🕒 ');
       } else {
         const date = new Date(value);
-        const text = props.mode === 'date' ? date.toLocaleDateString(locale, dateOptions) : date.toLocaleTimeString(locale, timeOptions);
+        const text =
+          props.mode === 'date'
+            ? date.toLocaleDateString(locale, dateOptions)
+            : date.toLocaleTimeString(locale, timeOptions);
         setText(text);
       }
     }, [props.mode, value]);
@@ -81,7 +96,7 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
         setDateValue(new Date(textDate.slice(0, -6)));
         if (onChange) onChange(textDate);
       }
-    }
+    };
 
     const params = {
       ...props,
@@ -99,6 +114,7 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
         onPress={open}
       />
     );
-  });
+  },
+);
 
 export default DatetimeInput;

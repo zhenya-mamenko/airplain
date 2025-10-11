@@ -4,16 +4,23 @@ import type { Flight } from '@/types';
 import * as aerodatabox from '@/helpers/flights/aerodatabox';
 import * as aeroapi from '@/helpers/flights/flightaware';
 
-
 interface ApiData {
   key: string | undefined;
   url: string | undefined;
   module: any;
 }
 
-const apiList: {[key: string]: Function} = {
-  'aerodatabox': (): ApiData => ({ key: settings.AEDBX_API_KEY, url: AEDBX_API_URL, module: aerodatabox }),
-  'aeroapi': (): ApiData => ({ key: settings.AEROAPI_API_KEY, url: AEROAPI_API_URL, module: aeroapi }),
+const apiList: { [key: string]: Function } = {
+  aerodatabox: (): ApiData => ({
+    key: settings.AEDBX_API_KEY,
+    url: AEDBX_API_URL,
+    module: aerodatabox,
+  }),
+  aeroapi: (): ApiData => ({
+    key: settings.AEROAPI_API_KEY,
+    url: AEROAPI_API_URL,
+    module: aeroapi,
+  }),
 };
 
 function getApi(name: string = settings.CURRENT_API): ApiData | null {
@@ -24,8 +31,14 @@ function getApi(name: string = settings.CURRENT_API): ApiData | null {
   return api;
 }
 
-export const getFlightData = async (airline: string, flightNumber: string, date: string): Promise<Flight | null> => {
-  console.debug(`Fetching flight data from API: ${airline} ${flightNumber} ${date}`);
+export const getFlightData = async (
+  airline: string,
+  flightNumber: string,
+  date: string,
+): Promise<Flight | null> => {
+  console.debug(
+    `Fetching flight data from API: ${airline} ${flightNumber} ${date}`,
+  );
   const state = await NetInfo.fetch();
   if (!state.isConnected) {
     return null;
@@ -34,5 +47,11 @@ export const getFlightData = async (airline: string, flightNumber: string, date:
   if (!api || !api.key || !api.url || !api.module) {
     return null;
   }
-  return await api.module.getFlightData(airline, flightNumber, date, api.url, api.key);
-}
+  return await api.module.getFlightData(
+    airline,
+    flightNumber,
+    date,
+    api.url,
+    api.key,
+  );
+};

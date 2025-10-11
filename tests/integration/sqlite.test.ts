@@ -1,7 +1,6 @@
 import type { Flight } from '@/types';
 import * as db from '@/helpers/sqlite';
 
-
 const mockSQLite = {
   execAsync: jest.fn(),
   getAllAsync: jest.fn(),
@@ -17,7 +16,9 @@ jest.mock('expo-sqlite', () => ({
 
 jest.mock('expo-asset', () => ({
   Asset: {
-    loadAsync: jest.fn().mockResolvedValue([{ localUri: 'mocked/local/uri.sql' }]),
+    loadAsync: jest
+      .fn()
+      .mockResolvedValue([{ localUri: 'mocked/local/uri.sql' }]),
   },
 }));
 
@@ -51,13 +52,19 @@ describe('SQLite', () => {
     it('should open the database and execute PRAGMA statements', async () => {
       const result = await db.openDatabase('test.db');
       expect(result).toBe(true);
-      expect(mockSQLite.execAsync).toHaveBeenCalledWith('PRAGMA journal_mode = WAL');
-      expect(mockSQLite.execAsync).toHaveBeenCalledWith('PRAGMA foreign_keys = ON');
+      expect(mockSQLite.execAsync).toHaveBeenCalledWith(
+        'PRAGMA journal_mode = WAL',
+      );
+      expect(mockSQLite.execAsync).toHaveBeenCalledWith(
+        'PRAGMA foreign_keys = ON',
+      );
     });
 
     it('should return false if the database cannot be opened', async () => {
       jest.spyOn(console, 'error').mockImplementation(() => {});
-      mockSQLite.execAsync.mockRejectedValueOnce(new Error('Failed to execute'));
+      mockSQLite.execAsync.mockRejectedValueOnce(
+        new Error('Failed to execute'),
+      );
       const result = await db.openDatabase('test.db');
       expect(result).toBe(false);
       expect(console.error).toHaveBeenCalled();
@@ -82,7 +89,10 @@ describe('SQLite', () => {
       const expectedSQL = `INSERT OR REPLACE INTO test_table (column1, column2) VALUES (?, ?), (?, ?)`;
       const expectedParams = ['value1', 'value2', 'value3', 'value4'];
 
-      expect(mockSQLite.runAsync).toHaveBeenCalledWith(expectedSQL, expectedParams);
+      expect(mockSQLite.runAsync).toHaveBeenCalledWith(
+        expectedSQL,
+        expectedParams,
+      );
     });
 
     it('should handle empty records gracefully', async () => {
@@ -117,7 +127,10 @@ describe('SQLite', () => {
       await db.updateFlight(mockFlight);
 
       expect(mockSQLite.withTransactionAsync).toHaveBeenCalled();
-      expect(mockSQLite.runAsync).toHaveBeenCalledWith('DELETE FROM passengers WHERE flight_id = ?;', 1);
+      expect(mockSQLite.runAsync).toHaveBeenCalledWith(
+        'DELETE FROM passengers WHERE flight_id = ?;',
+        1,
+      );
       expect(mockSQLite.runAsync).toHaveBeenCalled();
     });
 
@@ -151,10 +164,12 @@ describe('SQLite', () => {
 
     it('should throw an error if the database is not opened', async () => {
       jest.spyOn(db, 'getStats').mockImplementationOnce(async () => {
-        throw new Error('Can\'t get stats: database not opened');
+        throw new Error("Can't get stats: database not opened");
       });
 
-      await expect(db.getStats()).rejects.toThrow('Can\'t get stats: database not opened');
+      await expect(db.getStats()).rejects.toThrow(
+        "Can't get stats: database not opened",
+      );
     });
   });
 
@@ -164,7 +179,8 @@ describe('SQLite', () => {
 
       const result = await db.isFlightExists('AA', '100', '2023-01-01');
 
-      expect(mockSQLite.getFirstAsync).toHaveBeenCalledWith(`
+      expect(mockSQLite.getFirstAsync).toHaveBeenCalledWith(
+        `
     SELECT
       flight_id
     FROM vw_flights
@@ -172,7 +188,7 @@ describe('SQLite', () => {
   `,
         'AA',
         '100',
-        '2023-01-01'
+        '2023-01-01',
       );
       expect(result).toBe(1);
     });
@@ -222,10 +238,12 @@ describe('SQLite', () => {
 
     it('should throw an error if the database is not opened', async () => {
       jest.spyOn(db, 'getFlights').mockImplementationOnce(async () => {
-        throw new Error('Can\'t select flights: database not opened');
+        throw new Error("Can't select flights: database not opened");
       });
 
-      await expect(db.getFlights([], 10)).rejects.toThrow('Can\'t select flights: database not opened');
+      await expect(db.getFlights([], 10)).rejects.toThrow(
+        "Can't select flights: database not opened",
+      );
     });
   });
 
@@ -233,13 +251,13 @@ describe('SQLite', () => {
     it('should update the is_archived field for a flight', async () => {
       await db.archiveFlight(1, 1);
       expect(mockSQLite.runAsync).toHaveBeenCalledWith(
-      `
+        `
     UPDATE flights
     SET
       is_archived = ?
     WHERE flight_id = ?;`,
-      1,
-      1
+        1,
+        1,
       );
     });
   });
@@ -248,8 +266,14 @@ describe('SQLite', () => {
     it('should delete a flight and its passengers', async () => {
       await db.deleteFlight(1);
       expect(mockSQLite.withTransactionAsync).toHaveBeenCalled();
-      expect(mockSQLite.runAsync).toHaveBeenCalledWith('DELETE FROM passengers WHERE flight_id = ?;', 1);
-      expect(mockSQLite.runAsync).toHaveBeenCalledWith('DELETE FROM flights WHERE flight_id = ?', 1);
+      expect(mockSQLite.runAsync).toHaveBeenCalledWith(
+        'DELETE FROM passengers WHERE flight_id = ?;',
+        1,
+      );
+      expect(mockSQLite.runAsync).toHaveBeenCalledWith(
+        'DELETE FROM flights WHERE flight_id = ?',
+        1,
+      );
     });
   });
 });

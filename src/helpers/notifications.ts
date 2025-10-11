@@ -1,7 +1,6 @@
 import t from '@/helpers/localization';
 import * as Notifications from 'expo-notifications';
 
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -35,7 +34,11 @@ Notifications.setNotificationChannelAsync('urgent', {
   vibrationPattern: [0, 250, 250, 250],
 });
 
-export const showCommonNotification = async (title: string, body: string, data?: any) => {
+export const showCommonNotification = async (
+  title: string,
+  body: string,
+  data?: any,
+) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -47,9 +50,13 @@ export const showCommonNotification = async (title: string, body: string, data?:
     },
   });
   console.debug(`showCommonNotification ${title} sent`);
-}
+};
 
-export const showFlightNotification = async (title: string, body: string, data?: any) => {
+export const showFlightNotification = async (
+  title: string,
+  body: string,
+  data?: any,
+) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -61,9 +68,13 @@ export const showFlightNotification = async (title: string, body: string, data?:
     },
   });
   console.debug(`showFlightNotification ${title} sent`);
-}
+};
 
-export const showUrgentNotification = async (title: string, body: string, data?: any) => {
+export const showUrgentNotification = async (
+  title: string,
+  body: string,
+  data?: any,
+) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -76,4 +87,4 @@ export const showUrgentNotification = async (title: string, body: string, data?:
     },
   });
   console.debug(`showUrgentNotification ${title} sent`);
-}
+};

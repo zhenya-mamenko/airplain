@@ -10,7 +10,6 @@ import {
 import { withLayoutContext } from 'expo-router';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 
-
 const { Navigator } = createMaterialTopTabNavigator();
 
 const MaterialTopTabs = withLayoutContext<
@@ -24,7 +23,8 @@ const FlightsWrapper = () => {
   const themeName = useDynamicColorScheme() || 'light';
   const colorPrimary = useThemeColor('textColors.primary');
   const bgPrimary = useThemeColor('colors.primary');
-  const colorInactive = themeName === 'light' ? usePaletteColor('NV-90') : usePaletteColor('NV-40');
+  const colorInactive =
+    themeName === 'light' ? usePaletteColor('NV-90') : usePaletteColor('NV-40');
 
   return (
     <MaterialTopTabs
@@ -40,13 +40,13 @@ const FlightsWrapper = () => {
       }}
     >
       <MaterialTopTabs.Screen
-        name='actual'
+        name="actual"
         options={{
           title: t('flights.actual'),
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 
-              name='plane-departure'
-              color={ color }
+            <FontAwesome5
+              name="plane-departure"
+              color={color}
               size={14}
               style={{ marginRight: 4, marginTop: -4 }}
             />
@@ -54,13 +54,13 @@ const FlightsWrapper = () => {
         }}
       />
       <MaterialTopTabs.Screen
-        name='past'
+        name="past"
         options={{
           title: t('flights.past'),
           tabBarIcon: ({ color }) => (
             <FontAwesome5
-              name='plane-arrival'
-              color={ color }
+              name="plane-arrival"
+              color={color}
               size={14}
               style={{ marginRight: 4, marginTop: -4 }}
             />

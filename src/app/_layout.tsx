@@ -1,5 +1,12 @@
 import '@/helpers/backgroundtasks';
-import { StrictMode, useEffect, useState, useContext, useRef, useCallback } from 'react';
+import {
+  StrictMode,
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useCallback,
+} from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { loadAsync } from 'expo-font';
@@ -9,7 +16,10 @@ import t from '@/helpers/localization';
 import { useThemeColor } from '@/hooks/useColors';
 import { openDatabase, closeDatabase } from '@/helpers/sqlite';
 import { prepareAchievements } from '@/helpers/achievements';
-import { GlobalContextProvider, GlobalContext } from '@/components/GlobalContext';
+import {
+  GlobalContextProvider,
+  GlobalContext,
+} from '@/components/GlobalContext';
 import { useImage } from '@shopify/react-native-skia';
 import emitter from '@/helpers/emitter';
 import Animated, {
@@ -27,7 +37,6 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { loadAirlines } from '@/helpers/airdata';
 
-
 function useNotificationObserver() {
   useEffect(() => {
     let isMounted = true;
@@ -39,17 +48,18 @@ function useNotificationObserver() {
       }
     }
 
-    Notifications.getLastNotificationResponseAsync()
-      .then(response => {
-        if (!isMounted || !response?.notification) {
-          return;
-        }
-        redirect(response?.notification);
-      });
-
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      redirect(response.notification);
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!isMounted || !response?.notification) {
+        return;
+      }
+      redirect(response?.notification);
     });
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        redirect(response.notification);
+      },
+    );
 
     return () => {
       isMounted = false;
@@ -88,14 +98,20 @@ function RootLayout() {
   const planeShadowScale = useSharedValue(1);
   const planeShadowBlur = useSharedValue(0);
 
-  const refreshAchievementsCallback = useRef<() => Promise<void>>(() => Promise.resolve());
+  const refreshAchievementsCallback = useRef<() => Promise<void>>(() =>
+    Promise.resolve(),
+  );
   useEffect(() => {
     refreshAchievementsCallback.current = async () => {
-      const achievements = await prepareAchievements(stampsColors, bgImage, themeName ?? 'light');
+      const achievements = await prepareAchievements(
+        stampsColors,
+        bgImage,
+        themeName ?? 'light',
+      );
       setAchievements(achievements);
     };
     emitter.on('refreshAchievements', refreshAchievementsCallback.current);
-    return () => { 
+    return () => {
       emitter.off('refreshAchievements', refreshAchievementsCallback.current);
     };
   }, [bgImage, themeName]);
@@ -105,25 +121,25 @@ function RootLayout() {
       planeYPosition.value = withRepeat(
         withTiming(-30, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
         -1,
-        true
+        true,
       );
 
       planeShadowOpacity.value = withRepeat(
         withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
         -1,
-        true
+        true,
       );
 
       planeShadowScale.value = withRepeat(
         withTiming(0.7, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
         -1,
-        true
+        true,
       );
 
       planeShadowBlur.value = withRepeat(
         withTiming(5, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
         -1,
-        true
+        true,
       );
 
       setAnimationStarted(true);
@@ -131,7 +147,7 @@ function RootLayout() {
   }, []);
 
   function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   useEffect(() => {
@@ -161,9 +177,7 @@ function RootLayout() {
 
   const planeAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateY: planeYPosition.value }
-      ]
+      transform: [{ translateY: planeYPosition.value }],
     };
   });
 
@@ -171,27 +185,20 @@ function RootLayout() {
     const shadowIntensity = interpolate(
       planeYPosition.value,
       [-30, 0],
-      [0.2, 0.6]
+      [0.2, 0.6],
     );
 
     const shadowSharpness = interpolate(
       planeYPosition.value,
       [-30, 0],
-      [20, 5]
+      [20, 5],
     );
 
-    const shadowSize = interpolate(
-      planeYPosition.value,
-      [-30, 0],
-      [1.1, 0.8]
-    );
+    const shadowSize = interpolate(planeYPosition.value, [-30, 0], [1.1, 0.8]);
 
     return {
       opacity: shadowIntensity,
-      transform: [
-        { scale: shadowSize },
-        { translateY: 40 }
-      ],
+      transform: [{ scale: shadowSize }, { translateY: 40 }],
       shadowRadius: shadowSharpness,
       shadowOpacity: 0.8,
     };
@@ -205,18 +212,18 @@ function RootLayout() {
 
   if (!appIsReady) {
     return (
-      <View style={ styles.container }>
-        <View style={ styles.animationContainer }>
+      <View style={styles.container}>
+        <View style={styles.animationContainer}>
           <Animated.Image
-            source={ require('@/assets/images/splash.png') }
-            style={[ styles.planeShadow, shadowAnimatedStyle ]}
-            resizeMode='contain'
+            source={require('@/assets/images/splash.png')}
+            style={[styles.planeShadow, shadowAnimatedStyle]}
+            resizeMode="contain"
           />
           <Animated.Image
-            source={ require('@/assets/images/splash.png') }
-            style={[ styles.planeImage, planeAnimatedStyle ]}
-            resizeMode='contain'
-            onLoadEnd={ onImageLoaded }
+            source={require('@/assets/images/splash.png')}
+            style={[styles.planeImage, planeAnimatedStyle]}
+            resizeMode="contain"
+            onLoadEnd={onImageLoaded}
           />
         </View>
       </View>
@@ -233,13 +240,13 @@ function RootLayoutNav() {
   return (
     <Stack>
       <Stack.Screen
-        name='(tabs)'
+        name="(tabs)"
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name='pass'
+        name="pass"
         options={{
           headerTintColor,
           headerStyle: {
@@ -250,7 +257,7 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen
-        name='add'
+        name="add"
         options={{
           headerTintColor,
           headerStyle: {
@@ -261,7 +268,7 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen
-        name='edit'
+        name="edit"
         options={{
           headerTintColor,
           headerStyle: {

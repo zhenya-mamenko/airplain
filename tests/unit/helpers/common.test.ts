@@ -1,5 +1,12 @@
-import { camelCase, snakeCase, flightToFlightData, flightToDepartingFlightData, flightToLandedFlightData, haversine, makeCheckInLink } from '@/helpers/common';
-
+import {
+  camelCase,
+  snakeCase,
+  flightToFlightData,
+  flightToDepartingFlightData,
+  flightToLandedFlightData,
+  haversine,
+  makeCheckInLink,
+} from '@/helpers/common';
 
 jest.mock('@/constants/settings', () => ({
   __esModule: true,
@@ -7,7 +14,6 @@ jest.mock('@/constants/settings', () => ({
 }));
 
 describe('common helper', () => {
-
   test('camelCase', () => {
     const obj = {
       test_key: 'test_value',
@@ -188,7 +194,7 @@ describe('common helper', () => {
 
   test('haversine', () => {
     const lat1 = 40.7128;
-    const lon1 = -74.0060;
+    const lon1 = -74.006;
     const lat2 = 34.0522;
     const lon2 = -118.2437;
     const result = haversine(lat1, lon1, lat2, lon2);
@@ -196,13 +202,22 @@ describe('common helper', () => {
   });
 
   test('makeCheckInLink', () => {
-    const checkInLink = 'https://example.com/checkin?DEP_DATE_EU={DEP_DATE_EU}&IATA_DEP={IATA_DEP}&FIRST={FIRST}&LAST={LAST}&PNR={PNR}&FLT_NO={FLT_NO}';
+    const checkInLink =
+      'https://example.com/checkin?DEP_DATE_EU={DEP_DATE_EU}&IATA_DEP={IATA_DEP}&FIRST={FIRST}&LAST={LAST}&PNR={PNR}&FLT_NO={FLT_NO}';
     const date = '2023-10-26';
     const departureAirport = 'LAX';
     const pnr = 'ABCDEF';
     const flightNumber = '123';
-    const result = makeCheckInLink(checkInLink, date, departureAirport, pnr, flightNumber);
-    expect(result).toBe('https://example.com/checkin?DEP_DATE_EU=2023-10-26&IATA_DEP=LAX&FIRST=firstname&LAST=surname&PNR=ABCDEF&FLT_NO=123');
+    const result = makeCheckInLink(
+      checkInLink,
+      date,
+      departureAirport,
+      pnr,
+      flightNumber,
+    );
+    expect(result).toBe(
+      'https://example.com/checkin?DEP_DATE_EU=2023-10-26&IATA_DEP=LAX&FIRST=firstname&LAST=surname&PNR=ABCDEF&FLT_NO=123',
+    );
   });
 
   test('String.prototype.splice', () => {
@@ -212,5 +227,4 @@ describe('common helper', () => {
     expect(str.splice(0, 'fckin')).toBe('fckin world');
     expect(str.splice(3, 'LO WO')).toBe('helLO WOrld');
   });
-
 });

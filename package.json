@@ -113,6 +113,5 @@
     "metro-core": "^0.81.0",
     "typescript": "~5.3.3"
   },
-  "private": true,
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+  "private": true
 }

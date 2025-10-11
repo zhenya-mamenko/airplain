@@ -3,7 +3,6 @@ import { Pressable } from 'react-native';
 import { Text, View } from 'react-native-picasso';
 import { useThemeColor } from '@/hooks/useColors';
 
-
 interface Props {
   className?: string;
   disabled?: boolean;
@@ -17,7 +16,7 @@ interface Props {
 }
 
 const Button: React.FC<Props> = (props: Props) => {
-  const { className, disabled, leftIcon, rightIcon, uppercase = true} = props;
+  const { className, disabled, leftIcon, rightIcon, uppercase = true } = props;
   const bgClass = `flex-row alignitems-center justifycontent-center bg-secondary radius-sm py-sm px-sm ${className ?? ''}`;
   const textClass = `color-primary size-md ${props.textClass ?? ''}`;
   const textStyle: any = { lineHeight: 28, ...(props.textStyle ?? {}) };
@@ -39,21 +38,15 @@ const Button: React.FC<Props> = (props: Props) => {
         if (props.onPress && !props.disabled) props.onPress();
       }}
     >
-      <View
-        className={ bgClass }
-        focusable={true}
-      >
-        { leftIcon }
-        <Text
-          className={ textClass }
-          style={ {...textStyle} }
-        >
-          { props.title }
+      <View className={bgClass} focusable={true}>
+        {leftIcon}
+        <Text className={textClass} style={{ ...textStyle }}>
+          {props.title}
         </Text>
-        { rightIcon }
+        {rightIcon}
       </View>
     </Pressable>
   );
-}
+};
 
 export default Button;

@@ -7,11 +7,10 @@ import { ThemeProvider, View, Text } from 'react-native-picasso';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import { useThemeColors } from '@/hooks/useColors';
 import useTheme from '@/hooks/useTheme';
-import t from '@/helpers/localization'
+import t from '@/helpers/localization';
 import type { TabData } from '@/types';
 import emitter from '@/helpers/emitter';
 import { router } from 'expo-router';
-
 
 export const unstable_settings = {
   initialRouteName: 'flights',
@@ -44,7 +43,7 @@ const defaultTabs: TabData[] = [
     icon: 'cogs',
     route: 'settings',
     title: 'settings.title',
-  }
+  },
 ];
 
 export default function TabLayout(props: { tabs?: TabData[] } = {}) {
@@ -52,38 +51,53 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
 
-  const [ colorBgPrimary, colorBg, colorPrimary, colorShadow, colorBgSecondary, colorBgPrimaryContainer ] = useThemeColors(
-    ['colors.primary', 'colors.background', 'textColors.primary', 'colors.shadow', 'colors.secondary', 'colors.primaryContainer']
-  );
+  const [
+    colorBgPrimary,
+    colorBg,
+    colorPrimary,
+    colorShadow,
+    colorBgSecondary,
+    colorBgPrimaryContainer,
+  ] = useThemeColors([
+    'colors.primary',
+    'colors.background',
+    'textColors.primary',
+    'colors.shadow',
+    'colors.secondary',
+    'colors.primaryContainer',
+  ]);
 
-  const [filterState, setFilterState] = useState<'filter' | 'filter-outline'>('filter-outline');
+  const [filterState, setFilterState] = useState<'filter' | 'filter-outline'>(
+    'filter-outline',
+  );
   const flightsType = usePathname().split('/').at(-1);
 
   useEffect(() => {
-    const setFlightFilterStateCallback = (filterState: 'filter' | 'filter-outline') => {
+    const setFlightFilterStateCallback = (
+      filterState: 'filter' | 'filter-outline',
+    ) => {
       setFilterState(filterState);
     };
     emitter.on('setFlightFilterState', setFlightFilterStateCallback);
-    return () => { 
+    return () => {
       emitter.off('setFlightFilterState', setFlightFilterStateCallback);
     };
   }, []);
 
-
   const addFlight = async () => {
     router.push({ pathname: '/add' });
-  }
+  };
 
   return (
     // @ts-ignore
     <ThemeProvider theme={theme}>
       <StatusBar
-        backgroundColor={ colorBgPrimary }
+        backgroundColor={colorBgPrimary}
         barStyle={`${themeName}-content`}
       />
       <Tabs
         screenOptions={{
-          animation:'none',
+          animation: 'none',
           headerTintColor: colorPrimary,
           headerStyle: {
             backgroundColor: colorBgPrimary,
@@ -93,7 +107,8 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
           tabBarStyle: {
             backgroundColor: colorBg,
           },
-      }}>
+        }}
+      >
         {tabs.map((tab) => (
           <Tabs.Screen
             key={tab.route}
@@ -101,68 +116,83 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
             options={{
               headerShadowVisible: tab.route.split('/')[0] !== 'flights',
               headerBackgroundContainerStyle: {
-                boxShadow: tab.route.split('/')[0] === 'flights' ? 'none' : `0 0 2px ${colorShadow}`,
+                boxShadow:
+                  tab.route.split('/')[0] === 'flights'
+                    ? 'none'
+                    : `0 0 2px ${colorShadow}`,
               },
-              headerRight: tab.route.split('/')[0] === 'flights' ? ({tintColor}) => (
-                <>
-                  <Pressable
-                    android_ripple={{ color: colorBgPrimaryContainer, radius: 16 }}
-                    style={{ padding: 16 }}
-                    testID='flights-add-button'
-                    onPress={ addFlight }
-                  >
-                    <FontAwesome5
-                      name='plus'
-                      size={18}
-                      style={{ margin: 4, color: tintColor }}
-                    />
-                  </Pressable>
-                </>
-              ) : undefined,
-              headerTitle: ({tintColor, children}) => (
-                <View
-                  className='flex-row justifycontent-start alignitems-center'
-                >
+              headerRight:
+                tab.route.split('/')[0] === 'flights'
+                  ? ({ tintColor }) => (
+                      <>
+                        <Pressable
+                          android_ripple={{
+                            color: colorBgPrimaryContainer,
+                            radius: 16,
+                          }}
+                          style={{ padding: 16 }}
+                          testID="flights-add-button"
+                          onPress={addFlight}
+                        >
+                          <FontAwesome5
+                            name="plus"
+                            size={18}
+                            style={{ margin: 4, color: tintColor }}
+                          />
+                        </Pressable>
+                      </>
+                    )
+                  : undefined,
+              headerTitle: ({ tintColor, children }) => (
+                <View className="flex-row justifycontent-start alignitems-center">
                   <Text
-                    className='size-lg weight-bold'
+                    className="size-lg weight-bold"
                     style={{ color: tintColor }}
                   >
                     {children}
                   </Text>
-                  { tab.route.split('/')[0] === 'flights' && (
-                      flightsType === 'past' ? (
-                        <Pressable
-                          android_ripple={{ color: colorBgPrimaryContainer, radius: 14 }}
-                          style={{ padding: 20 }}
-                          testID='flights-filter-button'
-                          onPress={ () => {
-                            emitter.emit('setFlightFilterModalState', true);
-                          }}
-                        >
-                          <MaterialCommunityIcons
-                            name={ filterState }
-                            size={18}
-                            style={{ marginTop: 6, color: tintColor }}
-                          />
-                        </Pressable>
-                      ) : (
+                  {tab.route.split('/')[0] === 'flights' &&
+                    (flightsType === 'past' ? (
+                      <Pressable
+                        android_ripple={{
+                          color: colorBgPrimaryContainer,
+                          radius: 14,
+                        }}
+                        style={{ padding: 20 }}
+                        testID="flights-filter-button"
+                        onPress={() => {
+                          emitter.emit('setFlightFilterModalState', true);
+                        }}
+                      >
                         <MaterialCommunityIcons
-                          name={ filterState }
+                          name={filterState}
                           size={18}
-                          style={{ marginTop: 6, color: tintColor, opacity: 0.38, padding: 20 }}
+                          style={{ marginTop: 6, color: tintColor }}
                         />
-                      )
-                    )
-                  }
+                      </Pressable>
+                    ) : (
+                      <MaterialCommunityIcons
+                        name={filterState}
+                        size={18}
+                        style={{
+                          marginTop: 6,
+                          color: tintColor,
+                          opacity: 0.38,
+                          padding: 20,
+                        }}
+                      />
+                    ))}
                 </View>
               ),
               tabBarButtonTestID: `${tab.route}-tab-button`,
-              tabBarIcon: ({ color }) => <TabBarIcon name={tab.icon as any} color={color} />,
+              tabBarIcon: ({ color }) => (
+                <TabBarIcon name={tab.icon as any} color={color} />
+              ),
               title: t(tab.title),
             }}
           />
         ))}
-        <Tabs.Screen name='index' options={{ href: null, title: '' }}/>
+        <Tabs.Screen name="index" options={{ href: null, title: '' }} />
       </Tabs>
     </ThemeProvider>
   );

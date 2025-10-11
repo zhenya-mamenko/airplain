@@ -1,16 +1,16 @@
 /**
  * ScrollableSelector Component
- * 
+ *
  * This component renders a horizontally scrollable list of items using React Native's FlatList.
  * It allows for selecting an item from the list, and provides callbacks for when the selection changes.
- * 
+ *
  * Props:
  * - data: An array of items to be displayed in the selector.
  * - ref: Optional ref object for the FlatList.
  * - viewabilityConfig: Optional configuration for viewability of items.
  * - onSelectionChange: Optional callback function that is called when the selection changes.
  * - onRenderItem: Function to render each item.
- * 
+ *
  * Example usage:
  * ```
  * <ScrollableSelector
@@ -70,9 +70,14 @@ interface ScrollableSelectorProps {
 }
 
 const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
-  const [selected, setSelected] = useState(props.selectedKey ?? props.data[0]?.key);
+  const [selected, setSelected] = useState(
+    props.selectedKey ?? props.data[0]?.key,
+  );
   const selectedRef = useRef(selected);
-  const viewabilityConfig = props.viewabilityConfig ?? { minimumViewTime: 200, itemVisiblePercentThreshold: 10 };
+  const viewabilityConfig = props.viewabilityConfig ?? {
+    minimumViewTime: 200,
+    itemVisiblePercentThreshold: 10,
+  };
   const keys = props.data.map((item) => item.key);
   const flRef = useRef<FlatList>(null);
 
@@ -84,42 +89,64 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
     }
   }, [flRef.current, selected]);
 
-  const changeSelected = useCallback((key: string) => {
-    setSelected(key);
-    selectedRef.current = key;
-    if (props.onSelectionChange) props.onSelectionChange(key);
-  }, [props.onSelectionChange]);
+  const changeSelected = useCallback(
+    (key: string) => {
+      setSelected(key);
+      selectedRef.current = key;
+      if (props.onSelectionChange) props.onSelectionChange(key);
+    },
+    [props.onSelectionChange],
+  );
 
   useEffect(() => {
-    if (props.selectedKey !== selected) changeSelected(props.selectedKey ?? props.data[0]?.key);
+    if (props.selectedKey !== selected)
+      changeSelected(props.selectedKey ?? props.data[0]?.key);
   }, [props.selectedKey]);
 
-  const viewableItemsChanged = useRef((info: { changed: any[], viewableItems: any[] }) => {});
+  const viewableItemsChanged = useRef(
+    (info: { changed: any[]; viewableItems: any[] }) => {},
+  );
   useEffect(() => {
-    viewableItemsChanged.current = (info: { changed: any[], viewableItems: any[] }) => {
+    viewableItemsChanged.current = (info: {
+      changed: any[];
+      viewableItems: any[];
+    }) => {
       const viewableKeys = info.viewableItems.map((v) => v.item.key);
-      let key = null, selectedKeyEncountered = false;
+      let key = null,
+        selectedKeyEncountered = false;
       for (const item of keys) {
-        selectedKeyEncountered = !selectedKeyEncountered ? item === selectedRef.current : selectedKeyEncountered;
+        selectedKeyEncountered = !selectedKeyEncountered
+          ? item === selectedRef.current
+          : selectedKeyEncountered;
         if (viewableKeys.includes(item)) key = item;
         if (selectedKeyEncountered && key !== null) break;
       }
       if (!!key && selectedRef.current !== key) changeSelected(key);
-    }
-  }, [keys, selected])
+    };
+  }, [keys, selected]);
 
-  const renderItem = useCallback(({ item }: { item: Item }): JSX.Element => {
-    const isSelected = item.key === selected;
-    const renderedItem = props.onRenderItem ?
-      <Pressable onPress={() => changeSelected(item.key)}>
-        {props.onRenderItem(item, isSelected)}
-      </Pressable>
-      : <></>;
-    return renderedItem;
-  }, [props.onRenderItem, selected]);
+  const renderItem = useCallback(
+    ({ item }: { item: Item }): JSX.Element => {
+      const isSelected = item.key === selected;
+      const renderedItem = props.onRenderItem ? (
+        <Pressable onPress={() => changeSelected(item.key)}>
+          {props.onRenderItem(item, isSelected)}
+        </Pressable>
+      ) : (
+        <></>
+      );
+      return renderedItem;
+    },
+    [props.onRenderItem, selected],
+  );
 
-  const onViewableItemsChanged = (info: { changed: any[], viewableItems: any[] }) => viewableItemsChanged.current(info);
-  const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }]).current;
+  const onViewableItemsChanged = (info: {
+    changed: any[];
+    viewableItems: any[];
+  }) => viewableItemsChanged.current(info);
+  const viewabilityConfigCallbackPairs = useRef([
+    { viewabilityConfig, onViewableItemsChanged },
+  ]).current;
 
   useEffect(() => {
     if (!!props.data[0]?.key && !selected) changeSelected(props.data[0]?.key);

@@ -1,6 +1,12 @@
 import { Alert, Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
-import { useSharedValue, useAnimatedStyle, withTiming, withSpring, runOnJS } from 'react-native-reanimated';
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  runOnJS,
+} from 'react-native-reanimated';
 import { deleteFlight } from '@/helpers/sqlite';
 import { router } from 'expo-router';
 import t from '@/helpers/localization';
@@ -8,22 +14,21 @@ import { useThemeColor } from '@/hooks/useColors';
 import { flightsCheckTask, setFlightArchiveState } from '@/helpers/airdata';
 import { refreshFlights } from '@/helpers/common';
 
-
 const changeArchivedState = async (flightId: number, state: number) => {
   await setFlightArchiveState(flightId, state);
   refreshFlights(true, false);
-}
+};
 
 const doEdit = (flightId: number) => {
   router.push({ pathname: '/edit', params: { flightId } });
-}
+};
 
 const doDelete = async (flightId: number) => {
   if (await deleteFlight(flightId)) {
     flightsCheckTask();
     refreshFlights(true);
   }
-}
+};
 
 export const makeCardGestures = (
   flightId: number,
@@ -31,7 +36,6 @@ export const makeCardGestures = (
   possibleUnarchive: boolean = false,
   refs?: any,
 ) => {
-
   const colorPrimary = useThemeColor('colors.primary');
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.4;
@@ -58,23 +62,31 @@ export const makeCardGestures = (
           text: t('buttons.delete'),
           style: 'destructive',
           onPress: () => {
-            border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
-              runOnJS(doDelete)(flightId)
-            });
+            border.value = withTiming(
+              `${colorPrimary}00`,
+              { duration: 100 },
+              () => {
+                runOnJS(doDelete)(flightId);
+              },
+            );
           },
-        }
+        },
       ],
       {
         cancelable: true,
-        onDismiss: () => border.value = withTiming(`${colorPrimary}00`, { duration: 100 }),
-      }
+        onDismiss: () =>
+          (border.value = withTiming(`${colorPrimary}00`, { duration: 100 })),
+      },
     );
-  }
+  };
 
   const pan = Gesture.Pan()
     .minDistance(20)
     .onUpdate((event) => {
-      if (Math.abs(event.velocityX) > Math.abs(event.velocityY) && event.translationX > 0) {
+      if (
+        Math.abs(event.velocityX) > Math.abs(event.velocityY) &&
+        event.translationX > 0
+      ) {
         translateX.value = event.translationX;
       }
     })
@@ -91,7 +103,10 @@ export const makeCardGestures = (
   const panUnarchive = Gesture.Pan()
     .minDistance(40)
     .onUpdate((event) => {
-      if (Math.abs(event.velocityX) > Math.abs(event.velocityY) && event.translationX < 0) {
+      if (
+        Math.abs(event.velocityX) > Math.abs(event.velocityY) &&
+        event.translationX < 0
+      ) {
         translateX.value = event.translationX;
       }
     })
@@ -111,16 +126,20 @@ export const makeCardGestures = (
     .requireExternalGestureToFail(refs ?? [])
     .onEnd((e, success) => {
       border.value = withTiming(`${colorPrimary}FF`, { duration: 100 }, () => {
-        border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
-          if (success) {
-            runOnJS(doEdit)(flightId);
-          }
-        });
+        border.value = withTiming(
+          `${colorPrimary}00`,
+          { duration: 100 },
+          () => {
+            if (success) {
+              runOnJS(doEdit)(flightId);
+            }
+          },
+        );
       });
     });
 
   const longpress = Gesture.LongPress()
-    .onStart(e => {
+    .onStart((e) => {
       border.value = withTiming(`${colorPrimary}FF`, { duration: 200 });
     })
     .onEnd((e, success) => {
@@ -140,4 +159,4 @@ export const makeCardGestures = (
   }
 
   return { gestures: Gesture.Race(...mixin), animatedStyle };
-}
+};
