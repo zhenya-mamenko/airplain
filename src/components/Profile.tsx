@@ -1,32 +1,26 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  ScrollView,
-  Dimensions,
-  Pressable,
-  Modal,
-} from 'react-native';
-import { View, Text } from 'react-native-picasso';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import t from '@/helpers/localization';
-import { DataCard, Input, Value } from '@/components/DataCard';
-import { useThemeColor } from '@/hooks/useColors';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Canvas, Image, Path } from '@shopify/react-native-skia';
-import { isPointInPolygon } from '@/helpers/algs';
-import { GlobalContext } from '@/components/GlobalContext';
-import emitter from '@/helpers/emitter';
-import { getSetting, setSetting } from '@/constants/settings';
-import type { ContextData } from '@/types';
-import * as Sharing from 'expo-sharing';
+
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Dimensions, Modal, Pressable, ScrollView } from 'react-native';
+import { Text, View } from 'react-native-picasso';
 import { captureRef } from 'react-native-view-shot';
+
+import { DataCard, Input, Value } from '@/components/DataCard';
+import { GlobalContext } from '@/components/GlobalContext';
+import { getSetting, setSetting } from '@/constants/settings';
+import { isPointInPolygon } from '@/helpers/algs';
+import emitter from '@/helpers/emitter';
+import t from '@/helpers/localization';
+import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
+import type { ContextData } from '@/types';
 
 export default function Profile() {
-  const colorSecondaryContainer = useThemeColor(
-    'textColors.secondaryContainer',
-  );
+  const colorSecondaryContainer = useThemeColor('textColors.secondaryContainer');
   const colorSurface = useThemeColor('textColors.surface');
   const colorPrimary = useThemeColor('colors.primary');
   const colorGray = useThemeColor('textColors.gray');
@@ -56,13 +50,7 @@ export default function Profile() {
       if (!!cachedImage) {
         setCanvasHeight(cachedImage.height() / 2);
         setContent(
-          <Image
-            image={cachedImage}
-            x={0}
-            y={0}
-            width={cachedImage.width() / 2}
-            height={cachedImage.height() / 2}
-          />,
+          <Image image={cachedImage} x={0} y={0} width={cachedImage.width() / 2} height={cachedImage.height() / 2} />,
         );
       } else if (cachedImage === null) {
         setCanvasHeight(0);
@@ -117,12 +105,7 @@ export default function Profile() {
       <DataCard
         caption={
           <View className="flex-row alignitems-end">
-            <Icon
-              name="notebook-outline"
-              size={16}
-              color={colorSecondaryContainer}
-              style={{ marginBottom: 1 }}
-            />
+            <Icon name="notebook-outline" size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
             <Text className="size-smm weight-bold mt-xs color-secondaryContainer ml-sm">
               {t('profile.data').toLocaleUpperCase()}
             </Text>
@@ -134,11 +117,7 @@ export default function Profile() {
       >
         <View className="flex-column">
           <View className="flex-row my-sm">
-            <Value
-              caption={t('profile.firstname')}
-              value={firstname}
-              width="50%"
-            />
+            <Value caption={t('profile.firstname')} value={firstname} width="50%" />
             <Value caption={t('profile.surname')} value={surname} width="50%" />
           </View>
           <View className="flex-row mb-sm">
@@ -147,38 +126,18 @@ export default function Profile() {
         </View>
         <View className="flex-column">
           <View className="flex-row my-sm">
-            <Input
-              caption={t('profile.firstname')}
-              field="firstname"
-              value={firstname}
-              width="50%"
-            />
-            <Input
-              caption={t('profile.surname')}
-              field="surname"
-              value={surname}
-              width="50%"
-            />
+            <Input caption={t('profile.firstname')} field="firstname" value={firstname} width="50%" />
+            <Input caption={t('profile.surname')} field="surname" value={surname} width="50%" />
           </View>
           <View className="flex-row mb-sm">
-            <Input
-              caption={t('profile.notes')}
-              field="notes"
-              lines={4}
-              value={notes}
-            />
+            <Input caption={t('profile.notes')} field="notes" lines={4} value={notes} />
           </View>
         </View>
       </DataCard>
       <DataCard
         caption={
           <View className="flex-row alignitems-end">
-            <Icon
-              name="podium-gold"
-              size={16}
-              color={colorSecondaryContainer}
-              style={{ marginBottom: 1 }}
-            />
+            <Icon name="podium-gold" size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
             <Text className="size-smm weight-bold mt-xs color-secondaryContainer ml-sm">
               {t('profile.achievements').toLocaleUpperCase()}
             </Text>
@@ -192,18 +151,12 @@ export default function Profile() {
               <Pressable
                 hitSlop={5}
                 onPress={async () => {
-                  await Sharing.shareAsync(
-                    `${FileSystem.cacheDirectory}achievements-share.png`,
-                    { mimeType: 'image/png' },
-                  );
+                  await Sharing.shareAsync(`${FileSystem.cacheDirectory}achievements-share.png`, {
+                    mimeType: 'image/png',
+                  });
                 }}
               >
-                <Icon
-                  name="share-variant"
-                  size={16}
-                  color={colorGray}
-                  style={{ marginTop: 4, marginRight: 16 }}
-                />
+                <Icon name="share-variant" size={16} color={colorGray} style={{ marginTop: 4, marginRight: 16 }} />
               </Pressable>
             )}
             <Pressable
@@ -214,12 +167,7 @@ export default function Profile() {
                 emitter.emit('refreshAchievements');
               }}
             >
-              <Icon
-                name="refresh"
-                size={20}
-                color={colorGray}
-                style={{ marginTop: 2 }}
-              />
+              <Icon name="refresh" size={20} color={colorGray} style={{ marginTop: 2 }} />
             </Pressable>
           </View>
         }
@@ -232,17 +180,8 @@ export default function Profile() {
               style={{ height: achievementsHeight, width: '100%' }}
             />
           ) : (
-            <Pressable
-              onPress={(e) =>
-                handleTouchStart(
-                  e.nativeEvent.locationX,
-                  e.nativeEvent.locationY,
-                )
-              }
-            >
-              <Canvas style={{ width: '100%', height: canvasHeight }}>
-                {content}
-              </Canvas>
+            <Pressable onPress={(e) => handleTouchStart(e.nativeEvent.locationX, e.nativeEvent.locationY)}>
+              <Canvas style={{ width: '100%', height: canvasHeight }}>{content}</Canvas>
             </Pressable>
           )}
         </ScrollView>
@@ -275,12 +214,7 @@ export default function Profile() {
                   await Sharing.shareAsync(uri, { mimeType: 'image/png' });
                 }}
               >
-                <Icon
-                  name="share-variant"
-                  size={20}
-                  color={colorPrimary}
-                  style={{}}
-                />
+                <Icon name="share-variant" size={20} color={colorPrimary} style={{}} />
               </Pressable>
             )}
           </View>
@@ -315,11 +249,7 @@ export default function Profile() {
             <Canvas style={{ width: 256, height: 256 }}>
               {!!achievement &&
                 achievement.achievement.svg.map((path: any, index: number) => (
-                  <Path
-                    color={stampsColors[themeName][achievement.color]}
-                    key={`path-${index}`}
-                    path={path}
-                  />
+                  <Path color={stampsColors[themeName][achievement.color]} key={`path-${index}`} path={path} />
                 ))}
             </Canvas>
             <Text className="size-md color-primaryContainer my-xl">

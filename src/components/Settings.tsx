@@ -1,35 +1,25 @@
-import React, { useReducer, useCallback } from 'react';
-import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { View, Text } from 'react-native-picasso';
-import { DataCard, Input, Value, Select, Switch } from '@/components/DataCard';
-import Button from '@/components/Button';
-import { KeyboardAvoidingView, ListRenderItemInfo } from 'react-native';
+import { DownloadDirectoryPath, exists, readFile, writeFile } from '@dr.pogodin/react-native-fs';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { useThemeColor } from '@/hooks/useColors';
-import t from '@/helpers/localization';
-import emitter from '@/helpers/emitter';
-import { getSetting, setSetting, settings } from '@/constants/settings';
-import { exportFlights, fillDataFromArray } from '@/helpers/sqlite';
-import {
-  readFile,
-  writeFile,
-  DownloadDirectoryPath,
-  exists,
-} from '@dr.pogodin/react-native-fs';
-import * as DocumentPicker from 'expo-document-picker';
-import {
-  refreshFlights,
-  showConfirmation,
-  startBackgroundTask,
-  stopBackgroundTask,
-} from '@/helpers/common';
+
 import { parse } from 'csv-parse/dist/esm/sync';
+import * as DocumentPicker from 'expo-document-picker';
+import React, { useCallback, useReducer } from 'react';
+import { KeyboardAvoidingView, ListRenderItemInfo } from 'react-native';
+import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Text, View } from 'react-native-picasso';
+
+import Button from '@/components/Button';
+import { DataCard, Input, Select, Switch, Value } from '@/components/DataCard';
+import { getSetting, setSetting, settings } from '@/constants/settings';
+import { refreshFlights, showConfirmation, startBackgroundTask, stopBackgroundTask } from '@/helpers/common';
+import emitter from '@/helpers/emitter';
 import { processExportData, processImportData } from '@/helpers/import-export';
+import t from '@/helpers/localization';
+import { exportFlights, fillDataFromArray } from '@/helpers/sqlite';
+import { useThemeColor } from '@/hooks/useColors';
 
 const Settings = React.memo(() => {
-  const colorSecondaryContainer = useThemeColor(
-    'textColors.secondaryContainer',
-  );
+  const colorSecondaryContainer = useThemeColor('textColors.secondaryContainer');
   const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
 
   const reducer = (state: any, action: any) => {
@@ -43,26 +33,14 @@ const Settings = React.memo(() => {
   const updateSettings = useCallback(() => {
     settings.TEMPERATURE_UNITS = getSetting('TEMPERATURE_UNITS', 'c');
     settings.TEMPERATURE_TYPE = getSetting('TEMPERATURE_TYPE', 'feelslike');
-    settings.WEATHER_API_KEY = getSetting(
-      'WEATHER_API_KEY',
-      process.env.EXPO_PUBLIC_WEATHER_API_KEY,
-    );
-    settings.AEDBX_API_KEY = getSetting(
-      'AEDBX_API_KEY',
-      process.env.EXPO_PUBLIC_AEDBX_API_KEY,
-    );
-    settings.AEROAPI_API_KEY = getSetting(
-      'AEROAPI_API_KEY',
-      process.env.EXPO_PUBLIC_AEROAPI_API_KEY,
-    );
+    settings.WEATHER_API_KEY = getSetting('WEATHER_API_KEY', process.env.EXPO_PUBLIC_WEATHER_API_KEY);
+    settings.AEDBX_API_KEY = getSetting('AEDBX_API_KEY', process.env.EXPO_PUBLIC_AEDBX_API_KEY);
+    settings.AEROAPI_API_KEY = getSetting('AEROAPI_API_KEY', process.env.EXPO_PUBLIC_AEROAPI_API_KEY);
     settings.CURRENT_API = getSetting('CURRENT_API', 'aerodatabox');
     settings.REFRESH_INTERVAL = parseInt(getSetting('REFRESH_INTERVAL', '1'));
     settings.FLIGHTS_LIMIT = parseInt(getSetting('FLIGHTS_LIMIT', '1000'));
     settings.ONLY_MANUAL_REFRESH = getSetting('ONLY_MANUAL_REFRESH', 'true');
-    settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH = getSetting(
-      'FORCE_REQUEST_API_ON_MANUAL_REFRESH',
-      'false',
-    );
+    settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH = getSetting('FORCE_REQUEST_API_ON_MANUAL_REFRESH', 'false');
 
     if (settings.ONLY_MANUAL_REFRESH === 'false') {
       startBackgroundTask();
@@ -153,11 +131,7 @@ const Settings = React.memo(() => {
           value = v.toString();
         }
       }
-      if (
-        ['ONLY_MANUAL_REFRESH', 'FORCE_REQUEST_API_ON_MANUAL_REFRESH'].includes(
-          field,
-        )
-      ) {
+      if (['ONLY_MANUAL_REFRESH', 'FORCE_REQUEST_API_ON_MANUAL_REFRESH'].includes(field)) {
         value = value.toString();
       }
       dispatch({ field, value });
@@ -175,12 +149,7 @@ const Settings = React.memo(() => {
     <DataCard
       caption={
         <View className="flex-row alignitems-end">
-          <Icon
-            name="weather-hazy"
-            size={16}
-            color={colorSecondaryContainer}
-            style={{ marginBottom: 1 }}
-          />
+          <Icon name="weather-hazy" size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
           <Text className="size-smm weight-bold mt-xs color-secondaryContainer ml-sm">
             {t('settings.weather').toLocaleUpperCase()}
           </Text>
@@ -203,10 +172,7 @@ const Settings = React.memo(() => {
           />
         </View>
         <View className="flex-row mb-sm">
-          <Value
-            caption={t('settings.weather_api')}
-            value={state['WEATHER_API_KEY']}
-          />
+          <Value caption={t('settings.weather_api')} value={state['WEATHER_API_KEY']} />
         </View>
       </View>
       <View className="flex-column">
@@ -250,12 +216,7 @@ const Settings = React.memo(() => {
     <DataCard
       caption={
         <View className="flex-row alignitems-end">
-          <Icon
-            name="numeric"
-            size={16}
-            color={colorSecondaryContainer}
-            style={{ marginBottom: 1 }}
-          />
+          <Icon name="numeric" size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
           <Text className="size-smm weight-bold mt-xs color-secondaryContainer ml-sm">
             {t('settings.limits').toLocaleUpperCase()}
           </Text>
@@ -266,29 +227,19 @@ const Settings = React.memo(() => {
     >
       <View className="flex-column">
         <View className="flex-row my-sm">
-          <Value
-            caption={t('settings.flights_limit')}
-            value={state['FLIGHTS_LIMIT']}
-            width="50%"
-          />
+          <Value caption={t('settings.flights_limit')} value={state['FLIGHTS_LIMIT']} width="50%" />
         </View>
         <View className="flex-row mb-sm">
           <Value
             caption={t('settings.only_manual_refresh')}
-            value={
-              state['ONLY_MANUAL_REFRESH'] === 'true'
-                ? t('messages.enabled')
-                : t('messages.disabled')
-            }
+            value={state['ONLY_MANUAL_REFRESH'] === 'true' ? t('messages.enabled') : t('messages.disabled')}
           />
         </View>
         <View className="flex-row mb-sm">
           <Value
             caption={t('settings.force_request_api_on_manual_refresh')}
             value={
-              state['FORCE_REQUEST_API_ON_MANUAL_REFRESH'] === 'true'
-                ? t('messages.enabled')
-                : t('messages.disabled')
+              state['FORCE_REQUEST_API_ON_MANUAL_REFRESH'] === 'true' ? t('messages.enabled') : t('messages.disabled')
             }
           />
         </View>
@@ -332,12 +283,7 @@ const Settings = React.memo(() => {
     <DataCard
       caption={
         <View className="flex-row alignitems-end">
-          <Icon
-            name="api"
-            size={16}
-            color={colorSecondaryContainer}
-            style={{ marginBottom: 1 }}
-          />
+          <Icon name="api" size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
           <Text className="size-smm weight-bold mt-xs color-secondaryContainer ml-sm">
             {t('settings.services').toLocaleUpperCase()}
           </Text>
@@ -348,10 +294,7 @@ const Settings = React.memo(() => {
     >
       <View className="flex-column">
         <View className="flex-row my-sm">
-          <Value
-            caption={t('settings.aerodatabox')}
-            value={state['AEDBX_API_KEY']}
-          />
+          <Value caption={t('settings.aerodatabox')} value={state['AEDBX_API_KEY']} />
         </View>
         {/* <View
           className='flex-row mb-sm'
@@ -414,12 +357,7 @@ const Settings = React.memo(() => {
     <DataCard
       caption={
         <View className="flex-row alignitems-end">
-          <Icon
-            name="arrow-left-right-bold"
-            size={16}
-            color={colorSecondaryContainer}
-            style={{ marginBottom: 1 }}
-          />
+          <Icon name="arrow-left-right-bold" size={16} color={colorSecondaryContainer} style={{ marginBottom: 1 }} />
           <Text className="size-smm weight-bold mt-xs color-secondaryContainer ml-sm">
             {`${t('settings.import')} / ${t('settings.export')}`.toLocaleUpperCase()}
           </Text>
@@ -430,18 +368,10 @@ const Settings = React.memo(() => {
       <View className="flex-column">
         <View className="flex-row mb-sm mt-md">
           <View style={{ width: '50%' }}>
-            <Button
-              className="px-lg mr-lg"
-              title={t('settings.import')}
-              onPress={() => importData()}
-            />
+            <Button className="px-lg mr-lg" title={t('settings.import')} onPress={() => importData()} />
           </View>
           <View style={{ width: '50%' }}>
-            <Button
-              className="px-lg mr-md"
-              title={t('settings.export')}
-              onPress={() => exportData()}
-            />
+            <Button className="px-lg mr-md" title={t('settings.export')} onPress={() => exportData()} />
           </View>
         </View>
       </View>
@@ -454,12 +384,7 @@ const Settings = React.memo(() => {
     import: importExportDataCard,
   };
 
-  const data: Array<keyof typeof dataCards> = [
-    'weather',
-    'limits',
-    'api',
-    'import',
-  ];
+  const data: Array<keyof typeof dataCards> = ['weather', 'limits', 'api', 'import'];
 
   const renderItem = ({ item }: ListRenderItemInfo<keyof typeof dataCards>) => {
     return dataCards[item];
@@ -467,11 +392,7 @@ const Settings = React.memo(() => {
 
   return (
     <GestureHandlerRootView>
-      <KeyboardAvoidingView
-        behavior="height"
-        keyboardVerticalOffset={100}
-        style={{ flex: 1 }}
-      >
+      <KeyboardAvoidingView behavior="height" keyboardVerticalOffset={100} style={{ flex: 1 }}>
         <FlatList
           data={data}
           keyExtractor={(item) => item}

@@ -1,12 +1,11 @@
-import React, { useEffect, useImperativeHandle, useState } from 'react';
-import {
-  DateTimePickerAndroid,
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { DateTime } from 'luxon';
-import { useLocale } from '@/helpers/localization';
+
+import React, { useEffect, useImperativeHandle, useState } from 'react';
+
 import Button from '@/components/Button';
 import { fromLocaltoUTCISOString } from '@/helpers/datetime';
+import { useLocale } from '@/helpers/localization';
 
 interface Props {
   className?: string;
@@ -26,18 +25,7 @@ interface IDatetimeInputRef {
 }
 
 const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
-  (
-    {
-      className,
-      dateFormatOptions,
-      textClass,
-      timeFormatOptions,
-      onChange,
-      timezone,
-      ...props
-    }: Props,
-    currentRef,
-  ) => {
+  ({ className, dateFormatOptions, textClass, timeFormatOptions, onChange, timezone, ...props }: Props, currentRef) => {
     const [value, setValue] = useState<string>('');
     const [dateValue, setDateValue] = useState<Date>(new Date());
     const [text, setText] = useState('');
@@ -105,15 +93,7 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
       onChange: setDate,
     };
 
-    return (
-      <Button
-        className={className}
-        textClass={textClass}
-        title={text}
-        uppercase={false}
-        onPress={open}
-      />
-    );
+    return <Button className={className} textClass={textClass} title={text} uppercase={false} onPress={open} />;
   },
 );
 

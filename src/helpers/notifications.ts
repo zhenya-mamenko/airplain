@@ -1,5 +1,6 @@
-import t from '@/helpers/localization';
 import * as Notifications from 'expo-notifications';
+
+import t from '@/helpers/localization';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -34,11 +35,7 @@ Notifications.setNotificationChannelAsync('urgent', {
   vibrationPattern: [0, 250, 250, 250],
 });
 
-export const showCommonNotification = async (
-  title: string,
-  body: string,
-  data?: any,
-) => {
+export const showCommonNotification = async (title: string, body: string, data?: any) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -52,11 +49,7 @@ export const showCommonNotification = async (
   console.debug(`showCommonNotification ${title} sent`);
 };
 
-export const showFlightNotification = async (
-  title: string,
-  body: string,
-  data?: any,
-) => {
+export const showFlightNotification = async (title: string, body: string, data?: any) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -70,11 +63,7 @@ export const showFlightNotification = async (
   console.debug(`showFlightNotification ${title} sent`);
 };
 
-export const showUrgentNotification = async (
-  title: string,
-  body: string,
-  data?: any,
-) => {
+export const showUrgentNotification = async (title: string, body: string, data?: any) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       body,

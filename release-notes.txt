@@ -1,4 +1,7 @@
-Bugfix: Corrected wrong drag handling in the flight details card.
-Bugfix: Fixed automatic refreshing actual flights.
+Bugfix: Fixed an error that occurred when adding passenger data.
 
-Feature: Display timezones in the flight details card.
+Refactoring: Refactored SQLite module for better performance and maintainability.
+
+Update: Updated UTC timezone display in flight details card for clarity.
+
+Improvement: Added comprehensive test coverage.

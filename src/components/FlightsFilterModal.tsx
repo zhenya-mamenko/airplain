@@ -1,17 +1,18 @@
 import { useContext, useEffect, useRef, useState } from 'react';
+import { Text, ThemeProvider, View } from 'react-native-picasso';
+
 import Button from '@/components/Button';
-import Separator from '@/components/Separator';
 import DatetimeInput from '@/components/DatetimeInput';
+import { GlobalContext } from '@/components/GlobalContext';
 import { MultiSelect } from '@/components/Select';
+import Separator from '@/components/Separator';
 import airports from '@/constants/airports.json';
-import { View, Text, ThemeProvider } from 'react-native-picasso';
 import emitter from '@/helpers/emitter';
 import t, { useLocale } from '@/helpers/localization';
 import { useThemeColor } from '@/hooks/useColors';
-import type { FlightsFilter } from '@/types';
-import { GlobalContext } from '@/components/GlobalContext';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import useTheme from '@/hooks/useTheme';
+import type { FlightsFilter } from '@/types';
 
 export default function FlightsFilterModal() {
   const themeName = useDynamicColorScheme() || 'light';
@@ -46,19 +47,11 @@ export default function FlightsFilterModal() {
           display: showFilterModal ? undefined : 'none',
         }}
       >
-        <Text className="size-lg color-surface">
-          {t('filter.setup_filter')}
-        </Text>
-        <Separator
-          borderColor={colorPrimaryContainer}
-          title={t('filter.flight_date').toLocaleLowerCase()}
-        />
+        <Text className="size-lg color-surface">{t('filter.setup_filter')}</Text>
+        <Separator borderColor={colorPrimaryContainer} title={t('filter.flight_date').toLocaleLowerCase()} />
         <View className="flex-row">
           <View className="flex-column flex-1 mr-lg">
-            <Text
-              className="size-md color-primaryContainer mb-sm"
-              style={{ fontVariant: ['small-caps'] }}
-            >
+            <Text className="size-md color-primaryContainer mb-sm" style={{ fontVariant: ['small-caps'] }}>
               {t('filter.from')}
             </Text>
             <DatetimeInput
@@ -76,10 +69,7 @@ export default function FlightsFilterModal() {
             />
           </View>
           <View className="flex-column flex-1 mr-lg">
-            <Text
-              className="size-md color-primaryContainer mb-sm"
-              style={{ fontVariant: ['small-caps'] }}
-            >
+            <Text className="size-md color-primaryContainer mb-sm" style={{ fontVariant: ['small-caps'] }}>
               {t('filter.to')}
             </Text>
             <DatetimeInput
@@ -97,19 +87,12 @@ export default function FlightsFilterModal() {
             />
           </View>
         </View>
-        <Separator
-          borderColor={colorPrimaryContainer}
-          title={t('filter.airports').toLocaleLowerCase()}
-        />
+        <Separator borderColor={colorPrimaryContainer} title={t('filter.airports').toLocaleLowerCase()} />
         <MultiSelect
           className="color-surface bg-background b-1 bordercolor-outline radius-sm"
           data={airports.map((x: any) => {
-            const local =
-              l !== 'en'
-                ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}`
-                : '';
-            x['full'] =
-              `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
+            const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
+            x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
             return x;
           })}
           labelField={`municipality_name${l !== 'en' ? '_' + l : ''}`}
@@ -144,9 +127,7 @@ export default function FlightsFilterModal() {
               setFilterModal(false);
               emitter.emit(
                 'setFlightFilterState',
-                params.dateFrom === undefined &&
-                  params.dateTo === undefined &&
-                  params.airports.length === 0
+                params.dateFrom === undefined && params.dateTo === undefined && params.airports.length === 0
                   ? 'filter-outline'
                   : 'filter',
               );

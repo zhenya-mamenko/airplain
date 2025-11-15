@@ -1,21 +1,19 @@
-import Button from '@/components/Button';
-import Separator from '@/components/Separator';
-import DatetimeInput from '@/components/DatetimeInput';
+import { router } from 'expo-router';
 import React, { useReducer, useRef, useState } from 'react';
+import { KeyboardAvoidingView, Pressable, ScrollView, ToastAndroid } from 'react-native';
+import { Text, TextInput, ThemeProvider, View } from 'react-native-picasso';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import Button from '@/components/Button';
+import DatetimeInput from '@/components/DatetimeInput';
+import LoadBCBPOptions from '@/components/LoadBCBP';
 import { Select } from '@/components/Select';
+import Separator from '@/components/Separator';
 import airports from '@/constants/airports.json';
+import { getAirlineData, getAirlinesData } from '@/helpers/airdata';
+import { BCBPData } from '@/helpers/boardingpass';
 import { haversine, showConfirmation } from '@/helpers/common';
-import t from '@/helpers/localization';
-import type { Flight, FlightStatus, PKPassData } from '@/types';
-import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
-import useTheme from '@/hooks/useTheme';
-import {
-  KeyboardAvoidingView,
-  Pressable,
-  ToastAndroid,
-  ScrollView,
-} from 'react-native';
-import { Text, View, ThemeProvider, TextInput } from 'react-native-picasso';
+import { refreshFlights } from '@/helpers/common';
 import {
   fromLocaltoLocalISOString,
   fromLocaltoUTCISOString,
@@ -23,28 +21,16 @@ import {
   replaceTimeZone,
 } from '@/helpers/datetime';
 import { getFlightData } from '@/helpers/flights';
-import {
-  isFlightExists,
-  inserPassengerFromBCBP,
-  insertFlight,
-} from '@/helpers/sqlite';
-import { router } from 'expo-router';
+import t from '@/helpers/localization';
 import { useLocale } from '@/helpers/localization';
+import { insertFlight, insertPassengerFromBCBP, isFlightExists } from '@/helpers/sqlite';
 import { useThemeColor } from '@/hooks/useColors';
-import LoadBCBPOptions from '@/components/LoadBCBP';
-import { BCBPData } from '@/helpers/boardingpass';
-import { refreshFlights } from '@/helpers/common';
-import { getAirlineData, getAirlinesData } from '@/helpers/airdata';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
+import useTheme from '@/hooks/useTheme';
+import type { Flight, FlightStatus, PKPassData } from '@/types';
 
 export default function AddFlight(props: { today?: Date }) {
-  const today = fromUTCtoLocalISOString(
-    (props.today ?? new Date()).toISOString(),
-    'UTC',
-  );
+  const today = fromUTCtoLocalISOString((props.today ?? new Date()).toISOString(), 'UTC');
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
@@ -94,24 +80,16 @@ export default function AddFlight(props: { today?: Date }) {
 
   const processManuallyAdd = async () => {
     setProcessing(true);
-    const arrivalAirport = airports.find(
-      (x) => x.iata_code === state.add.arrivalAirport,
-    );
-    const departureAirport = airports.find(
-      (x) => x.iata_code === state.add.departureAirport,
-    );
+    const arrivalAirport = airports.find((x) => x.iata_code === state.add.arrivalAirport);
+    const departureAirport = airports.find((x) => x.iata_code === state.add.departureAirport);
     const arrivalTimezone = arrivalAirport?.timezone || 'UTC';
     const departureTimezone = departureAirport?.timezone || 'UTC';
     const endDatetime = fromLocaltoLocalISOString(
-      state.add.arrivalDate.substring(0, 10) +
-        'T' +
-        state.add.arrivalTime.substring(11, 19),
+      state.add.arrivalDate.substring(0, 10) + 'T' + state.add.arrivalTime.substring(11, 19),
       arrivalTimezone,
     );
     const startDatetime = fromLocaltoLocalISOString(
-      state.add.departureDate.substring(0, 10) +
-        'T' +
-        state.add.departureTime.substring(11, 19),
+      state.add.departureDate.substring(0, 10) + 'T' + state.add.departureTime.substring(11, 19),
       departureTimezone,
     );
     const flight: Flight = {
@@ -157,14 +135,7 @@ export default function AddFlight(props: { today?: Date }) {
   };
 
   const updateFlightFromBCBP = async (flightId: number) => {
-    if (
-      await inserPassengerFromBCBP(
-        flightId,
-        state.bcbp.data,
-        state.bcbp.format,
-        state.bcbp.pkpass,
-      )
-    ) {
+    if (await insertPassengerFromBCBP(flightId, state.bcbp.data, state.bcbp.format, state.bcbp.pkpass)) {
       router.back();
       ToastAndroid.show(t('messages.update_successfull'), ToastAndroid.SHORT);
     } else {
@@ -190,8 +161,7 @@ export default function AddFlight(props: { today?: Date }) {
       };
       if (!!state.bcbp.data) {
         value.showOnlyCloseButton = false;
-        value.description +=
-          '\n' + t('add.flight_already_added_description_bcbp');
+        value.description += '\n' + t('add.flight_already_added_description_bcbp');
         value.onConfirm = () => updateFlightFromBCBP(flightId);
       }
       setProcessing(false);
@@ -221,8 +191,7 @@ export default function AddFlight(props: { today?: Date }) {
               type: 'add',
               value: {
                 airline: state.search.airline,
-                airlineName:
-                  getAirlineData(state.search.airline)?.airlineName ?? '',
+                airlineName: getAirlineData(state.search.airline)?.airlineName ?? '',
                 flightNumber: state.search.flightNumber,
                 departureDate: state.search.departureDate,
               },
@@ -256,27 +225,16 @@ export default function AddFlight(props: { today?: Date }) {
     <ThemeProvider theme={theme}>
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-          <ScrollView
-            keyboardShouldPersistTaps="always"
-            style={{ flex: 1, backgroundColor: colorSurfaceVariant }}
-          >
+          <ScrollView keyboardShouldPersistTaps="always" style={{ flex: 1, backgroundColor: colorSurfaceVariant }}>
             {state.visibility.searchForm && (
               <View className="bg-surfaceVariant alignitems-start justifycontent-start p-md flex-column flex-1">
-                <Text className="size-lg color-primaryContainer">
-                  {t('add.find_flight')}
-                </Text>
+                <Text className="size-lg color-primaryContainer">{t('add.find_flight')}</Text>
 
-                <Text
-                  className="size-md color-primaryContainer mt-md mb-xs"
-                  style={{ fontVariant: ['small-caps'] }}
-                >
+                <Text className="size-md color-primaryContainer mt-md mb-xs" style={{ fontVariant: ['small-caps'] }}>
                   {t('add.airline').toLocaleLowerCase()}
                 </Text>
                 <View className="flex-row">
-                  <Pressable
-                    style={{ flex: 1 }}
-                    onPress={() => refs.searchAirline.current?.open()}
-                  >
+                  <Pressable style={{ flex: 1 }} onPress={() => refs.searchAirline.current?.open()}>
                     <View className="flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg">
                       <Text
                         className="color-surface weight-bold size-lg"
@@ -377,16 +335,11 @@ export default function AddFlight(props: { today?: Date }) {
                   </View>
                 </View>
 
-                <View
-                  className="mt-xl mb-sm flex-row justifycontent-between"
-                  style={{ width: '100%' }}
-                >
+                <View className="mt-xl mb-sm flex-row justifycontent-between" style={{ width: '100%' }}>
                   <Button
                     className="bg-primary px-lg"
                     disabled={
-                      (state.search.flightNumber ?? '') === '' ||
-                      (state.search.airline ?? '') === '' ||
-                      processing
+                      (state.search.flightNumber ?? '') === '' || (state.search.airline ?? '') === '' || processing
                     }
                     title={t('add.search')}
                     onPress={findFlight}
@@ -402,14 +355,8 @@ export default function AddFlight(props: { today?: Date }) {
                 </View>
 
                 <View className="flex-row justifycontent-center alignitems-center pt-xl pb-lg">
-                  <View
-                    className="bg-surfaceVariant px-sm"
-                    style={{ position: 'absolute', top: 20, zIndex: 1 }}
-                  >
-                    <Text
-                      className="size-md color-primaryContainer"
-                      style={{ opacity: 0.6 }}
-                    >
+                  <View className="bg-surfaceVariant px-sm" style={{ position: 'absolute', top: 20, zIndex: 1 }}>
+                    <Text className="size-md color-primaryContainer" style={{ opacity: 0.6 }}>
                       {t('add.or')}
                     </Text>
                   </View>
@@ -426,30 +373,20 @@ export default function AddFlight(props: { today?: Date }) {
                   />
                 </View>
 
-                <Text className="size-lg color-primaryContainer mb-lg">
-                  {t('add.load_bp')}
-                </Text>
+                <Text className="size-lg color-primaryContainer mb-lg">{t('add.load_bp')}</Text>
 
                 <LoadBCBPOptions dispatch={dispatch} />
               </View>
             )}
             {state.visibility.addManuallyForm && (
               <View className="bg-surfaceVariant alignitems-start justifycontent-start p-md flex-column flex-1">
-                <Text className="size-lg color-primaryContainer">
-                  {t('add.fill_manually')}
-                </Text>
+                <Text className="size-lg color-primaryContainer">{t('add.fill_manually')}</Text>
 
-                <Separator
-                  borderColor={colorPrimaryContainer}
-                  title={t('add.airline').toLocaleLowerCase()}
-                />
+                <Separator borderColor={colorPrimaryContainer} title={t('add.airline').toLocaleLowerCase()} />
 
                 <View className="flex-row">
                   <View className="flex-column flex-1">
-                    <Text
-                      className="size-md color-primaryContainer mb-sm"
-                      style={{ fontVariant: ['small-caps'] }}
-                    >
+                    <Text className="size-md color-primaryContainer mb-sm" style={{ fontVariant: ['small-caps'] }}>
                       {t('add.airline_code').toLocaleLowerCase()}
                     </Text>
                     <TextInput
@@ -480,10 +417,7 @@ export default function AddFlight(props: { today?: Date }) {
                     />
                   </View>
                   <View className="flex-column flex-3">
-                    <Text
-                      className="size-md color-primaryContainer mb-sm"
-                      style={{ fontVariant: ['small-caps'] }}
-                    >
+                    <Text className="size-md color-primaryContainer mb-sm" style={{ fontVariant: ['small-caps'] }}>
                       {t('add.airline_name').toLocaleLowerCase()}
                     </Text>
                     <TextInput
@@ -528,29 +462,18 @@ export default function AddFlight(props: { today?: Date }) {
                           value: { flightNumber: text },
                         });
                       }}
-                      onSubmitEditing={() =>
-                        refs.departureAirport.current?.open()
-                      }
+                      onSubmitEditing={() => refs.departureAirport.current?.open()}
                     />
                   </View>
                 </View>
 
-                <Separator
-                  borderColor={colorPrimaryContainer}
-                  title={t('add.departure').toLocaleLowerCase()}
-                />
+                <Separator borderColor={colorPrimaryContainer} title={t('add.departure').toLocaleLowerCase()} />
 
-                <Text
-                  className="size-md color-primaryContainer mt-xs mb-sm"
-                  style={{ fontVariant: ['small-caps'] }}
-                >
+                <Text className="size-md color-primaryContainer mt-xs mb-sm" style={{ fontVariant: ['small-caps'] }}>
                   {t('add.airport').toLocaleLowerCase()}
                 </Text>
                 <View className="flex-row">
-                  <Pressable
-                    style={{ flex: 1 }}
-                    onPress={() => refs.departureAirport.current?.open()}
-                  >
+                  <Pressable style={{ flex: 1 }} onPress={() => refs.departureAirport.current?.open()}>
                     <View
                       className="flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg"
                       style={{ width: 75 }}
@@ -570,12 +493,8 @@ export default function AddFlight(props: { today?: Date }) {
                     <Select
                       className="color-surface bg-background b-1 bordercolor-outline radius-sm"
                       data={airports.map((x: any) => {
-                        const local =
-                          l !== 'en'
-                            ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}`
-                            : '';
-                        x['full'] =
-                          `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
+                        const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
+                        x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
                         return x;
                       })}
                       dropdownRef={refs.departureAirport}
@@ -624,10 +543,7 @@ export default function AddFlight(props: { today?: Date }) {
                           dispatch({
                             type: 'add',
                             value: {
-                              arrivalDate: state.add.arrivalDate.splice(
-                                0,
-                                value.substring(0, 10),
-                              ),
+                              arrivalDate: state.add.arrivalDate.splice(0, value.substring(0, 10)),
                             },
                           });
                         }
@@ -660,22 +576,13 @@ export default function AddFlight(props: { today?: Date }) {
                   </View>
                 </View>
 
-                <Separator
-                  borderColor={colorPrimaryContainer}
-                  title={t('add.arrival').toLocaleLowerCase()}
-                />
+                <Separator borderColor={colorPrimaryContainer} title={t('add.arrival').toLocaleLowerCase()} />
 
-                <Text
-                  className="size-md color-primaryContainer mt-xs mb-sm"
-                  style={{ fontVariant: ['small-caps'] }}
-                >
+                <Text className="size-md color-primaryContainer mt-xs mb-sm" style={{ fontVariant: ['small-caps'] }}>
                   {t('add.airport').toLocaleLowerCase()}
                 </Text>
                 <View className="flex-row">
-                  <Pressable
-                    style={{ flex: 1 }}
-                    onPress={() => refs.arrivalAirport.current?.open()}
-                  >
+                  <Pressable style={{ flex: 1 }} onPress={() => refs.arrivalAirport.current?.open()}>
                     <View
                       className="flex-1 b-1 bg-background bordercolor-outline radius-sm alignitems-center justifycontent-center mr-lg"
                       style={{ width: 75 }}
@@ -695,12 +602,8 @@ export default function AddFlight(props: { today?: Date }) {
                     <Select
                       className="color-surface bg-background b-1 bordercolor-outline radius-sm"
                       data={airports.map((x: any) => {
-                        const local =
-                          l !== 'en'
-                            ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}`
-                            : '';
-                        x['full'] =
-                          `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
+                        const local = l !== 'en' ? `${x[`airport_name_${l}`]} ${x[`municipality_name_${l}`]}` : '';
+                        x['full'] = `${x['iata_code']} ${x['airport_name']} ${x['municipality_name']} ${local}`;
                         return x;
                       })}
                       dropdownPosition="top"
@@ -774,10 +677,7 @@ export default function AddFlight(props: { today?: Date }) {
                   </View>
                 </View>
 
-                <View
-                  className="mt-xl flex-row justifycontent-end"
-                  style={{ width: '100%' }}
-                >
+                <View className="mt-xl flex-row justifycontent-end" style={{ width: '100%' }}>
                   <Button
                     className="bg-primary px-lg"
                     disabled={

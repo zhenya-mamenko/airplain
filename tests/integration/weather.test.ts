@@ -1,12 +1,8 @@
-import { parseWeather, loadWeather } from '@/helpers/weather';
-import { fetch } from '@/helpers/common';
-import {
-  SvgLightWind,
-  SvgModerateWind,
-  SvgHeaveWind,
-} from '@/constants/svg/weather';
+import { WEATHER_API_URL, settings } from '@/constants/settings';
+import { SvgHeaveWind, SvgLightWind, SvgModerateWind } from '@/constants/svg/weather';
 import { weatherIcons } from '@/constants/weather';
-import { settings, WEATHER_API_URL } from '@/constants/settings';
+import { fetch } from '@/helpers/common';
+import { loadWeather, parseWeather } from '@/helpers/weather';
 
 jest.mock('@/helpers/common', () => ({
   fetch: jest.fn(),

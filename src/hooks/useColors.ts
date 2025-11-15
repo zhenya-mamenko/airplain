@@ -1,12 +1,10 @@
-import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import { ColorSchemeName } from 'react-native';
-import themes from '@/constants/themes.json';
-import palettes from '@/constants/palettes.json';
 
-export const useThemeColor = (
-  colorName: string,
-  themeName?: ColorSchemeName,
-): string => {
+import palettes from '@/constants/palettes.json';
+import themes from '@/constants/themes.json';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
+
+export const useThemeColor = (colorName: string, themeName?: ColorSchemeName): string => {
   const theme = themeName ?? useDynamicColorScheme() ?? 'light';
 
   const parts = colorName.split('.');
@@ -21,10 +19,7 @@ export const useThemeColor = (
   return color as unknown as string;
 };
 
-export const useThemeColors = (
-  colorNames: Array<string>,
-  themeName?: ColorSchemeName,
-): Array<string> => {
+export const useThemeColors = (colorNames: Array<string>, themeName?: ColorSchemeName): Array<string> => {
   const theme = themeName ?? useDynamicColorScheme() ?? 'light';
   return colorNames.map((colorName) => useThemeColor(colorName, theme));
 };
@@ -40,8 +35,6 @@ for (const palette in palettes) {
   }
 }
 
-export const usePaletteColor = (
-  colorId: keyof typeof preparedPalette,
-): string => {
+export const usePaletteColor = (colorId: keyof typeof preparedPalette): string => {
   return preparedPalette[colorId];
 };

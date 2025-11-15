@@ -84,14 +84,7 @@ export async function processImportData(records: any): Promise<Array<any>> {
     const startDate = new Date(flight.start_datetime);
     if (isNaN(startDate.valueOf())) continue;
 
-    if (
-      !!(await isFlightExists(
-        flight.airline,
-        flight.flight_number,
-        startDate.toISOString().substring(0, 10),
-      ))
-    )
-      continue;
+    if (await isFlightExists(flight.airline, flight.flight_number, startDate.toISOString().substring(0, 10))) continue;
 
     const airlineData = getAirlineData(flight.airline);
     if (!airlineData) {
@@ -118,44 +111,24 @@ export async function processImportData(records: any): Promise<Array<any>> {
     }
 
     if (isNaN(Date.parse(flight.end_datetime))) continue;
-    if (
-      !!flight.actual_start_datetime &&
-      isNaN(Date.parse(flight.actual_start_datetime))
-    )
-      continue;
-    if (
-      !!flight.actual_end_datetime &&
-      isNaN(Date.parse(flight.actual_end_datetime))
-    )
-      continue;
+    if (!!flight.actual_start_datetime && isNaN(Date.parse(flight.actual_start_datetime))) continue;
+    if (!!flight.actual_end_datetime && isNaN(Date.parse(flight.actual_end_datetime))) continue;
 
     flight.actual_start_datetime = !!flight.actual_start_datetime
       ? flight.actual_start_datetime
       : flight.start_datetime;
-    flight.actual_end_datetime = !!flight.actual_end_datetime
-      ? flight.actual_end_datetime
-      : flight.end_datetime;
+    flight.actual_end_datetime = !!flight.actual_end_datetime ? flight.actual_end_datetime : flight.end_datetime;
 
     if (!flight.status) {
-      flight.status =
-        new Date(flight.actual_end_datetime) < new Date()
-          ? 'scheduled'
-          : 'arrived';
+      flight.status = new Date(flight.actual_end_datetime) < new Date() ? 'scheduled' : 'arrived';
     }
-    flight.status = ['arrived', 'canceled', 'diverted', 'scheduled'].includes(
-      flight.status,
-    )
+    flight.status = ['arrived', 'canceled', 'diverted', 'scheduled'].includes(flight.status)
       ? flight.status
       : 'arrived';
     flight.record_type = 0;
-    flight.is_archived =
-      new Date(flight.actual_end_datetime) < new Date() ? 1 : 0;
+    flight.is_archived = new Date(flight.actual_end_datetime) < new Date() ? 1 : 0;
     for (const f of fields) {
-      if (
-        flight[f] === null ||
-        flight[f] === undefined ||
-        flight[f].toString().toLowerCase() === 'null'
-      ) {
+      if (flight[f] === null || flight[f] === undefined || flight[f].toString().toLowerCase() === 'null') {
         delete flight[f];
       }
     }

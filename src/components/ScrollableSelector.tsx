@@ -22,7 +22,6 @@
  * />
  * ```
  */
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, ViewabilityConfig } from 'react-native';
 
@@ -70,9 +69,7 @@ interface ScrollableSelectorProps {
 }
 
 const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
-  const [selected, setSelected] = useState(
-    props.selectedKey ?? props.data[0]?.key,
-  );
+  const [selected, setSelected] = useState(props.selectedKey ?? props.data[0]?.key);
   const selectedRef = useRef(selected);
   const viewabilityConfig = props.viewabilityConfig ?? {
     minimumViewTime: 200,
@@ -99,25 +96,17 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
   );
 
   useEffect(() => {
-    if (props.selectedKey !== selected)
-      changeSelected(props.selectedKey ?? props.data[0]?.key);
+    if (props.selectedKey !== selected) changeSelected(props.selectedKey ?? props.data[0]?.key);
   }, [props.selectedKey]);
 
-  const viewableItemsChanged = useRef(
-    (info: { changed: any[]; viewableItems: any[] }) => {},
-  );
+  const viewableItemsChanged = useRef((info: { changed: any[]; viewableItems: any[] }) => {});
   useEffect(() => {
-    viewableItemsChanged.current = (info: {
-      changed: any[];
-      viewableItems: any[];
-    }) => {
+    viewableItemsChanged.current = (info: { changed: any[]; viewableItems: any[] }) => {
       const viewableKeys = info.viewableItems.map((v) => v.item.key);
       let key = null,
         selectedKeyEncountered = false;
       for (const item of keys) {
-        selectedKeyEncountered = !selectedKeyEncountered
-          ? item === selectedRef.current
-          : selectedKeyEncountered;
+        selectedKeyEncountered = !selectedKeyEncountered ? item === selectedRef.current : selectedKeyEncountered;
         if (viewableKeys.includes(item)) key = item;
         if (selectedKeyEncountered && key !== null) break;
       }
@@ -129,9 +118,7 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
     ({ item }: { item: Item }): JSX.Element => {
       const isSelected = item.key === selected;
       const renderedItem = props.onRenderItem ? (
-        <Pressable onPress={() => changeSelected(item.key)}>
-          {props.onRenderItem(item, isSelected)}
-        </Pressable>
+        <Pressable onPress={() => changeSelected(item.key)}>{props.onRenderItem(item, isSelected)}</Pressable>
       ) : (
         <></>
       );
@@ -140,13 +127,8 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
     [props.onRenderItem, selected],
   );
 
-  const onViewableItemsChanged = (info: {
-    changed: any[];
-    viewableItems: any[];
-  }) => viewableItemsChanged.current(info);
-  const viewabilityConfigCallbackPairs = useRef([
-    { viewabilityConfig, onViewableItemsChanged },
-  ]).current;
+  const onViewableItemsChanged = (info: { changed: any[]; viewableItems: any[] }) => viewableItemsChanged.current(info);
+  const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }]).current;
 
   useEffect(() => {
     if (!!props.data[0]?.key && !selected) changeSelected(props.data[0]?.key);

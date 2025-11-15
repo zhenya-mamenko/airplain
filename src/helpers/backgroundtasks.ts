@@ -1,5 +1,6 @@
-import { flightsCheckTask } from '@/helpers/airdata';
 import { AppRegistry } from 'react-native';
+
+import { flightsCheckTask } from '@/helpers/airdata';
 
 const BACKGROUND_TASK_NAME = 'flightsCheckTask';
 

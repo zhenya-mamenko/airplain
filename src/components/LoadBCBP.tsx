@@ -1,30 +1,19 @@
-import React, { useState } from 'react';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
+
+import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
-import Button from '@/components/Button';
-import {
-  CameraView,
-  BarcodeScanningResult,
-  useCameraPermissions,
-} from 'expo-camera';
-import { View } from 'react-native-picasso';
-import {
-  loadPKPass,
-  createPKPass,
-  scanBarcode as scan,
-  decodeBCBP,
-} from '@/helpers/boardingpass';
-import { useThemeColor } from '@/hooks/useColors';
-import t from '@/helpers/localization';
+import React, { useState } from 'react';
 import { Dimensions, Modal, StyleSheet, ToastAndroid } from 'react-native';
+import { View } from 'react-native-picasso';
+
+import Button from '@/components/Button';
+import { createPKPass, decodeBCBP, loadPKPass, scanBarcode as scan } from '@/helpers/boardingpass';
+import t from '@/helpers/localization';
+import { useThemeColor } from '@/hooks/useColors';
 import { BCBPFormat } from '@/types';
 
-const LoadBCBPOptions = (props: {
-  today?: Date;
-  dispatch: any;
-  showToast?: boolean;
-}) => {
+const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boolean }) => {
   const { today = new Date(), dispatch, showToast = true } = props;
   const [permission, requestPermission] = useCameraPermissions();
   const colorPrimary = useThemeColor('textColors.primary');
@@ -41,8 +30,7 @@ const LoadBCBPOptions = (props: {
         departureDate: leg.flightDate ?? today,
       },
     });
-    if (showToast)
-      ToastAndroid.show(t('add.check_flight_date'), ToastAndroid.SHORT);
+    if (showToast) ToastAndroid.show(t('add.check_flight_date'), ToastAndroid.SHORT);
   };
 
   const openPKpass = () => {
@@ -156,20 +144,14 @@ const LoadBCBPOptions = (props: {
               onBarcodeScanned={scanBarcode}
             />
           </View>
-          <Button
-            className="mt-lg"
-            title={t('buttons.close')}
-            onPress={() => setCameraModal(false)}
-          />
+          <Button className="mt-lg" title={t('buttons.close')} onPress={() => setCameraModal(false)} />
         </View>
       </Modal>
 
       <View className="flex-column" style={{ width: '100%' }}>
         <Button
           className="bg-secondary px-lg justifycontent-start"
-          leftIcon={
-            <Icon name="passport-biometric" size={20} color={colorPrimary} />
-          }
+          leftIcon={<Icon name="passport-biometric" size={20} color={colorPrimary} />}
           textClass="ml-lg"
           title={t('add.open_pkpass')}
           uppercase={false}

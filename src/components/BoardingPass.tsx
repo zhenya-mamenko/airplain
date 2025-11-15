@@ -1,18 +1,14 @@
+import { RenderOptions, azteccode, datamatrix, pdf417, qrcode } from '@bwip-js/react-native';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
+import * as Brightness from 'expo-brightness';
+import { Image, useImage } from 'expo-image';
 import React, { useEffect, useRef } from 'react';
 import { useWindowDimensions } from 'react-native';
-import * as Brightness from 'expo-brightness';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { View, Text } from 'react-native-picasso';
-import {
-  azteccode,
-  pdf417,
-  qrcode,
-  datamatrix,
-  RenderOptions,
-} from '@bwip-js/react-native';
-import { Image, useImage } from 'expo-image';
+import { Text, View } from 'react-native-picasso';
+
 import { parsefncMessage } from '@/helpers/boardingpass';
-import type { PKPassAsset, PKPassData, BCBPFormat } from '@/types';
+import type { BCBPFormat, PKPassAsset, PKPassData } from '@/types';
 
 interface BarCodeProps extends React.ComponentProps<typeof Image> {
   format: BCBPFormat;
@@ -97,21 +93,10 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
 
   const Field = ({ label, value, ...rest }: FieldProps) => {
     return (
-      <View
-        {...rest}
-        className={
-          rest.className
-            ? rest.className + ' flex-1 flex-column'
-            : 'flex-1 flex-column'
-        }
-      >
+      <View {...rest} className={rest.className ? rest.className + ' flex-1 flex-column' : 'flex-1 flex-column'}>
         <Text
           {...rest.labelProps}
-          className={
-            (rest.labelProps as any).className
-              ? (rest.labelProps as any).className + ' size-sm'
-              : 'size-sm'
-          }
+          className={(rest.labelProps as any).className ? (rest.labelProps as any).className + ' size-sm' : 'size-sm'}
           style={{
             color: colors.labelColor,
             ...(rest.labelProps as any).style,
@@ -121,11 +106,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
         </Text>
         <Text
           {...rest.valueProps}
-          className={
-            (rest.valueProps as any).className
-              ? (rest.valueProps as any).className + ' size-md'
-              : 'size-md'
-          }
+          className={(rest.valueProps as any).className ? (rest.valueProps as any).className + ' size-md' : 'size-md'}
           style={{
             color: colors.foregroundColor,
             ...(rest.valueProps as any).style,
@@ -174,12 +155,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
     maxHeight?: number; // icon: 29, logo: 50, footer: 15
     maxWidth?: number; // icon: 29, logo: 160, footer: 286
   }
-  const AssetImage = ({
-    asset,
-    maxHeight,
-    maxWidth,
-    ...rest
-  }: AssetImageProps) => {
+  const AssetImage = ({ asset, maxHeight, maxWidth, ...rest }: AssetImageProps) => {
     let image = null;
     if (asset && asset.image) {
       const data = useImage(asset.image);
@@ -228,20 +204,12 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
             {airline}
           </Text>
         )}
-        {boardingPass.headerFields ? (
-          <Fields
-            fields={boardingPass.headerFields}
-            className="alignitems-end"
-          />
-        ) : null}
+        {boardingPass.headerFields ? <Fields fields={boardingPass.headerFields} className="alignitems-end" /> : null}
       </View>
       {boardingPass.primaryFields && boardingPass.primaryFields.length == 2 ? (
         <View className="flex-row alignitems-end justifycontent-between mt-lg mb-md">
           <Field
-            label={
-              boardingPass.primaryFields[0].label ??
-              boardingPass.primaryFields[0].key
-            }
+            label={boardingPass.primaryFields[0].label ?? boardingPass.primaryFields[0].key}
             labelProps={{ className: 'size-sm' }}
             style={{ width: '35%' }}
             value={boardingPass.primaryFields[0].value}
@@ -262,10 +230,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
           </View>
           <Field
             className="alignitems-end"
-            label={
-              boardingPass.primaryFields[1].label ??
-              boardingPass.primaryFields[1].key
-            }
+            label={boardingPass.primaryFields[1].label ?? boardingPass.primaryFields[1].key}
             labelProps={{ className: 'size-sm align-right' }}
             style={{ width: '35%' }}
             value={boardingPass.primaryFields[1].value}
@@ -276,17 +241,12 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
           />
         </View>
       ) : null}
-      {boardingPass.auxiliaryFields &&
-      boardingPass.auxiliaryFields.length > 0 ? (
-        <View
-          className="flex-row alignitems-start justifycontent-between my-md"
-          style={{ height: 48 }}
-        >
+      {boardingPass.auxiliaryFields && boardingPass.auxiliaryFields.length > 0 ? (
+        <View className="flex-row alignitems-start justifycontent-between my-md" style={{ height: 48 }}>
           <Fields fields={boardingPass.auxiliaryFields} />
         </View>
       ) : null}
-      {boardingPass.secondaryFields &&
-      boardingPass.secondaryFields.length > 0 ? (
+      {boardingPass.secondaryFields && boardingPass.secondaryFields.length > 0 ? (
         <View className="flex-row alignitems-start justifycontent-between my-md">
           <Fields fields={boardingPass.secondaryFields} />
         </View>
@@ -303,10 +263,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
             className="p-md b-1 radius-md mt-md"
             style={{
               backgroundColor: '#FFFFFF',
-              borderColor:
-                colors.backgroundColor === '#FFFFFF'
-                  ? colors.foregroundColor
-                  : '#FFFFFF',
+              borderColor: colors.backgroundColor === '#FFFFFF' ? colors.foregroundColor : '#FFFFFF',
             }}
           >
             <BarCode
@@ -323,10 +280,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
             />
           </View>
           {barcode.altText ? (
-            <Text
-              className="size-sm mt-sm"
-              style={{ color: colors.labelColor }}
-            >
+            <Text className="size-sm mt-sm" style={{ color: colors.labelColor }}>
               {barcode.altText}
             </Text>
           ) : null}

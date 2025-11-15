@@ -1,12 +1,14 @@
-import { PixelRatio } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-import { unzipSync } from 'fflate';
+import { type BarcodedBoardingPass as BCBPData, decode } from 'bcbp';
 import { Buffer } from 'buffer';
-import { decode, type BarcodedBoardingPass as BCBPData } from 'bcbp';
-import type { PKPassAsset, PKPassData, BCBPFormat } from '@/types';
-import { getAirportData, airlineLogoUri } from '@/helpers/airdata';
+import { unzipSync } from 'fflate';
+
 import { scanFromURLAsync } from 'expo-camera';
+import * as FileSystem from 'expo-file-system';
+import { PixelRatio } from 'react-native';
+
+import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
 import { fetch } from '@/helpers/common';
+import type { BCBPFormat, PKPassAsset, PKPassData } from '@/types';
 
 export { type BarcodedBoardingPass as BCBPData } from 'bcbp';
 
@@ -28,23 +30,14 @@ export function getColor(color: string): string | null {
 }
 
 export async function loadPKPass(uri: string): Promise<PKPassData | null> {
-  const loadAsset = async (
-    filename: string,
-    ratio: number,
-  ): Promise<PKPassAsset | undefined> => {
+  const loadAsset = async (filename: string, ratio: number): Promise<PKPassAsset | undefined> => {
     ratio = Math.floor(ratio);
     let base64Content = null;
     while (ratio >= 1) {
-      let filepath =
-        ratio > 1
-          ? `${unzipDir}${filename}@${ratio}x.png`
-          : `${unzipDir}${filename}.png`;
+      let filepath = ratio > 1 ? `${unzipDir}${filename}@${ratio}x.png` : `${unzipDir}${filename}.png`;
       let fileInfo = await FileSystem.getInfoAsync(filepath);
       if (!fileInfo.exists) {
-        filepath =
-          ratio > 1
-            ? `${unzipDir}en.lproj/${filename}@${ratio}x.png`
-            : `${unzipDir}en.lproj/${filename}.png`;
+        filepath = ratio > 1 ? `${unzipDir}en.lproj/${filename}@${ratio}x.png` : `${unzipDir}en.lproj/${filename}.png`;
         fileInfo = await FileSystem.getInfoAsync(filepath);
         if (!fileInfo.exists) {
           ratio--;
@@ -109,10 +102,7 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
       encoding: FileSystem.EncodingType.UTF8,
     }),
   );
-  if (
-    pass.formatVersion !== 1 ||
-    pass.boardingPass.transitType !== 'PKTransitTypeAir'
-  ) {
+  if (pass.formatVersion !== 1 || pass.boardingPass.transitType !== 'PKTransitTypeAir') {
     console.error(
       `Unsupported pass format version: ${pass.formatVersion} or transitType: ${pass.boardingPass.transitType}`,
     );
@@ -123,9 +113,7 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
 
   const result: PKPassData = {
     airline: pass.organizationName,
-    barcode:
-      pass.barcode ??
-      (pass.barcodes && pass.barcodes.length > 0 ? pass.barcodes[0] : ''),
+    barcode: pass.barcode ?? (pass.barcodes && pass.barcodes.length > 0 ? pass.barcodes[0] : ''),
     boardingPass: pass.boardingPass,
     colors: {
       backgroundColor: getColor(pass.backgroundColor) ?? '#ffffff',
@@ -164,10 +152,7 @@ export function decodeBCBP(bcbp: string): BCBPData | null {
   }
 }
 
-export async function createPKPass(
-  bcbp: string,
-  format: BCBPFormat = 'PKBarcodeFormatQR',
-): Promise<PKPassData | null> {
+export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcodeFormatQR'): Promise<PKPassData | null> {
   const bpData = decodeBCBP(bcbp);
   if (!bpData || !bpData.data || !bpData.data.legs || !bpData.data.legs[0]) {
     return null;
@@ -250,10 +235,7 @@ export async function createPKPass(
     } catch (error) {
       return null;
     }
-    image =
-      image && image.ok && image.status === 200
-        ? await image.arrayBuffer()
-        : null;
+    image = image && image.ok && image.status === 200 ? await image.arrayBuffer() : null;
     let logo: PKPassAsset | undefined = undefined;
     if (image) {
       const base64Content = Buffer.from(image).toString('base64');
@@ -297,15 +279,8 @@ const BCBPFormatMap: { [key: string]: BCBPFormat } = {
   256: 'PKBarcodeFormatQR',
 };
 
-export async function scanBarcode(
-  uri: string,
-): Promise<{ bcbp: string | null; format: BCBPFormat | null }> {
-  const scanResult = await scanFromURLAsync(uri, [
-    'aztec',
-    'datamatrix',
-    'qr',
-    'pdf417',
-  ]);
+export async function scanBarcode(uri: string): Promise<{ bcbp: string | null; format: BCBPFormat | null }> {
+  const scanResult = await scanFromURLAsync(uri, ['aztec', 'datamatrix', 'qr', 'pdf417']);
   if (!scanResult || scanResult.length === 0) {
     return { bcbp: null, format: null };
   }

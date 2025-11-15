@@ -1,24 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, ScrollView, TextStyle } from 'react-native';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Text, View } from 'react-native-picasso';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+
 import YearSelector from '@/components/YearSelector';
-import { getStats } from '@/helpers/sqlite';
-import type { StatsData } from '@/types';
-import t, { useLocale } from '@/helpers/localization';
-import emitter from '@/helpers/emitter';
 import flags from '@/constants/flags.json';
+import emitter from '@/helpers/emitter';
+import t, { useLocale } from '@/helpers/localization';
+import { getStats } from '@/helpers/sqlite';
 import { useThemeColor } from '@/hooks/useColors';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from 'react-native-reanimated';
-import {
-  GestureDetector,
-  Gesture,
-  GestureHandlerRootView,
-} from 'react-native-gesture-handler';
-import { ActivityIndicator, TextStyle, ScrollView } from 'react-native';
+import type { StatsData } from '@/types';
 
 interface CardProps {
   caption: string;
@@ -31,15 +23,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = (props) => {
-  const {
-    caption,
-    value,
-    year,
-    units,
-    leftmost,
-    size = 'lgx',
-    flex = 1,
-  } = props;
+  const { caption, value, year, units, leftmost, size = 'lgx', flex = 1 } = props;
 
   const [displayValue, setDisplayValue] = useState(value);
   const [oldYear, setOldYear] = useState(year);
@@ -84,10 +68,7 @@ const Card: React.FC<CardProps> = (props) => {
         );
         if (u[i]) {
           c.push(
-            <Animated.Text
-              key={`units${i}`}
-              style={{ color: unitsColor, fontSize: sizePx }}
-            >
+            <Animated.Text key={`units${i}`} style={{ color: unitsColor, fontSize: sizePx }}>
               {u[i]}
             </Animated.Text>,
           );
@@ -122,10 +103,7 @@ const Card: React.FC<CardProps> = (props) => {
       className={`flex-column alignitems-start justifycontent-start flex-${flex} py-xs
       p${flex == 1 ? 'x' : !leftmost ? 'r' : 'l'}-sm ${leftmost ? 'mr-lg' : ''}`}
     >
-      <Text
-        className={`size-xs color-primaryContainer mb-xs`}
-        style={{ fontVariant: ['small-caps'] }}
-      >
+      <Text className={`size-xs color-primaryContainer mb-xs`} style={{ fontVariant: ['small-caps'] }}>
         {t(`stats.${caption}`).toLocaleLowerCase()}
       </Text>
       <Animated.View
@@ -259,16 +237,9 @@ export default function Stats() {
   };
 
   const statsView = (
-    <ScrollView
-      keyboardShouldPersistTaps="always"
-      style={{ flex: 1, backgroundColor: colorSurfaceVariant }}
-    >
+    <ScrollView keyboardShouldPersistTaps="always" style={{ flex: 1, backgroundColor: colorSurfaceVariant }}>
       <View className="bg-surfaceVariant flex-column flex-1">
-        <YearSelector
-          current={year}
-          years={years}
-          onYearChange={(year) => setYear(year)}
-        />
+        <YearSelector current={year} years={years} onYearChange={(year) => setYear(year)} />
         <GestureHandlerRootView style={{ flex: 1 }}>
           <GestureDetector gesture={panGesture}>
             <View collapsable={false}>
@@ -282,18 +253,10 @@ export default function Stats() {
                   </Text>
                 </View>
                 <View className="flex-row px-md pt-md pb-sm">
-                  <Card
-                    caption="flights"
-                    year={year}
-                    size="xxl"
-                    value={stats?.[year]?.flights}
-                  />
+                  <Card caption="flights" year={year} size="xxl" value={stats?.[year]?.flights} />
                   <View className="flex-column alignitems-end justifycontent-end mb-smm">
                     <View className="flex-row">
-                      <Text
-                        className="size-sm color-primaryContainer"
-                        style={{ fontVariant: ['small-caps'] }}
-                      >
+                      <Text className="size-sm color-primaryContainer" style={{ fontVariant: ['small-caps'] }}>
                         {t('stats.domestic_flights').toLocaleLowerCase()}
                       </Text>
                       <Animated.Text style={[animatedStyle, flightsStyle]}>
@@ -301,10 +264,7 @@ export default function Stats() {
                       </Animated.Text>
                     </View>
                     <View className="flex-row">
-                      <Text
-                        className="size-sm color-primaryContainer"
-                        style={{ fontVariant: ['small-caps'] }}
-                      >
+                      <Text className="size-sm color-primaryContainer" style={{ fontVariant: ['small-caps'] }}>
                         {t('stats.international_flights').toLocaleLowerCase()}
                       </Text>
                       <Animated.Text
@@ -315,10 +275,7 @@ export default function Stats() {
                       </Animated.Text>
                     </View>
                     <View className="flex-row">
-                      <Text
-                        className="size-sm color-primaryContainer"
-                        style={{ fontVariant: ['small-caps'] }}
-                      >
+                      <Text className="size-sm color-primaryContainer" style={{ fontVariant: ['small-caps'] }}>
                         {t('stats.long_haul_flights').toLocaleLowerCase()}
                       </Text>
                       <Animated.Text
@@ -342,36 +299,16 @@ export default function Stats() {
                     flex={2}
                     year={year}
                     units={t('measurements.km')}
-                    value={
-                      stats?.[year]?.distance
-                        ? `${stats?.[year]?.distance.toLocaleString(locale)}`
-                        : '0'
-                    }
+                    value={stats?.[year]?.distance ? `${stats?.[year]?.distance.toLocaleString(locale)}` : '0'}
                   />
                 </View>
                 <View className="flex-row px-md py-sm">
-                  <Card
-                    caption="airports"
-                    year={year}
-                    value={stats?.[year]?.airports}
-                  />
-                  <Card
-                    caption="airlines"
-                    year={year}
-                    value={stats?.[year]?.airlines}
-                  />
-                  <Card
-                    caption="aircrafts"
-                    year={year}
-                    value={stats?.[year]?.aircrafts}
-                  />
+                  <Card caption="airports" year={year} value={stats?.[year]?.airports} />
+                  <Card caption="airlines" year={year} value={stats?.[year]?.airlines} />
+                  <Card caption="aircrafts" year={year} value={stats?.[year]?.aircrafts} />
                 </View>
                 <View className="flex-row px-md pb-sm">
-                  <Card
-                    caption="countries"
-                    year={year}
-                    value={stats?.[year]?.countries}
-                  />
+                  <Card caption="countries" year={year} value={stats?.[year]?.countries} />
                   <View className="flex-2 py-sm justifycontent-end alignitems-start">
                     <Animated.Text
                       ellipsizeMode="clip"
@@ -396,9 +333,7 @@ export default function Stats() {
               </View>
               <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
                 <View className="flex-row radiustr-md radiustl-md px-md py-md bb-1 bordercolor-outlineVariant bg-secondaryContainer">
-                  <Text className="size-mdl color-surface ml-xs flex-1">
-                    {t('stats.average_flight')}
-                  </Text>
+                  <Text className="size-mdl color-surface ml-xs flex-1">{t('stats.average_flight')}</Text>
                 </View>
                 <View className="flex-row px-md pt-md">
                   <Card
@@ -423,11 +358,7 @@ export default function Stats() {
                     caption="distance"
                     size="lg"
                     units={t('measurements.km')}
-                    value={
-                      stats?.[year]?.avgDistance
-                        ? `${stats?.[year]?.avgDistance.toLocaleString(locale)}`
-                        : 0
-                    }
+                    value={stats?.[year]?.avgDistance ? `${stats?.[year]?.avgDistance.toLocaleString(locale)}` : 0}
                     year={year}
                   />
                 </View>

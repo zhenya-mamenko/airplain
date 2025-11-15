@@ -1,6 +1,6 @@
-import type { Flight, FlightStatus } from '@/types';
-import { fromUTCtoLocalISOString } from '@/helpers/datetime';
 import airports from '@/constants/airports.json';
+import { fromUTCtoLocalISOString } from '@/helpers/datetime';
+import type { Flight, FlightStatus } from '@/types';
 
 export async function getFlightData(
   airline: string,
@@ -18,22 +18,13 @@ export async function getFlightData(
     return null;
   }
   const data = await response.json();
-  if (
-    !data ||
-    !data.flights ||
-    !data.flights.length ||
-    data.flights.length === 0
-  ) {
+  if (!data || !data.flights || !data.flights.length || data.flights.length === 0) {
     return null;
   }
   const flightData = data.flights[0];
   let result: Flight | null = null;
-  const arrivalAirport = airports.find(
-    (x) => x.iata_code === flightData.destination.code_iata,
-  );
-  const departureAirport = airports.find(
-    (x) => x.iata_code === flightData.origin.code_iata,
-  );
+  const arrivalAirport = airports.find((x) => x.iata_code === flightData.destination.code_iata);
+  const departureAirport = airports.find((x) => x.iata_code === flightData.origin.code_iata);
   try {
     result = {
       actualEndDatetime: fromUTCtoLocalISOString(
@@ -59,10 +50,7 @@ export async function getFlightData(
       departureGate: flightData.gate_origin ?? undefined,
       departureTerminal: flightData.terminal_origin ?? undefined,
       distance: Math.round(flightData.route_distance ?? 0),
-      endDatetime: fromUTCtoLocalISOString(
-        flightData.scheduled_in,
-        flightData.destination.timezone,
-      ),
+      endDatetime: fromUTCtoLocalISOString(flightData.scheduled_in, flightData.destination.timezone),
       extra: {},
       flightNumber: flightData.flight_number,
       info: {
@@ -70,10 +58,7 @@ export async function getFlightData(
       },
       isArchived: false,
       recordType: 1,
-      startDatetime: fromUTCtoLocalISOString(
-        flightData.scheduled_out,
-        flightData.origin.timezone,
-      ),
+      startDatetime: fromUTCtoLocalISOString(flightData.scheduled_out, flightData.origin.timezone),
       status: (flightData.status?.toLowerCase() ?? 'unknown') as FlightStatus,
     };
   } catch (e) {

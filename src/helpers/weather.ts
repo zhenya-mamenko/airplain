@@ -1,19 +1,12 @@
 import React from 'react';
-import {
-  SvgLightWind,
-  SvgModerateWind,
-  SvgHeaveWind,
-} from '@/constants/svg/weather';
-import { weatherIcons } from '@/constants/weather';
-import type { WeatherData } from '@/types';
-import { WEATHER_API_URL, settings } from '@/constants/settings';
-import { fetch } from '@/helpers/common';
 
-export const parseWeather = (
-  data: any,
-  color: string,
-  iconSize: number = 20,
-): WeatherData | null => {
+import { WEATHER_API_URL, settings } from '@/constants/settings';
+import { SvgHeaveWind, SvgLightWind, SvgModerateWind } from '@/constants/svg/weather';
+import { weatherIcons } from '@/constants/weather';
+import { fetch } from '@/helpers/common';
+import type { WeatherData } from '@/types';
+
+export const parseWeather = (data: any, color: string, iconSize: number = 20): WeatherData | null => {
   if (!data) {
     return null;
   }
@@ -23,9 +16,9 @@ export const parseWeather = (
     style: { width: iconSize, height: iconSize, marginLeft: 4 },
   };
 
-  const weatherIcon = (
-    (data.is_day == 0 ? weatherIcons.night : weatherIcons.day) as any
-  )[data.condition.code.toString()];
+  const weatherIcon = ((data.is_day == 0 ? weatherIcons.night : weatherIcons.day) as any)[
+    data.condition.code.toString()
+  ];
   if (weatherIcon) {
     if (Array.isArray(weatherIcon)) {
       let i = 0;
@@ -48,9 +41,7 @@ export const parseWeather = (
   }
 
   if (data.wind_kph >= 40) {
-    icons.push(
-      React.createElement(SvgHeaveWind, { ...iconsProps, key: 'heavy-wind' }),
-    );
+    icons.push(React.createElement(SvgHeaveWind, { ...iconsProps, key: 'heavy-wind' }));
   } else if (data.wind_kph >= 20) {
     icons.push(
       React.createElement(SvgModerateWind, {
@@ -59,14 +50,10 @@ export const parseWeather = (
       }),
     );
   } else if (data.wind_kph >= 12) {
-    icons.push(
-      React.createElement(SvgLightWind, { ...iconsProps, key: 'light-wind' }),
-    );
+    icons.push(React.createElement(SvgLightWind, { ...iconsProps, key: 'light-wind' }));
   }
 
-  let temperature: number = Math.round(
-    data[`${settings.TEMPERATURE_TYPE}_${settings.TEMPERATURE_UNITS}`],
-  );
+  let temperature: number = Math.round(data[`${settings.TEMPERATURE_TYPE}_${settings.TEMPERATURE_UNITS}`]);
   let temperatureOut: string = '0°';
   if (temperature > 0) {
     temperatureOut = `+${temperature}°`;
@@ -83,19 +70,11 @@ export const parseWeather = (
   return weatherData;
 };
 
-export const loadWeather = async (
-  latitude: number,
-  longitude: number,
-): Promise<any | null> => {
+export const loadWeather = async (latitude: number, longitude: number): Promise<any | null> => {
   const WEATHER_API_ENDPOINT = !!settings.WEATHER_API_KEY
     ? `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=`
     : null;
-  if (
-    !WEATHER_API_ENDPOINT ||
-    WEATHER_API_ENDPOINT.length === 0 ||
-    !latitude ||
-    !longitude
-  ) {
+  if (!WEATHER_API_ENDPOINT || WEATHER_API_ENDPOINT.length === 0 || !latitude || !longitude) {
     return null;
   }
   const url = `${WEATHER_API_ENDPOINT}${latitude},${longitude}`;

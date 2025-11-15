@@ -1,29 +1,25 @@
-import React, { useMemo } from 'react';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
 import { Image as _Image } from 'expo-image';
 import { router } from 'expo-router';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import React, { useMemo } from 'react';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
-import type { DepartingFlightCardData } from '@/types';
-import {
-  dateClass,
-  makeDateLabel,
-  durationToLocaleString,
-} from '@/helpers/datetime';
-import { useLocale } from '@/helpers/localization';
-import { useThemeColor, usePaletteColor } from '@/hooks/useColors';
-import { getAirportData, airlineLogoUri } from '@/helpers/airdata';
-import t from '@/helpers/localization';
-import flags from '@/constants/flags.json';
 import Animated, { runOnJS } from 'react-native-reanimated';
-import { makeCardGestures } from '@/helpers/gestures';
+
+import flags from '@/constants/flags.json';
+import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
 import { openUrl } from '@/helpers/common';
+import { dateClass, durationToLocaleString, makeDateLabel } from '@/helpers/datetime';
+import { makeCardGestures } from '@/helpers/gestures';
+import { useLocale } from '@/helpers/localization';
+import t from '@/helpers/localization';
+import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import type { DepartingFlightCardData } from '@/types';
 
 const Image = createPicassoComponent(_Image);
 
-export default function DepartingFlightCard(props: {
-  data: DepartingFlightCardData;
-}) {
+export default function DepartingFlightCard(props: { data: DepartingFlightCardData }) {
   const locale = useLocale();
 
   const {
@@ -57,21 +53,10 @@ export default function DepartingFlightCard(props: {
   const arrivalAirportData = getAirportData(arrivalAirport, locale);
   const departureDate = new Date(sd * 1000);
   const arrivalDate = new Date(ed * 1000);
-  const dateLabel = makeDateLabel(
-    departureDate,
-    departureAirportTimezone,
-    arrivalDate,
-    arrivalAirportTimezone,
-    locale,
-  );
-  const durationString = durationToLocaleString(
-    Math.round((ed - sd) / 60),
-    locale,
-  );
+  const dateLabel = makeDateLabel(departureDate, departureAirportTimezone, arrivalDate, arrivalAirportTimezone, locale);
+  const durationString = durationToLocaleString(Math.round((ed - sd) / 60), locale);
   const distanceString = `${props.data.distance.toLocaleString(locale)}${t('measurements.km')}`;
-  const stateTimeString = stateTime
-    ? durationToLocaleString(stateTime, locale)
-    : '';
+  const stateTimeString = stateTime ? durationToLocaleString(stateTime, locale) : '';
 
   const departureTimeOptions = useMemo(
     () => ({
@@ -91,14 +76,12 @@ export default function DepartingFlightCard(props: {
     }),
     [arrivalAirportTimezone],
   );
-  const timeClassDeparture =
-    dateClass(startDatetime, actualStartDatetime) ?? 'green';
+  const timeClassDeparture = dateClass(startDatetime, actualStartDatetime) ?? 'green';
   const timeClassArrival = dateClass(endDatetime, actualEndDatetime);
 
   const arrivalFlag =
     arrivalAirportData?.country_code !== departureAirportData?.country_code
-      ? flags.find((x) => x.country_code === arrivalAirportData?.country_code)
-          ?.flag
+      ? flags.find((x) => x.country_code === arrivalAirportData?.country_code)?.flag
       : null;
 
   const showBoardingPass = () =>
@@ -116,21 +99,13 @@ export default function DepartingFlightCard(props: {
 
   const tresholdDate = new Date();
   tresholdDate.setHours(tresholdDate.getHours() - 1);
-  const { gestures, animatedStyle } = makeCardGestures(
-    flightId,
-    isArchived,
-    tresholdDate < arrivalDate,
-    tap,
-  );
+  const { gestures, animatedStyle } = makeCardGestures(flightId, isArchived, tresholdDate < arrivalDate, tap);
 
   const colorPrimary = useThemeColor('colors.surfaceVariant');
   const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
 
   const onlineCheckInText = (
-    <Text
-      className="size-sm color-primaryContainer mr-sm"
-      style={{ fontVariant: ['small-caps'] }}
-    >
+    <Text className="size-sm color-primaryContainer mr-sm" style={{ fontVariant: ['small-caps'] }}>
       {`${t('flights.statuses.online_check_in_available').toLocaleLowerCase()}`}
     </Text>
   );
@@ -165,8 +140,7 @@ export default function DepartingFlightCard(props: {
                   {departureAirportData?.municipality_name ?? ''}
                 </Text>
                 <Text className="color-secondaryContainer size-md">
-                  ➜{' '}
-                  {`${arrivalAirportData?.municipality_name ?? ''} ${arrivalFlag ?? ''}`}
+                  ➜ {`${arrivalAirportData?.municipality_name ?? ''} ${arrivalFlag ?? ''}`}
                 </Text>
               </View>
             </View>
@@ -181,15 +155,8 @@ export default function DepartingFlightCard(props: {
                 <View className="flex-row justifycontent-start alignitems-center">
                   {!!state && !!stateTimeString ? (
                     <>
-                      <FontAwesome5
-                        color={colorPrimaryContainer}
-                        name="clock"
-                        size={12}
-                      />
-                      <Text
-                        className="size-sm color-primaryContainer ml-xs"
-                        style={{ fontVariant: ['small-caps'] }}
-                      >
+                      <FontAwesome5 color={colorPrimaryContainer} name="clock" size={12} />
+                      <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
                         {`${t('flights.statuses.' + state).toLocaleLowerCase()}`}
                       </Text>
                       <Text
@@ -200,10 +167,7 @@ export default function DepartingFlightCard(props: {
                       </Text>
                     </>
                   ) : (
-                    <Text
-                      className="size-sm color-primaryContainer ml-xs"
-                      style={{ fontVariant: ['small-caps'] }}
-                    >
+                    <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
                       {!!state
                         ? `${t('flights.statuses.' + state).toLocaleLowerCase()}`
                         : `${t('flights.whishes').toLocaleLowerCase()}`}
@@ -213,9 +177,7 @@ export default function DepartingFlightCard(props: {
                 {boardingPass && (
                   <View className="flex-row justifycontent-end alignitems-center">
                     {seatNumber && seatNumber !== '' && (
-                      <Text className="weight-bold size-md color-primaryContainer">
-                        {seatNumber}
-                      </Text>
+                      <Text className="weight-bold size-md color-primaryContainer">{seatNumber}</Text>
                     )}
                     <GestureDetector gesture={tap}>
                       <View collapsable={false}>
@@ -233,9 +195,7 @@ export default function DepartingFlightCard(props: {
             )}
             <View className="flex-column justifycontent-start alignitems-top py-sm px-md">
               <View className="flex-row justifycontent-between alignitems-center">
-                <Text className="size-xxl color-surface mr-md weight-bold">
-                  {departureAirportData?.iata_code}
-                </Text>
+                <Text className="size-xxl color-surface mr-md weight-bold">{departureAirportData?.iata_code}</Text>
                 <Text
                   className="size-md color-surface align-right"
                   ellipsizeMode="tail"
@@ -252,10 +212,7 @@ export default function DepartingFlightCard(props: {
                   className={`size-xxl ${!!timeClassDeparture ? `color-${timeClassDeparture}` : 'color-green'}`}
                   style={{ marginTop: -2 }}
                 >
-                  {departureDate.toLocaleTimeString(
-                    locale,
-                    departureTimeOptions as Intl.DateTimeFormatOptions,
-                  )}
+                  {departureDate.toLocaleTimeString(locale, departureTimeOptions as Intl.DateTimeFormatOptions)}
                 </Text>
                 <Text
                   className={`size-sm ${!!timeClassDeparture ? `color-${timeClassDeparture}` : 'color-green'}`}
@@ -287,14 +244,8 @@ export default function DepartingFlightCard(props: {
               </View>
             </View>
             <View className="flex-row justifycontent-center alignitems-center px-md py-md">
-              <View
-                className="bg-background px-sm"
-                style={{ position: 'absolute', top: 7, zIndex: 1 }}
-              >
-                <Text
-                  className="size-sm"
-                  style={{ color: usePaletteColor('N-70') }}
-                >
+              <View className="bg-background px-sm" style={{ position: 'absolute', top: 7, zIndex: 1 }}>
+                <Text className="size-sm" style={{ color: usePaletteColor('N-70') }}>
                   {`${durationString} • ${distanceString}`}
                 </Text>
               </View>
@@ -311,9 +262,7 @@ export default function DepartingFlightCard(props: {
             </View>
             <View className="flex-column justifycontent-start alignitems-top px-md pb-xs">
               <View className="flex-row justifycontent-between alignitems-center">
-                <Text className="size-lg color-surface mr-md weight-bold">
-                  {arrivalAirportData?.iata_code}
-                </Text>
+                <Text className="size-lg color-surface mr-md weight-bold">{arrivalAirportData?.iata_code}</Text>
                 <Text
                   className="size-sm color-surface align-right"
                   ellipsizeMode="tail"
@@ -330,21 +279,13 @@ export default function DepartingFlightCard(props: {
                   className={`size-lg ${!!timeClassArrival ? `color-${timeClassArrival}` : 'color-primaryContainer'}`}
                   style={{ marginTop: -2 }}
                 >
-                  {arrivalDate.toLocaleTimeString(
-                    locale,
-                    arrivalTimeOptions as Intl.DateTimeFormatOptions,
-                  )}
+                  {arrivalDate.toLocaleTimeString(locale, arrivalTimeOptions as Intl.DateTimeFormatOptions)}
                 </Text>
               </View>
               <View className="flex-column justifycontent-center alignitems-center alignself-end">
                 {arrivalTerminal && (
-                  <Text
-                    className="size-sm color-surface mb-sm"
-                    style={{ marginTop: 2, fontVariant: ['small-caps'] }}
-                  >
-                    {arrivalTerminal
-                      ? `${t('flights.terminal').toLocaleLowerCase()} ${arrivalTerminal}`
-                      : ''}
+                  <Text className="size-sm color-surface mb-sm" style={{ marginTop: 2, fontVariant: ['small-caps'] }}>
+                    {arrivalTerminal ? `${t('flights.terminal').toLocaleLowerCase()} ${arrivalTerminal}` : ''}
                   </Text>
                 )}
               </View>
@@ -362,11 +303,7 @@ export default function DepartingFlightCard(props: {
                     <View collapsable={false}>
                       <View className="flex-row justifycontent-start alignitems-center">
                         {onlineCheckInText}
-                        <FontAwesome5
-                          color={colorPrimaryContainer}
-                          name="external-link-alt"
-                          size={12}
-                        />
+                        <FontAwesome5 color={colorPrimaryContainer} name="external-link-alt" size={12} />
                       </View>
                     </View>
                   </GestureDetector>

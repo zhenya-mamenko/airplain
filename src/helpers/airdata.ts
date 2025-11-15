@@ -1,24 +1,16 @@
-import airports from '@/constants/airports.json';
-import type { AirportData, AirlineData, Flight } from '@/types';
-import {
-  deleteSetting,
-  getSetting,
-  setSetting,
-  settings,
-} from '@/constants/settings';
-import { makeCheckInLink, stopBackgroundTask } from '@/helpers/common';
-import {
-  getActualFlights,
-  archiveFlight,
-  updateFlight,
-  getAirlines,
-} from '@/helpers/sqlite';
-import * as Notifications from '@/helpers/notifications';
-import t from '@/helpers/localization';
 import { DateTime } from 'luxon';
+
 import { getCalendars } from 'expo-localization';
-import { getFlightData } from '@/helpers/flights';
+
+import airports from '@/constants/airports.json';
+import { deleteSetting, getSetting, setSetting, settings } from '@/constants/settings';
+import { makeCheckInLink, stopBackgroundTask } from '@/helpers/common';
 import emitter from '@/helpers/emitter';
+import { getFlightData } from '@/helpers/flights';
+import t from '@/helpers/localization';
+import * as Notifications from '@/helpers/notifications';
+import { archiveFlight, getActualFlights, getAirlines, updateFlight } from '@/helpers/sqlite';
+import type { AirlineData, AirportData, Flight } from '@/types';
 
 export const flightsCheckTask = async () => {
   const flights = await getActualFlights(1);
@@ -29,10 +21,7 @@ export const flightsCheckTask = async () => {
   }
 };
 
-export const getAirportData = (
-  code: string,
-  locale: string = 'en',
-): AirportData | undefined => {
+export const getAirportData = (code: string, locale: string = 'en'): AirportData | undefined => {
   const a = airports.find((x) => x.iata_code === code) as any;
   if (!a) {
     return undefined;
@@ -59,8 +48,7 @@ export const getAirportData = (
   };
   locale = locale.split('-')[0].toLowerCase();
   if (locale !== 'en') {
-    result.municipality_name =
-      a[`municipality_name_${locale}`] ?? result.municipality_name;
+    result.municipality_name = a[`municipality_name_${locale}`] ?? result.municipality_name;
     result.airport_name = a[`airport_name_${locale}`] ?? result.airport_name;
   }
   return result;
@@ -84,34 +72,18 @@ export const airlineLogoUri = (airline: string, plainUri: boolean = false) => {
   return plainUri ? uri : { uri };
 };
 
-export const fetchActualFlights = async (
-  date: Date,
-  forceRefresh: boolean = false,
-): Promise<Flight[]> => {
+export const fetchActualFlights = async (date: Date, forceRefresh: boolean = false): Promise<Flight[]> => {
   let flights = await getActualFlights(settings.FLIGHTS_LIMIT);
   flights = await updateFlightsState(flights, date, forceRefresh);
   return flights;
 };
 
-async function updateFlightsState(
-  flights: Flight[],
-  date: Date,
-  forceRefresh: boolean = false,
-): Promise<Flight[]> {
+async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: boolean = false): Promise<Flight[]> {
   const timeSpan = (hours: number): string => {
     if (hours >= 23 && hours < 24) return '24h';
     if (hours >= 1.9 && hours <= 3 && hours === Math.floor(hours)) return '3h';
-    if (
-      hours >= 0.75 &&
-      hours <= 1.5 &&
-      (Math.ceil(hours * 60) % 5 === 0 || forceRefresh)
-    )
-      return '90m';
-    if (
-      (hours >= 0.25 && hours < 0.75 && Math.ceil(hours * 60) % 3 === 0) ||
-      forceRefresh
-    )
-      return 'last';
+    if (hours >= 0.75 && hours <= 1.5 && (Math.ceil(hours * 60) % 5 === 0 || forceRefresh)) return '90m';
+    if ((hours >= 0.25 && hours < 0.75 && Math.ceil(hours * 60) % 3 === 0) || forceRefresh) return 'last';
     return '';
   };
   const result: Flight[] = [];
@@ -119,29 +91,20 @@ async function updateFlightsState(
     let isFlightUpdated = false;
     const flight = Object.assign({}, f);
     if (!flight.info) flight.info = {};
-    const flightNotificationsState = JSON.parse(
-      getSetting(`flight-notifications-${flight.flightId}`, '{}'),
-    );
+    const flightNotificationsState = JSON.parse(getSetting(`flight-notifications-${flight.flightId}`, '{}'));
 
-    const tz = getCalendars()[0]?.timeZone || 'UTC';
-    const isDifferentTimezone =
-      DateTime.now().setZone(tz).toFormat('ZZ') !==
-      flight.endDatetime.slice(-6);
+    const tz = getCalendars()[0]?.timeZone ?? 'UTC';
+    const isDifferentTimezone = DateTime.now().setZone(tz).toFormat('ZZ') !== flight.endDatetime.slice(-6);
     flight.isDifferentTimezone = isDifferentTimezone;
 
-    const startDatetime = new Date(
-      flight.actualStartDatetime ?? flight.startDatetime,
-    );
+    const startDatetime = new Date(flight.actualStartDatetime ?? flight.startDatetime);
     const hours = (startDatetime.valueOf() - date.valueOf()) / 3600000;
     const minutes = Math.ceil(hours * 60);
 
     let flightData: Flight | null = null;
     if (flight.recordType === 1) {
       const ts = timeSpan(hours);
-      if (
-        ts !== '' &&
-        ((flightNotificationsState[ts] ?? -1) !== minutes || forceRefresh)
-      ) {
+      if (ts !== '' && ((flightNotificationsState[ts] ?? -1) !== minutes || forceRefresh)) {
         flightData = await getFlightData(
           flight.airline,
           flight.flightNumber,
@@ -166,10 +129,7 @@ async function updateFlightsState(
             }
           }
 
-          if (
-            !!flightData.actualStartDatetime &&
-            flight.actualStartDatetime !== flightData.actualStartDatetime
-          ) {
+          if (!!flightData.actualStartDatetime && flight.actualStartDatetime !== flightData.actualStartDatetime) {
             messages.push(
               t('notifications.changed_start_datetime', {
                 time: flightData.actualStartDatetime.substring(11, 16),
@@ -178,10 +138,7 @@ async function updateFlightsState(
             flight.actualStartDatetime = flightData.actualStartDatetime;
             isFlightUpdated = true;
           }
-          if (
-            !!flightData.departureTerminal &&
-            flight.departureTerminal !== flightData.departureTerminal
-          ) {
+          if (!!flightData.departureTerminal && flight.departureTerminal !== flightData.departureTerminal) {
             messages.push(
               t('notifications.changed_departure_terminal', {
                 terminal: flightData.departureTerminal,
@@ -190,10 +147,7 @@ async function updateFlightsState(
             flight.departureTerminal = flightData.departureTerminal;
             isFlightUpdated = true;
           }
-          if (
-            !!flightData.departureCheckInDesk &&
-            flight.departureCheckInDesk !== flightData.departureCheckInDesk
-          ) {
+          if (!!flightData.departureCheckInDesk && flight.departureCheckInDesk !== flightData.departureCheckInDesk) {
             messages.push(
               t('notifications.changed_departure_check_in_desk', {
                 desk: flightData.departureCheckInDesk,
@@ -202,10 +156,7 @@ async function updateFlightsState(
             flight.departureCheckInDesk = flightData.departureCheckInDesk;
             isFlightUpdated = true;
           }
-          if (
-            !!flightData.departureGate &&
-            flight.departureGate !== flightData.departureGate
-          ) {
+          if (!!flightData.departureGate && flight.departureGate !== flightData.departureGate) {
             messages.push(
               t('notifications.changed_departure_gate', {
                 gate: flightData.departureGate,
@@ -215,10 +166,7 @@ async function updateFlightsState(
             isFlightUpdated = true;
           }
 
-          if (
-            !!flightData.actualEndDatetime &&
-            flight.actualEndDatetime !== flightData.actualEndDatetime
-          ) {
+          if (!!flightData.actualEndDatetime && flight.actualEndDatetime !== flightData.actualEndDatetime) {
             messages.push(
               t('notifications.changed_end_datetime', {
                 time: flightData.actualEndDatetime.substring(11, 16),
@@ -227,10 +175,7 @@ async function updateFlightsState(
             flight.actualEndDatetime = flightData.actualEndDatetime;
             isFlightUpdated = true;
           }
-          if (
-            !!flightData.arrivalTerminal &&
-            flight.arrivalTerminal !== flightData.arrivalTerminal
-          ) {
+          if (!!flightData.arrivalTerminal && flight.arrivalTerminal !== flightData.arrivalTerminal) {
             messages.push(
               t('notifications.changed_arrival_terminal', {
                 terminal: flightData.arrivalTerminal,
@@ -239,10 +184,7 @@ async function updateFlightsState(
             flight.arrivalTerminal = flightData.arrivalTerminal;
             isFlightUpdated = true;
           }
-          if (
-            !!flightData.baggageBelt &&
-            flight.baggageBelt !== flightData.baggageBelt
-          ) {
+          if (!!flightData.baggageBelt && flight.baggageBelt !== flightData.baggageBelt) {
             messages.push(
               t('notifications.changed_baggage_belt', {
                 belt: flightData.baggageBelt,
@@ -253,9 +195,7 @@ async function updateFlightsState(
           }
           flight.distance = flightData.distance;
           if (messages.length > 0 && minutes > 0) {
-            (minutes < 60
-              ? Notifications.showUrgentNotification
-              : Notifications.showFlightNotification)(
+            (minutes < 60 ? Notifications.showUrgentNotification : Notifications.showFlightNotification)(
               `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
               messages.join('\n'),
               { url: `/flights/actual?flightId=${flight.flightId}` },
@@ -266,12 +206,8 @@ async function updateFlightsState(
       }
     }
 
-    const endDatetime = new Date(
-      flight.actualEndDatetime ?? flight.endDatetime,
-    );
-    const arrivalMinutes = Math.ceil(
-      (date.valueOf() - endDatetime.valueOf()) / 60000,
-    );
+    const endDatetime = new Date(flight.actualEndDatetime ?? flight.endDatetime);
+    const arrivalMinutes = Math.ceil((date.valueOf() - endDatetime.valueOf()) / 60000);
 
     flight.info.state = '';
     flight.info.stateTime = null as number | null;
@@ -281,10 +217,7 @@ async function updateFlightsState(
         flight.info.stateTime = minutes - 120;
       }
     }
-    if (
-      (flight.status === 'checkin' || (hours < 2 && minutes > 40)) &&
-      !flight.seatNumber
-    ) {
+    if ((flight.status === 'checkin' || (hours < 2 && minutes > 40)) && !flight.seatNumber) {
       flight.info.state = 'checkin_end';
       flight.info.stateTime = minutes - 40;
     }
@@ -310,10 +243,7 @@ async function updateFlightsState(
       flight.info.stateTime = minutes;
     }
 
-    if (
-      minutes <= 0 &&
-      !['en_route', 'diverted', 'canceled'].includes(flight.status)
-    ) {
+    if (minutes <= 0 && !['en_route', 'diverted', 'canceled'].includes(flight.status)) {
       flight.status = 'en_route';
       isFlightUpdated = true;
     }
@@ -366,11 +296,7 @@ async function updateFlightsState(
         flight.flightNumber,
         startDatetime.toISOString().substring(0, 10),
       );
-      if (
-        !!flightData &&
-        !!flightData.baggageBelt &&
-        flight.baggageBelt !== flightData.baggageBelt
-      ) {
+      if (!!flightData && !!flightData.baggageBelt && flight.baggageBelt !== flightData.baggageBelt) {
         Notifications.showFlightNotification(
           `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
           t('notifications.changed_baggage_belt', {
@@ -383,18 +309,12 @@ async function updateFlightsState(
         isFlightUpdated = true;
       }
     }
-    if (
-      arrivalMinutes >= 0 &&
-      !['arrived', 'diverted', 'canceled'].includes(flight.status)
-    ) {
+    if (arrivalMinutes >= 0 && !['arrived', 'diverted', 'canceled'].includes(flight.status)) {
       flight.status = 'arrived';
       isFlightUpdated = true;
     }
 
-    setSetting(
-      `flight-notifications-${flight.flightId}`,
-      JSON.stringify(flightNotificationsState),
-    );
+    setSetting(`flight-notifications-${flight.flightId}`, JSON.stringify(flightNotificationsState));
 
     if (isFlightUpdated) {
       await updateFlight(flight);
@@ -413,10 +333,7 @@ async function updateFlightsState(
   return result;
 }
 
-export async function setFlightArchiveState(
-  flightId: number | undefined,
-  state: number,
-) {
+export async function setFlightArchiveState(flightId: number | undefined, state: number) {
   if (!flightId) return;
   await archiveFlight(flightId, state);
   if (state === 1) {
