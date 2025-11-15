@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { Text, View } from 'react-native-picasso';
+
 import { useThemeColor } from '@/hooks/useColors';
 
 interface Props {

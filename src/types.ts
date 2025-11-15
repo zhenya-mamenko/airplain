@@ -1,5 +1,7 @@
-import React from 'react';
 import { SkPath } from '@shopify/react-native-skia';
+
+import React from 'react';
+
 import { Point } from '@/helpers/algs';
 
 export interface AirlineData {

@@ -1,4 +1,5 @@
 import { processExportData, processImportData } from '@/helpers/import-export';
+import { isFlightExists } from '@/helpers/sqlite';
 
 jest.mock('@/helpers/sqlite', () => ({
   __esModule: true,
@@ -10,8 +11,7 @@ const mockedAirlines = [
     airlineId: 175,
     airlineCode: 'BA',
     airlineName: 'British Airways',
-    checkInLink:
-      'https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile',
+    checkInLink: 'https://www.britishairways.com/travel/olcilandingpageauthreq/public/en_gb/device-mobile',
     checkInTime: 24,
   },
   {
@@ -25,12 +25,8 @@ const mockedAirlines = [
 
 jest.mock('@/helpers/airdata', () => ({
   __esModule: true,
-  getAirlineData: jest.fn((code: string) =>
-    mockedAirlines.find((x) => x.airlineCode === code),
-  ),
+  getAirlineData: jest.fn((code: string) => mockedAirlines.find((x) => x.airlineCode === code)),
 }));
-
-import { isFlightExists } from '@/helpers/sqlite';
 
 const mockedIsFlightExists = jest.mocked(isFlightExists);
 
@@ -58,9 +54,7 @@ describe('processExportData', () => {
       },
     ];
     const result = processExportData(flights);
-    expect(result).toBe(
-      'departure_airport,arrival_airport,status\nJFK,LAX,arrived',
-    );
+    expect(result).toBe('departure_airport,arrival_airport,status\nJFK,LAX,arrived');
   });
 
   it('should handle multiple flights', () => {
@@ -69,9 +63,7 @@ describe('processExportData', () => {
       { departure_airport: 'LAX', arrival_airport: 'SFO', status: 'scheduled' },
     ];
     const result = processExportData(flights);
-    expect(result).toBe(
-      'departure_airport,arrival_airport,status\nJFK,LAX,arrived\nLAX,SFO,scheduled',
-    );
+    expect(result).toBe('departure_airport,arrival_airport,status\nJFK,LAX,arrived\nLAX,SFO,scheduled');
   });
 
   it('should exclude specified fields from export', () => {

@@ -1,25 +1,21 @@
-import React, { useMemo } from 'react';
-import { View, Text, createPicassoComponent } from 'react-native-picasso';
-import t, { useLocale } from '@/helpers/localization';
-import { Image as _Image } from 'expo-image';
-import { durationToLocaleString, makeDateLabel } from '@/helpers/datetime';
-import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
-import {
-  SvgArrow,
-  SvgArrowLong,
-  SvgCross,
-  SvgLine,
-  SvgPlane,
-} from '@/constants/svg';
-import flags from '@/constants/flags.json';
-import { dateClass } from '@/helpers/datetime';
-import type { FlightCardData, FlightStatus } from '@/types';
-import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS } from 'react-native-reanimated';
-import { makeCardGestures } from '@/helpers/gestures';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
+import { Image as _Image } from 'expo-image';
+import React, { useMemo } from 'react';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Text, View, createPicassoComponent } from 'react-native-picasso';
+import Animated, { runOnJS } from 'react-native-reanimated';
+
+import flags from '@/constants/flags.json';
+import { SvgArrow, SvgArrowLong, SvgCross, SvgLine, SvgPlane } from '@/constants/svg';
+import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
 import { openUrl } from '@/helpers/common';
+import { durationToLocaleString, makeDateLabel } from '@/helpers/datetime';
+import { dateClass } from '@/helpers/datetime';
+import { makeCardGestures } from '@/helpers/gestures';
+import t, { useLocale } from '@/helpers/localization';
+import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import type { FlightCardData, FlightStatus } from '@/types';
 
 const Image = createPicassoComponent(_Image);
 
@@ -55,10 +51,7 @@ const PlaceBlock = React.memo(
       </Text>
     );
     const hiddenAirport = (
-      <Text
-        className="size-lg alignself-start weight-bold"
-        style={{ fontSize: 28, color: 'transparent', height: 16 }}
-      >
+      <Text className="size-lg alignself-start weight-bold" style={{ fontSize: 28, color: 'transparent', height: 16 }}>
         {props.airport}
       </Text>
     );
@@ -70,10 +63,7 @@ const PlaceBlock = React.memo(
           textDecorationStyle: 'solid',
         }}
       >
-        {new Date(props.planned * 1000).toLocaleTimeString(
-          locale,
-          props.timeOptions,
-        )}
+        {new Date(props.planned * 1000).toLocaleTimeString(locale, props.timeOptions)}
       </Text>
     );
     const cityText = (
@@ -99,9 +89,7 @@ const PlaceBlock = React.memo(
     return (
       <View className="flex-column" style={{ width: '40%' }}>
         <View className={`flex-row justifycontent-${props.align}`}>
-          {props.align === 'start'
-            ? [flagText, cityText]
-            : [cityText, flagText]}
+          {props.align === 'start' ? [flagText, cityText] : [cityText, flagText]}
         </View>
         <View className={`flex-row justifycontent-${props.align}`}>
           {props.align === 'start' ? airport : actualTime}
@@ -121,23 +109,12 @@ const PlaceBlock = React.memo(
 const RouteSymbol = React.memo((props: { status: FlightStatus }) => {
   switch (props.status) {
     case 'canceled':
-      return (
-        <SvgCross
-          color={useThemeColor('textColors.red')}
-          style={{ width: 24, height: 24 }}
-        />
-      );
+      return <SvgCross color={useThemeColor('textColors.red')} style={{ width: 24, height: 24 }} />;
     case 'arrived':
       return (
         <View className="flex-row justifycontent-around alignitems-center">
-          <SvgLine
-            color={useThemeColor('textColors.surface')}
-            style={{ width: 48, height: 24, marginRight: -4 }}
-          />
-          <SvgPlane
-            color={useThemeColor('textColors.surface')}
-            style={{ width: 16, height: 16 }}
-          />
+          <SvgLine color={useThemeColor('textColors.surface')} style={{ width: 48, height: 24, marginRight: -4 }} />
+          <SvgPlane color={useThemeColor('textColors.surface')} style={{ width: 16, height: 16 }} />
         </View>
       );
     case 'departed':
@@ -148,36 +125,21 @@ const RouteSymbol = React.memo((props: { status: FlightStatus }) => {
             color={useThemeColor('textColors.surface')}
             style={{ width: 60, height: 24, marginLeft: -22 }}
           />
-          <SvgPlane
-            color={useThemeColor('colors.primary')}
-            style={{ width: 16, height: 16, marginLeft: -38 }}
-          />
+          <SvgPlane color={useThemeColor('colors.primary')} style={{ width: 16, height: 16, marginLeft: -38 }} />
         </View>
       );
     case 'delayed':
       return (
         <View className="flex-row justifycontent-around alignitems-center">
-          <SvgPlane
-            color={usePaletteColor('T-50')}
-            style={{ width: 16, height: 16 }}
-          />
-          <SvgArrow
-            color={useThemeColor('textColors.surface')}
-            style={{ width: 48, height: 24, marginLeft: -4 }}
-          />
+          <SvgPlane color={usePaletteColor('T-50')} style={{ width: 16, height: 16 }} />
+          <SvgArrow color={useThemeColor('textColors.surface')} style={{ width: 48, height: 24, marginLeft: -4 }} />
         </View>
       );
     default:
       return (
         <View className="flex-row justifycontent-around alignitems-center">
-          <SvgPlane
-            color={useThemeColor('textColors.surface')}
-            style={{ width: 16, height: 16 }}
-          />
-          <SvgLine
-            color={useThemeColor('textColors.surface')}
-            style={{ width: 48, height: 24, marginLeft: -4 }}
-          />
+          <SvgPlane color={useThemeColor('textColors.surface')} style={{ width: 16, height: 16 }} />
+          <SvgLine color={useThemeColor('textColors.surface')} style={{ width: 48, height: 24, marginLeft: -4 }} />
         </View>
       );
   }
@@ -211,10 +173,7 @@ const FlightCard = React.memo(
 
     const sd = actualStartDatetime ?? startDatetime;
     const ed = actualEndDatetime ?? endDatetime;
-    const durationString = durationToLocaleString(
-      Math.round((ed - sd) / 60),
-      locale,
-    );
+    const durationString = durationToLocaleString(Math.round((ed - sd) / 60), locale);
     const distanceString = `${distance.toLocaleString(locale)}${t('measurements.km')}`;
     const departureDate = new Date(sd * 1000);
     const arrivalDate = new Date(ed * 1000);
@@ -248,30 +207,20 @@ const FlightCard = React.memo(
       arrivalAirportTimezone ?? 'UTC',
       locale,
     );
-    const stateTimeString = stateTime
-      ? durationToLocaleString(stateTime, locale)
-      : '';
+    const stateTimeString = stateTime ? durationToLocaleString(stateTime, locale) : '';
 
     const tap = Gesture.Tap().onEnd(() => {
       runOnJS(openUrl)(onlineCheckInLink ?? '');
     });
     const tresholdDate = new Date();
     tresholdDate.setHours(tresholdDate.getHours() - 1);
-    const { gestures, animatedStyle } = makeCardGestures(
-      flightId,
-      isArchived,
-      tresholdDate < arrivalDate,
-      tap,
-    );
+    const { gestures, animatedStyle } = makeCardGestures(flightId, isArchived, tresholdDate < arrivalDate, tap);
 
     const colorPrimary = useThemeColor('colors.surfaceVariant');
     const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
 
     const onlineCheckInText = (
-      <Text
-        className="size-sm color-primaryContainer mr-sm"
-        style={{ fontVariant: ['small-caps'] }}
-      >
+      <Text className="size-sm color-primaryContainer mr-sm" style={{ fontVariant: ['small-caps'] }}>
         {`${t('flights.statuses.online_check_in_available').toLocaleLowerCase()}`}
       </Text>
     );
@@ -292,13 +241,9 @@ const FlightCard = React.memo(
                   marginTop: 2,
                 }}
               />
-              <Text className="size-smm weight-bold mt-xs ml-sm color-gray">
-                {`${airline} ${flightNumber}`}
-              </Text>
+              <Text className="size-smm weight-bold mt-xs ml-sm color-gray">{`${airline} ${flightNumber}`}</Text>
             </View>
-            <Text className="size-sm weight-bold mt-xs color-gray">
-              {`${dateLabel.toLocaleUpperCase()}`}
-            </Text>
+            <Text className="size-sm weight-bold mt-xs color-gray">{`${dateLabel.toLocaleUpperCase()}`}</Text>
           </View>
           <View className="px-md pb-md pt-md radiusbr-md radiusbl-md bg-background flex-row justifycontent-between">
             <PlaceBlock
@@ -307,28 +252,17 @@ const FlightCard = React.memo(
               align="start"
               city={departureAirportData?.municipality_name ?? ''}
               country={departureAirportData?.country_code ?? ''}
-              date={departureDate.toLocaleTimeString(
-                locale,
-                departureTimeOptions as Intl.DateTimeFormatOptions,
-              )}
+              date={departureDate.toLocaleTimeString(locale, departureTimeOptions as Intl.DateTimeFormatOptions)}
               planned={startDatetime}
               timeOptions={departureTimeOptions}
             />
-            <View
-              className="flex-column justifycontent-end alignitems-center"
-              style={{ width: '20%' }}
-            >
+            <View className="flex-column justifycontent-end alignitems-center" style={{ width: '20%' }}>
               <Text className="size-sm color-primaryContainer mt-xs">
                 {status !== 'canceled' ? distanceString : null}
               </Text>
               <RouteSymbol status={status} />
-              <Text
-                className="size-sm color-primaryContainer"
-                style={{ marginTop: -4 }}
-              >
-                {status !== 'canceled'
-                  ? durationString
-                  : t(`flights.statuses.${status}`)}
+              <Text className="size-sm color-primaryContainer" style={{ marginTop: -4 }}>
+                {status !== 'canceled' ? durationString : t(`flights.statuses.${status}`)}
               </Text>
             </View>
             <PlaceBlock
@@ -337,18 +271,12 @@ const FlightCard = React.memo(
               align="end"
               city={arrivalAirportData?.municipality_name ?? ''}
               country={arrivalAirportData?.country_code ?? ''}
-              date={arrivalDate.toLocaleTimeString(
-                locale,
-                arrivalTimeOptions as Intl.DateTimeFormatOptions,
-              )}
+              date={arrivalDate.toLocaleTimeString(locale, arrivalTimeOptions as Intl.DateTimeFormatOptions)}
               planned={endDatetime}
               timeOptions={arrivalTimeOptions}
             />
           </View>
-          {((isOnlineCheckInOpen &&
-            !seatNumber &&
-            !['en_route', 'departed'].includes(state ?? '')) ||
-            !!state) && (
+          {((isOnlineCheckInOpen && !seatNumber && !['en_route', 'departed'].includes(state ?? '')) || !!state) && (
             <View
               className="p-md bt-1 bordercolor-outlineVariant flex-row justifycontent-start alignitems-center"
               style={{
@@ -361,11 +289,7 @@ const FlightCard = React.memo(
                   <View collapsable={false}>
                     <View className="flex-row justifycontent-start alignitems-center">
                       {onlineCheckInText}
-                      <FontAwesome5
-                        color={colorPrimaryContainer}
-                        name="external-link-alt"
-                        size={12}
-                      />
+                      <FontAwesome5 color={colorPrimaryContainer} name="external-link-alt" size={12} />
                     </View>
                   </View>
                 </GestureDetector>
@@ -374,29 +298,16 @@ const FlightCard = React.memo(
               ) : null}
               {!!state && !!stateTimeString ? (
                 <>
-                  <FontAwesome5
-                    color={colorPrimaryContainer}
-                    name="clock"
-                    size={12}
-                  />
-                  <Text
-                    className="size-sm color-primaryContainer ml-xs"
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
+                  <FontAwesome5 color={colorPrimaryContainer} name="clock" size={12} />
+                  <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
                     {`${t('flights.statuses.' + state).toLocaleLowerCase()}`}
                   </Text>
-                  <Text
-                    className="size-sm color-primaryContainer weight-bold"
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
+                  <Text className="size-sm color-primaryContainer weight-bold" style={{ fontVariant: ['small-caps'] }}>
                     &nbsp;{`${stateTimeString}`}
                   </Text>
                 </>
               ) : (
-                <Text
-                  className="size-sm color-primaryContainer ml-xs"
-                  style={{ fontVariant: ['small-caps'] }}
-                >
+                <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
                   {!!state
                     ? `${t('flights.statuses.' + state).toLocaleLowerCase()}`
                     : !onlineCheckInText
@@ -442,23 +353,19 @@ const FlightCard = React.memo(
       prevProps.data.state === nextProps.data.state &&
       prevProps.data.stateTime === nextProps.data.stateTime &&
       prevProps.data.status === nextProps.data.status &&
-      prevProps.data.actualStartDatetime ===
-        nextProps.data.actualStartDatetime &&
+      prevProps.data.actualStartDatetime === nextProps.data.actualStartDatetime &&
       prevProps.data.actualEndDatetime === nextProps.data.actualEndDatetime &&
       prevProps.data.startDatetime === nextProps.data.startDatetime &&
       prevProps.data.endDatetime === nextProps.data.endDatetime &&
       prevProps.data.departureAirport === nextProps.data.departureAirport &&
       prevProps.data.arrivalAirport === nextProps.data.arrivalAirport &&
       prevProps.data.distance === nextProps.data.distance &&
-      prevProps.data.departureAirportTimezone ===
-        nextProps.data.departureAirportTimezone &&
-      prevProps.data.arrivalAirportTimezone ===
-        nextProps.data.arrivalAirportTimezone &&
+      prevProps.data.departureAirportTimezone === nextProps.data.departureAirportTimezone &&
+      prevProps.data.arrivalAirportTimezone === nextProps.data.arrivalAirportTimezone &&
       prevProps.data.airline === nextProps.data.airline &&
       prevProps.data.flightNumber === nextProps.data.flightNumber &&
       prevProps.data.isArchived === nextProps.data.isArchived &&
-      prevProps.data.isOnlineCheckInOpen ===
-        nextProps.data.isOnlineCheckInOpen &&
+      prevProps.data.isOnlineCheckInOpen === nextProps.data.isOnlineCheckInOpen &&
       prevProps.data.onlineCheckInLink === nextProps.data.onlineCheckInLink &&
       prevProps.data.seatNumber === nextProps.data.seatNumber
     );

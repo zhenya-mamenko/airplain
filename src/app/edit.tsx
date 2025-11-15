@@ -1,13 +1,14 @@
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import EditFlight from '@/components/EditFlight';
-import { getFlight } from '@/helpers/sqlite';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import type { Flight } from '@/types';
-import { useThemeColor } from '@/hooks/useColors';
 import { makeDateLabel } from '@/helpers/datetime';
 import { useLocale } from '@/helpers/localization';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { getFlight } from '@/helpers/sqlite';
+import { useThemeColor } from '@/hooks/useColors';
+import type { Flight } from '@/types';
 
 export default function Edit() {
   const { flightId } = useLocalSearchParams<{ flightId: string }>();
@@ -22,12 +23,8 @@ export default function Edit() {
   useEffect(() => {
     getFlight(parseInt(flightId)).then((flight) => {
       if (!!flight) {
-        const departureDate = new Date(
-          flight.actualStartDatetime ?? flight.startDatetime,
-        );
-        const arrivalDate = new Date(
-          flight.actualEndDatetime ?? flight.endDatetime,
-        );
+        const departureDate = new Date(flight.actualStartDatetime ?? flight.startDatetime);
+        const arrivalDate = new Date(flight.actualEndDatetime ?? flight.endDatetime);
         const dateLabel = makeDateLabel(
           departureDate,
           flight.departureAirportTimezone ?? 'UTC',
@@ -55,11 +52,7 @@ export default function Edit() {
           margin: 0,
         }}
       >
-        {!!flight ? (
-          <EditFlight data={flight} />
-        ) : (
-          <ActivityIndicator size="large" color={colorPrimary} />
-        )}
+        {!!flight ? <EditFlight data={flight} /> : <ActivityIndicator size="large" color={colorPrimary} />}
       </View>
     </SafeAreaProvider>
   );

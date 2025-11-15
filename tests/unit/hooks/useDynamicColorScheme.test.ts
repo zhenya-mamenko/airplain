@@ -1,5 +1,6 @@
-import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import { act, renderHook } from '@testing-library/react-native';
+
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
 const mockAddChangeListener = jest.fn();
 

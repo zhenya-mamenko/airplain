@@ -1,5 +1,5 @@
-import { getFlightData } from '@/helpers/flights/aerodatabox';
 import { fetch } from '@/helpers/common';
+import { getFlightData } from '@/helpers/flights/aerodatabox';
 import type { Flight } from '@/types';
 
 jest.mock('@/helpers/common', () => ({
@@ -88,13 +88,7 @@ describe('Aerodatabox API', () => {
       status: 'arrived',
     };
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight).toEqual(expectedFlight);
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -105,13 +99,7 @@ describe('Aerodatabox API', () => {
   test('getFlightData return null when the API call fails', async () => {
     mockFetch.mockRejectedValue(new Error('API Error'));
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -125,13 +113,7 @@ describe('Aerodatabox API', () => {
       status: 404,
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -146,13 +128,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue([]),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -196,13 +172,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.status).toBe('en_route');
   });
 
@@ -242,13 +212,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.status).toBe('unknown');
   });
 
@@ -288,13 +252,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.isArchived).toBe(true);
   });
 
@@ -334,13 +292,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.isArchived).toBe(false);
   });
 
@@ -379,13 +331,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.isArchived).toBe(false);
   });
 
@@ -424,13 +370,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.isArchived).toBe(true);
   });
 
@@ -470,13 +410,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(
-      airline,
-      flightNumber,
-      flightDate,
-      apiUrl,
-      apiKey,
-    );
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
     expect(flight?.extra).toEqual({
       carrier: 'DL',
       carrierName: 'Delta Airlines',
@@ -522,13 +456,7 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(
-        airline,
-        flightNumber,
-        flightDate,
-        apiUrl,
-        apiKey,
-      );
+      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
       expect(flight?.info.state).toBe(status);
     }
   });
@@ -571,14 +499,259 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(
-        airline,
-        flightNumber,
-        flightDate,
-        apiUrl,
-        apiKey,
-      );
+      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
       expect(flight?.info.state).toBe('');
     }
+  });
+
+  test('getFlightData return null when response.ok is true but status is not 200', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: jest.fn().mockResolvedValue([]),
+    } as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight).toBeNull();
+  });
+
+  test('getFlightData return null when response is null', async () => {
+    mockFetch.mockResolvedValue(null as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight).toBeNull();
+  });
+
+  test('getFlightData handle error when trying to get JSON from error response', async () => {
+    const mockResponse = {
+      ok: false,
+      status: 500,
+      json: jest.fn().mockRejectedValue(new Error('JSON parse error')),
+    };
+    mockFetch.mockResolvedValue(mockResponse as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight).toBeNull();
+    expect(mockResponse.json).toHaveBeenCalled();
+  });
+
+  test('getFlightData handle missing optional fields', async () => {
+    const mockFlightData = [
+      {
+        arrival: {
+          scheduledTime: { local: '2024-01-01T14:00:00' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
+        },
+        departure: {
+          scheduledTime: { local: '2024-01-01T09:00:00' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
+        },
+        aircraft: {},
+        status: 'Expected',
+        airline: { iata: 'AA', name: 'American Airlines' },
+        number: 'AA 123',
+        flightNumber: '123',
+      },
+    ];
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue(mockFlightData),
+    } as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight?.aircraftRegNumber).toBe('');
+    expect(flight?.aircraftType).toBe('');
+    expect(flight?.distance).toBe(0);
+    expect(flight?.arrivalTerminal).toBeUndefined();
+    expect(flight?.baggageBelt).toBeUndefined();
+    expect(flight?.departureTerminal).toBeUndefined();
+    expect(flight?.departureGate).toBeUndefined();
+    expect(flight?.departureCheckInDesk).toBeUndefined();
+    expect(flight?.actualStartDatetime).toBeUndefined();
+    expect(flight?.actualEndDatetime).toBeUndefined();
+  });
+
+  test('getFlightData map all adbFlightStatuses correctly', async () => {
+    const statusMap = {
+      Approaching: 'en_route',
+      Arrived: 'arrived',
+      Boarding: 'boarding',
+      Canceled: 'canceled',
+      CanceledUncertain: 'unknown',
+      CheckIn: 'checkin',
+      Delayed: 'delayed',
+      Departed: 'departed',
+      Diverted: 'diverted',
+      EnRoute: 'en_route',
+      Expected: 'scheduled',
+      GateClosed: 'gateclosed',
+      Unknown: 'unknown',
+    };
+
+    for (const [adbStatus, expectedStatus] of Object.entries(statusMap)) {
+      const mockFlightData = [
+        {
+          arrival: {
+            scheduledTime: { local: '2024-01-01T14:00:00' },
+            airport: {
+              iata: 'JFK',
+              timeZone: 'America/New_York',
+              countryCode: 'US',
+            },
+          },
+          departure: {
+            scheduledTime: { local: '2024-01-01T09:00:00' },
+            airport: {
+              iata: 'LAX',
+              timeZone: 'America/Los_Angeles',
+              countryCode: 'US',
+            },
+          },
+          aircraft: { reg: 'N123AA', model: 'Boeing 737' },
+          greatCircleDistance: { km: 3940 },
+          status: adbStatus,
+          airline: { iata: 'AA', name: 'American Airlines' },
+          number: 'AA 123',
+          flightNumber: '123',
+        },
+      ];
+
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: jest.fn().mockResolvedValue(mockFlightData),
+      } as any);
+
+      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+      expect(flight?.status).toBe(expectedStatus);
+    }
+  });
+
+  test('getFlightData handle case when carrier flight number extraction fails', async () => {
+    const mockFlightData = [
+      {
+        arrival: {
+          scheduledTime: { local: '2024-01-01T14:00:00' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
+        },
+        departure: {
+          scheduledTime: { local: '2024-01-01T09:00:00' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
+        },
+        aircraft: { reg: 'N123AA', model: 'Boeing 737' },
+        greatCircleDistance: { km: 3940 },
+        status: 'Arrived',
+        airline: { iata: 'DL', name: 'Delta Airlines' },
+        number: '',
+        flightNumber: '456',
+      },
+    ];
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue(mockFlightData),
+    } as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight?.extra).toEqual({
+      carrier: 'DL',
+      carrierName: 'Delta Airlines',
+      carrierFlightNumber: '456',
+    });
+  });
+
+  test('getFlightData handle CheckIn status for info.state', async () => {
+    const mockFlightData = [
+      {
+        arrival: {
+          scheduledTime: { local: '2024-01-01T14:00:00' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
+        },
+        departure: {
+          scheduledTime: { local: '2024-01-01T09:00:00' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
+        },
+        aircraft: { reg: 'N123AA', model: 'Boeing 737' },
+        greatCircleDistance: { km: 3940 },
+        status: 'CheckIn',
+        airline: { iata: 'AA', name: 'American Airlines' },
+        number: 'AA 123',
+        flightNumber: '123',
+      },
+    ];
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue(mockFlightData),
+    } as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight?.info.state).toBe('checkin');
+  });
+
+  test('getFlightData handle GateClosed status for info.state', async () => {
+    const mockFlightData = [
+      {
+        arrival: {
+          scheduledTime: { local: '2024-01-01T14:00:00' },
+          airport: {
+            iata: 'JFK',
+            timeZone: 'America/New_York',
+            countryCode: 'US',
+          },
+        },
+        departure: {
+          scheduledTime: { local: '2024-01-01T09:00:00' },
+          airport: {
+            iata: 'LAX',
+            timeZone: 'America/Los_Angeles',
+            countryCode: 'US',
+          },
+        },
+        aircraft: { reg: 'N123AA', model: 'Boeing 737' },
+        greatCircleDistance: { km: 3940 },
+        status: 'GateClosed',
+        airline: { iata: 'AA', name: 'American Airlines' },
+        number: 'AA 123',
+        flightNumber: '123',
+      },
+    ];
+
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: jest.fn().mockResolvedValue(mockFlightData),
+    } as any);
+
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    expect(flight?.info.state).toBe('gateclosed');
   });
 });

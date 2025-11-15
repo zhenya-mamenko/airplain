@@ -1,12 +1,15 @@
-import { useState, useEffect, useRef, memo, useSyncExternalStore } from 'react';
-import { AppState, FlatList } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { View } from 'react-native-picasso';
+import { useLocalSearchParams } from 'expo-router';
+import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { AppState, FlatList } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { View } from 'react-native-picasso';
+
+import DepartingFlightCard from '@/components/DepartingFlightCard';
 import FlightCard from '@/components/FlightCard';
 import LandedFlightCard from '@/components/LandedFlightCard';
-import DepartingFlightCard from '@/components/DepartingFlightCard';
-import type { Flight } from '@/types';
+import { settings as _settings } from '@/constants/settings';
+import { fetchActualFlights } from '@/helpers/airdata';
 import {
   flightToDepartingFlightData,
   flightToFlightData,
@@ -15,18 +18,14 @@ import {
   stopBackgroundTask,
 } from '@/helpers/common';
 import emitter from '@/helpers/emitter';
-import { fetchActualFlights } from '@/helpers/airdata';
-import { settings as _settings } from '@/constants/settings';
-import { useLocalSearchParams } from 'expo-router';
+import type { Flight } from '@/types';
 
 const ActualFlights = memo((props: { now?: Date }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [flights, setFlights] = useState<Flight[]>([]);
 
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const loadFlightsRef = useRef(
-    (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {}
-  );
+  const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
   const flightsLoading = useRef(false);
 
   const subscribe = (callback: Function) => {
@@ -43,10 +42,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
   useEffect(() => {
     Notifications.requestPermissionsAsync();
 
-    loadFlightsRef.current = async (
-      refreshAnimation: boolean = false,
-      forceRefresh: boolean = false
-    ) => {
+    loadFlightsRef.current = async (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {
       if (flightsLoading.current) return;
       flightsLoading.current = true;
       if (!!timeoutId.current) {
@@ -55,15 +51,8 @@ const ActualFlights = memo((props: { now?: Date }) => {
       }
       if (refreshAnimation) setRefreshing(true);
       try {
-        if (
-          settings.ONLY_MANUAL_REFRESH === 'false' ||
-          refreshAnimation ||
-          forceRefresh
-        ) {
-          const flights = await fetchActualFlights(
-            props.now ?? new Date(),
-            forceRefresh
-          );
+        if (settings.ONLY_MANUAL_REFRESH === 'false' || refreshAnimation || forceRefresh) {
+          const flights = await fetchActualFlights(props.now ?? new Date(), forceRefresh);
           if (flights.length !== 0) {
             if (settings.ONLY_MANUAL_REFRESH === 'false') {
               startBackgroundTask();
@@ -76,10 +65,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
           setFlights(flights);
         }
         if (settings.ONLY_MANUAL_REFRESH === 'false') {
-          const tId = setTimeout(
-            () => loadFlightsRef.current(false, false),
-            60000
-          );
+          const tId = setTimeout(() => loadFlightsRef.current(false, false), 60000);
           timeoutId.current = tId;
         }
       } catch (e) {
@@ -91,13 +77,8 @@ const ActualFlights = memo((props: { now?: Date }) => {
     };
     loadFlightsRef.current(true, false);
 
-    const callback = ({
-      refreshAnimation,
-      forceRefresh,
-    }: {
-      refreshAnimation?: boolean;
-      forceRefresh?: boolean;
-    }) => loadFlightsRef.current(refreshAnimation, forceRefresh);
+    const callback = ({ refreshAnimation, forceRefresh }: { refreshAnimation?: boolean; forceRefresh?: boolean }) =>
+      loadFlightsRef.current(refreshAnimation, forceRefresh);
     emitter.on('updateActualFlights', callback);
 
     return () => emitter.off('updateActualFlights', callback);
@@ -105,18 +86,12 @@ const ActualFlights = memo((props: { now?: Date }) => {
 
   const appState = useRef(AppState.currentState);
   useEffect(() => {
-    const appStateListener = AppState.addEventListener(
-      'change',
-      (nextAppState) => {
-        if (
-          nextAppState === 'active' &&
-          ['background', 'inactive'].includes(appState.current)
-        ) {
-          loadFlightsRef.current(true);
-        }
-        appState.current = nextAppState;
+    const appStateListener = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active' && ['background', 'inactive'].includes(appState.current)) {
+        loadFlightsRef.current(true);
       }
-    );
+      appState.current = nextAppState;
+    });
 
     return () => {
       appStateListener.remove();
@@ -127,8 +102,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
     if (item.isArchived) {
       return <FlightCard data={flightToFlightData(item)} />;
     }
-    const sd =
-      new Date(item.actualStartDatetime ?? item.startDatetime).getTime() / 1000;
+    const sd = new Date(item.actualStartDatetime ?? item.startDatetime).getTime() / 1000;
     const cd = new Date().getTime() / 1000;
     if (sd - cd > 0 && sd - cd < 3600 * 4) {
       return <DepartingFlightCard data={flightToDepartingFlightData(item)} />;
@@ -142,12 +116,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
   const { flightId } = useLocalSearchParams();
   const ref = useRef<FlatList>(null);
   useEffect(() => {
-    if (
-      flights &&
-      flights.length > 0 &&
-      typeof flightId === 'string' &&
-      ref.current
-    ) {
+    if (flights && flights.length > 0 && typeof flightId === 'string' && ref.current) {
       const index = flights.findIndex((x) => x.flightId === parseInt(flightId));
       if (index !== -1) {
         ref.current.scrollToIndex({ animated: true, index });
@@ -161,19 +130,12 @@ const ActualFlights = memo((props: { now?: Date }) => {
         <FlatList
           data={flights}
           keyboardShouldPersistTaps="always"
-          keyExtractor={(item: Flight, index: number) =>
-            item.flightId?.toString() ?? index.toString()
-          }
+          keyExtractor={(item: Flight, index: number) => item.flightId?.toString() ?? index.toString()}
           ref={ref}
           refreshing={refreshing}
           renderItem={renderFlight}
           style={{ padding: 8 }}
-          onRefresh={() =>
-            loadFlightsRef.current(
-              true,
-              settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH === 'true'
-            )
-          }
+          onRefresh={() => loadFlightsRef.current(true, settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH === 'true')}
         />
       </View>
     </GestureHandlerRootView>

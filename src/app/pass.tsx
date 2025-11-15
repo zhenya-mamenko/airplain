@@ -1,4 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
+
 import BoardingPass from '@/components/BoardingPass';
 import type { PKPassData } from '@/types';
 

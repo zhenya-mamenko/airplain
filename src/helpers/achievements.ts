@@ -1,22 +1,24 @@
-import type { Achievement, ContextData } from '@/types';
+import { SkImage, SkPath, Skia } from '@shopify/react-native-skia';
+
+import * as FileSystem from 'expo-file-system';
 import { Dimensions } from 'react-native';
+
+import { getSetting, setSetting } from '@/constants/settings';
 import {
+  PPoint,
+  Point,
   type Polygon,
   calcHeight,
+  cyrb64Hash,
   doPlace,
+  pp2p,
   rotatePolygon,
   squareToPolygon,
-  cyrb64Hash,
-  PPoint,
-  pp2p,
-  Point,
 } from '@/helpers/algs';
 import { readFileToString } from '@/helpers/common';
-import { getAchievements } from '@/helpers/sqlite';
 import t from '@/helpers/localization';
-import { Skia, SkImage, SkPath } from '@shopify/react-native-skia';
-import * as FileSystem from 'expo-file-system';
-import { getSetting, setSetting } from '@/constants/settings';
+import { getAchievements } from '@/helpers/sqlite';
+import type { Achievement, ContextData } from '@/types';
 
 export interface Stamp {
   achievement: any;
@@ -26,22 +28,13 @@ export interface Stamp {
   svgPaths: Array<SkPath>;
 }
 
-const makeHash = (
-  width: number,
-  height: number,
-  ids: Array<string>,
-): string => {
+const makeHash = (width: number, height: number, ids: Array<string>): string => {
   const hashSource = `${width}|${height}|${ids.join('|')}`;
   const hash = cyrb64Hash(hashSource);
   return hash;
 };
 
-const applyViewBoxTransform = (
-  path: SkPath,
-  left: number,
-  top: number,
-  size: number,
-) => {
+const applyViewBoxTransform = (path: SkPath, left: number, top: number, size: number) => {
   const scale = size / 256;
   const matrix = Skia.Matrix();
   matrix.translate(left, top);
@@ -51,13 +44,7 @@ const applyViewBoxTransform = (
   return newPath;
 };
 
-const rotatePath = (
-  path: SkPath,
-  left: number,
-  top: number,
-  size: number,
-  radians: number,
-) => {
+const rotatePath = (path: SkPath, left: number, top: number, size: number, radians: number) => {
   const matrix = Skia.Matrix();
   const [cx, cy] = [left + size / 2, top + size / 2];
   matrix.translate(cx, cy);
@@ -79,10 +66,7 @@ const convexHull = (points: Array<PPoint>) => {
   let hull = [];
 
   for (let p of points) {
-    while (
-      hull.length >= 2 &&
-      crossProduct(hull[hull.length - 2], hull[hull.length - 1], p) <= 0
-    ) {
+    while (hull.length >= 2 && crossProduct(hull[hull.length - 2], hull[hull.length - 1], p) <= 0) {
       hull.pop();
     }
     hull.push(p);
@@ -91,10 +75,7 @@ const convexHull = (points: Array<PPoint>) => {
   let t = hull.length + 1;
   for (let i = points.length - 2; i >= 0; i--) {
     let p = points[i];
-    while (
-      hull.length >= t &&
-      crossProduct(hull[hull.length - 2], hull[hull.length - 1], p) <= 0
-    ) {
+    while (hull.length >= t && crossProduct(hull[hull.length - 2], hull[hull.length - 1], p) <= 0) {
       hull.pop();
     }
     hull.push(p);
@@ -130,9 +111,7 @@ export const loadAchievements = async (
   const processSvg = async (file: any): Promise<Array<SkPath> | null> => {
     const svg = extractPathsData(await readFileToString(file));
     if (!svg) return null;
-    const result = svg
-      .map((x: string) => Skia.Path.MakeFromSVGString(x))
-      .filter((x) => !!x);
+    const result = svg.map((x: string) => Skia.Path.MakeFromSVGString(x)).filter((x) => !!x);
     return result;
   };
 
@@ -187,8 +166,7 @@ export const prepareAchievements = async (
 
     const height = calcHeight(polys);
     const minTop = Math.floor(polys.length / 3) * size + 32;
-    const t = (p: number) =>
-      Math.round((Math.random() * 0.1 + 0.09 * p) * (height - minTop)) + minTop;
+    const t = (p: number) => Math.round((Math.random() * 0.1 + 0.09 * p) * (height - minTop)) + minTop;
 
     let i = 0;
     let found = false;
@@ -211,8 +189,7 @@ export const prepareAchievements = async (
     while (!found) {
       top = height + Math.round(Math.random() * 8 + 8);
       left = Math.round(Math.random() * 0.7 * width) + 16;
-      radians =
-        ((Math.random() * Math.PI) / 6 + 0.1) * Math.sign(Math.random() - 0.5);
+      radians = ((Math.random() * Math.PI) / 6 + 0.1) * Math.sign(Math.random() - 0.5);
       poly = rotatePolygon(squareToPolygon({ left, top, size }), radians);
       found = doPlace(polys, poly);
     }
@@ -286,9 +263,7 @@ export const prepareAchievements = async (
       if (!svg.paths) continue;
       const id = svg.id;
       const isCountry = id.length === 2;
-      const size = isCountry
-        ? Math.round(maxSvgSize * (Math.random() * 0.1 + 0.9))
-        : 0.24 * (width - 32);
+      const size = isCountry ? Math.round(maxSvgSize * (Math.random() * 0.1 + 0.9)) : 0.24 * (width - 32);
       const selected = colors[Math.floor(Math.random() * colors.length)];
       const color = isCountry ? selected : 'gold';
       const r = ((Math.random() * 120 - 60) * Math.PI) / 180;
@@ -300,13 +275,7 @@ export const prepareAchievements = async (
       );
       const paths =
         svg.paths?.map((path: SkPath) =>
-          rotatePath(
-            applyViewBoxTransform(path, left, top, size),
-            left,
-            top,
-            size,
-            radians,
-          ),
+          rotatePath(applyViewBoxTransform(path, left, top, size), left, top, size, radians),
         ) || [];
       const result: Stamp = {
         achievement: { ...achievements.find((x) => x.id === id) },
@@ -320,13 +289,7 @@ export const prepareAchievements = async (
 
     let image: SkImage | null = null;
     for (const t of ['light', 'dark']) {
-      const img = await createCachedImage(
-        width,
-        height,
-        bgImage,
-        stamps,
-        stampsColors[t as 'light' | 'dark'],
-      );
+      const img = await createCachedImage(width, height, bgImage, stamps, stampsColors[t as 'light' | 'dark']);
       if (!img) return { image: null, data: [] };
       await exportImage(img, t);
       if (t === themeName) image = img;
@@ -379,14 +342,7 @@ export const createCachedImage = async (
 
     const stampPaint = Skia.Paint();
     stampPaint.setColor(Skia.Color(colors[stamp.color]));
-    const noiseShader = Skia.Shader.MakeTurbulence(
-      0.05,
-      0.1,
-      4,
-      Math.random(),
-      0,
-      0,
-    );
+    const noiseShader = Skia.Shader.MakeTurbulence(0.05, 0.1, 4, Math.random(), 0, 0);
     stampPaint.setShader(noiseShader);
     const cl = Skia.Color(colors[stamp.color]);
     const colorFilter = Skia.ColorFilter.MakeMatrix([
@@ -439,17 +395,13 @@ const exportImage = async (image: SkImage, themeName: string) => {
     canvas.scale(0.5, 0.5);
     const result = surface.makeImageSnapshot().encodeToBase64();
     if (!result) return;
-    await FileSystem.writeAsStringAsync(
-      `${FileSystem.cacheDirectory}achievements-share-${themeName}.png`,
-      result,
-      { encoding: 'base64' },
-    );
+    await FileSystem.writeAsStringAsync(`${FileSystem.cacheDirectory}achievements-share-${themeName}.png`, result, {
+      encoding: 'base64',
+    });
   } catch (e) {}
 };
 
-const exportData = async (
-  data: { id: string; hull: Point[]; color: string }[],
-) => {
+const exportData = async (data: { id: string; hull: Point[]; color: string }[]) => {
   const path = `${FileSystem.cacheDirectory}achievements-data.json`;
   try {
     await FileSystem.writeAsStringAsync(path, JSON.stringify(data), {
@@ -473,9 +425,7 @@ const importImage = async (themeName: string) => {
   return null;
 };
 
-const importData = async (): Promise<
-  { id: string; hull: Point[]; color: string }[] | null
-> => {
+const importData = async (): Promise<{ id: string; hull: Point[]; color: string }[] | null> => {
   const path = `${FileSystem.cacheDirectory}achievements-data.json`;
   const fileInfo = await FileSystem.getInfoAsync(path);
   if (!fileInfo.exists) return null;

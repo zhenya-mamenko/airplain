@@ -1,31 +1,26 @@
-import React from 'react';
-import { useState, useEffect, useCallback } from 'react';
 import { Image as _Image } from 'expo-image';
 import { useNetworkState } from 'expo-network';
-import { Text, View, createPicassoComponent } from 'react-native-picasso';
-import type { LandedFlightCardData, WeatherData } from '@/types';
-import {
-  dateClass,
-  makeDateLabel,
-  durationToLocaleString,
-} from '@/helpers/datetime';
-import { useLocale } from '@/helpers/localization';
-import { useThemeColor, usePaletteColor } from '@/hooks/useColors';
-import { getAirportData, airlineLogoUri } from '@/helpers/airdata';
-import t from '@/helpers/localization';
-import { SvgBaggageBelt, SvgTimezoneAlert } from '@/constants/svg';
-import flags from '@/constants/flags.json';
-import { loadWeather, parseWeather } from '@/helpers/weather';
-import { settings } from '@/constants/settings';
+import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GestureDetector } from 'react-native-gesture-handler';
+import { Text, View, createPicassoComponent } from 'react-native-picasso';
 import Animated from 'react-native-reanimated';
+
+import flags from '@/constants/flags.json';
+import { settings } from '@/constants/settings';
+import { SvgBaggageBelt, SvgTimezoneAlert } from '@/constants/svg';
+import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
+import { dateClass, durationToLocaleString, makeDateLabel } from '@/helpers/datetime';
 import { makeCardGestures } from '@/helpers/gestures';
+import { useLocale } from '@/helpers/localization';
+import t from '@/helpers/localization';
+import { loadWeather, parseWeather } from '@/helpers/weather';
+import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import type { LandedFlightCardData, WeatherData } from '@/types';
 
 const Image = createPicassoComponent(_Image);
 
-export default function LandedFlightCard(props: {
-  data: LandedFlightCardData;
-}) {
+export default function LandedFlightCard(props: { data: LandedFlightCardData }) {
   const locale = useLocale();
   const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
   const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
@@ -56,34 +51,18 @@ export default function LandedFlightCard(props: {
   const arrivalAirportData = getAirportData(arrivalAirport, locale);
   const departureDate = new Date(sd * 1000);
   const arrivalDate = new Date(ed * 1000);
-  const dateLabel = makeDateLabel(
-    departureDate,
-    departureAirportTimezone,
-    arrivalDate,
-    arrivalAirportTimezone,
-    locale,
-  );
-  const durationString = durationToLocaleString(
-    Math.round((ed - sd) / 60),
-    locale,
-  );
+  const dateLabel = makeDateLabel(departureDate, departureAirportTimezone, arrivalDate, arrivalAirportTimezone, locale);
+  const durationString = durationToLocaleString(Math.round((ed - sd) / 60), locale);
   const distanceString = `${props.data.distance.toLocaleString(locale)}${t('measurements.km')}`;
 
   const network = useNetworkState();
-  const [airportWeather, setAirportWeather] = useState<WeatherData | null>(
-    null,
-  );
-  const [lat, lon] = [
-    arrivalAirportData?.airport_latitude,
-    arrivalAirportData?.airport_longitude,
-  ];
+  const [airportWeather, setAirportWeather] = useState<WeatherData | null>(null);
+  const [lat, lon] = [arrivalAirportData?.airport_latitude, arrivalAirportData?.airport_longitude];
   const loadWeatherCallback = useCallback(async () => {
     if (lat && lon && network.isInternetReachable) {
       const data = await loadWeather(lat, lon);
       if (data) {
-        setAirportWeather(
-          parseWeather((data as any).current, colorPrimaryContainer, 16),
-        );
+        setAirportWeather(parseWeather((data as any).current, colorPrimaryContainer, 16));
       }
     }
   }, [
@@ -123,17 +102,12 @@ export default function LandedFlightCard(props: {
 
   const flag =
     arrivalAirportData?.country_code !== departureAirportData?.country_code
-      ? flags.find((x) => x.country_code === arrivalAirportData?.country_code)
-          ?.flag
+      ? flags.find((x) => x.country_code === arrivalAirportData?.country_code)?.flag
       : null;
 
   const tresholdDate = new Date();
   tresholdDate.setHours(tresholdDate.getHours() - 1);
-  const { gestures, animatedStyle } = makeCardGestures(
-    flightId,
-    isArchived,
-    tresholdDate < arrivalDate,
-  );
+  const { gestures, animatedStyle } = makeCardGestures(flightId, isArchived, tresholdDate < arrivalDate);
 
   return (
     <GestureDetector gesture={gestures}>
@@ -171,9 +145,7 @@ export default function LandedFlightCard(props: {
             </View>
             <View className="flex-column justifycontent-start alignitems-top pt-md px-md pb-xs">
               <View className="flex-row justifycontent-between alignitems-center">
-                <Text className="size-lg color-surface mr-md weight-bold">
-                  {departureAirportData?.iata_code}
-                </Text>
+                <Text className="size-lg color-surface mr-md weight-bold">{departureAirportData?.iata_code}</Text>
                 <Text
                   className="size-sm color-surface align-right"
                   ellipsizeMode="tail"
@@ -190,30 +162,19 @@ export default function LandedFlightCard(props: {
                   className={`size-lg ${!!timeClassDeparture ? `color-${timeClassDeparture}` : 'color-primaryContainer'}`}
                   style={{ marginTop: -2 }}
                 >
-                  {departureDate.toLocaleTimeString(
-                    locale,
-                    departureTimeOptions,
-                  )}
+                  {departureDate.toLocaleTimeString(locale, departureTimeOptions)}
                 </Text>
               </View>
               <View className="flex-column justifycontent-center alignitems-center alignself-end">
                 {departureTerminal && (
-                  <Text
-                    className="size-sm color-surface mb-sm"
-                    style={{ marginTop: 2, fontVariant: ['small-caps'] }}
-                  >
-                    {departureTerminal
-                      ? `${t('flights.terminal').toLocaleLowerCase()} ${departureTerminal}`
-                      : ''}
+                  <Text className="size-sm color-surface mb-sm" style={{ marginTop: 2, fontVariant: ['small-caps'] }}>
+                    {departureTerminal ? `${t('flights.terminal').toLocaleLowerCase()} ${departureTerminal}` : ''}
                   </Text>
                 )}
               </View>
             </View>
             <View className="flex-row justifycontent-center alignitems-center px-md py-md">
-              <View
-                className="bg-background px-sm"
-                style={{ position: 'absolute', top: 7, zIndex: 1 }}
-              >
+              <View className="bg-background px-sm" style={{ position: 'absolute', top: 7, zIndex: 1 }}>
                 <Text className="size-sm" style={{ color: colorN70 }}>
                   {`${durationString} • ${distanceString}`}
                 </Text>
@@ -231,9 +192,7 @@ export default function LandedFlightCard(props: {
             </View>
             <View className="flex-column justifycontent-start alignitems-top pb-sm px-md">
               <View className="flex-row justifycontent-between alignitems-center">
-                <Text className="size-xxl color-surface mr-md weight-bold">
-                  {arrivalAirportData?.iata_code}
-                </Text>
+                <Text className="size-xxl color-surface mr-md weight-bold">{arrivalAirportData?.iata_code}</Text>
                 <Text
                   className="size-md color-surface align-right"
                   ellipsizeMode="tail"
@@ -272,9 +231,7 @@ export default function LandedFlightCard(props: {
                         marginBottom: -4,
                       }}
                     />
-                    <Text className="size-lg weight-bold color-primaryContainer ml-xs">
-                      {baggageBelt || '—'}
-                    </Text>
+                    <Text className="size-lg weight-bold color-primaryContainer ml-xs">{baggageBelt || '—'}</Text>
                   </View>
                 )}
                 <Text
@@ -290,42 +247,28 @@ export default function LandedFlightCard(props: {
               style={{
                 borderStyle: 'dotted',
                 borderTopWidth: 0.8,
-                display:
-                  !!airportWeather || isDifferentTimezone ? undefined : 'none',
+                display: !!airportWeather || isDifferentTimezone ? undefined : 'none',
               }}
             >
               <View className="flex-row justifycontent-center alignitems-center">
                 {isDifferentTimezone ? (
                   <>
-                    <SvgTimezoneAlert
-                      color={colorPrimaryContainer}
-                      style={{ width: 16, height: 16 }}
-                    />
-                    <Text
-                      className="size-sm color-primaryContainer ml-xs"
-                      style={{ fontVariant: ['small-caps'] }}
-                    >
+                    <SvgTimezoneAlert color={colorPrimaryContainer} style={{ width: 16, height: 16 }} />
+                    <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
                       {t('messages.different_timezone')}
                     </Text>
                   </>
                 ) : (
-                  <Text
-                    className="size-sm color-primaryContainer ml-xs"
-                    style={{ fontVariant: ['small-caps'] }}
-                  >
+                  <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
                     {t('messages.welcome').toLocaleLowerCase()}
                   </Text>
                 )}
               </View>
               <View className="flex-row justifycontent-end alignitems-center alignself-end">
                 {airportWeather && (
-                  <Text className="size-lg color-primaryContainer align-right">
-                    {airportWeather.temperatureOut}
-                  </Text>
+                  <Text className="size-lg color-primaryContainer align-right">{airportWeather.temperatureOut}</Text>
                 )}
-                {airportWeather?.icons && airportWeather?.icons.length > 0
-                  ? airportWeather.icons
-                  : null}
+                {airportWeather?.icons && airportWeather?.icons.length > 0 ? airportWeather.icons : null}
               </View>
             </View>
           </View>

@@ -1,6 +1,7 @@
-import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
-import themes from '@/constants/themes.json';
 import { defaultTheme } from 'react-native-picasso';
+
+import themes from '@/constants/themes.json';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import type { ThemeData } from '@/types';
 
 const additions = {
@@ -21,10 +22,7 @@ const additions = {
 };
 
 const useTheme = (theme?: string): ThemeData => {
-  const colors =
-    themes[
-      (theme || useDynamicColorScheme() || 'light') as keyof typeof themes
-    ];
+  const colors = themes[(theme || useDynamicColorScheme() || 'light') as keyof typeof themes];
   const result = {
     ...defaultTheme,
     ...colors,

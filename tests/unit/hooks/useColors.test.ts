@@ -1,9 +1,7 @@
-import {
-  useThemeColor,
-  useThemeColors,
-  usePaletteColor,
-} from '@/hooks/useColors';
 import { renderHook } from '@testing-library/react-native';
+
+import { usePaletteColor, useThemeColor, useThemeColors } from '@/hooks/useColors';
+
 import mockedPalettes from '../../__mocks__/palettes.json';
 import mockedThemes from '../../__mocks__/themes.json';
 
@@ -21,9 +19,7 @@ jest.mock('@/hooks/useDynamicColorScheme', () => ({
 
 describe('useColors', () => {
   test('useThemeColor', () => {
-    const { result, rerender } = renderHook(() =>
-      useThemeColor('colors.primary'),
-    );
+    const { result, rerender } = renderHook(() => useThemeColor('colors.primary'));
 
     expect(result.current).toBe(mockedThemes.light.colors.primary);
 
@@ -37,52 +33,32 @@ describe('useColors', () => {
   });
 
   test('useThemeColor with specific theme', () => {
-    const { result } = renderHook(() =>
-      useThemeColor('colors.primary', 'dark'),
-    );
+    const { result } = renderHook(() => useThemeColor('colors.primary', 'dark'));
     expect(result.current).toBe(mockedThemes.dark.colors.primary);
   });
 
   test('useThemeColor with invalid color name', () => {
-    const { result } = renderHook(() =>
-      useThemeColor('invalid.color', 'light'),
-    );
+    const { result } = renderHook(() => useThemeColor('invalid.color', 'light'));
     expect(result.current).toBeUndefined();
   });
 
   test('useThemeColors', () => {
-    const { result, rerender } = renderHook(() =>
-      useThemeColors(['colors.primary', 'colors.secondary']),
-    );
+    const { result, rerender } = renderHook(() => useThemeColors(['colors.primary', 'colors.secondary']));
 
-    expect(result.current).toEqual([
-      mockedThemes.light.colors.primary,
-      mockedThemes.light.colors.secondary,
-    ]);
+    expect(result.current).toEqual([mockedThemes.light.colors.primary, mockedThemes.light.colors.secondary]);
 
     rerender({});
 
-    expect(result.current).toEqual([
-      mockedThemes.dark.colors.primary,
-      mockedThemes.dark.colors.secondary,
-    ]);
+    expect(result.current).toEqual([mockedThemes.dark.colors.primary, mockedThemes.dark.colors.secondary]);
 
     rerender({});
 
-    expect(result.current).toEqual([
-      mockedThemes.light.colors.primary,
-      mockedThemes.light.colors.secondary,
-    ]);
+    expect(result.current).toEqual([mockedThemes.light.colors.primary, mockedThemes.light.colors.secondary]);
   });
 
   test('useThemeColors with specific theme', () => {
-    const { result } = renderHook(() =>
-      useThemeColors(['colors.primary', 'colors.secondary'], 'dark'),
-    );
-    expect(result.current).toEqual([
-      mockedThemes.dark.colors.primary,
-      mockedThemes.dark.colors.secondary,
-    ]);
+    const { result } = renderHook(() => useThemeColors(['colors.primary', 'colors.secondary'], 'dark'));
+    expect(result.current).toEqual([mockedThemes.dark.colors.primary, mockedThemes.dark.colors.secondary]);
   });
 
   test('usePaletteColor', () => {

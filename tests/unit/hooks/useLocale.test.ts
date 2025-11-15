@@ -1,5 +1,6 @@
-import t, { useLocale } from '@/helpers/localization';
 import { renderHook } from '@testing-library/react-native';
+
+import t, { useLocale } from '@/helpers/localization';
 
 jest.mock('expo-localization', () => ({
   getLocales: jest

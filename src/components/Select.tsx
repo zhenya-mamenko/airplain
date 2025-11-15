@@ -1,15 +1,14 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import React, { useCallback } from 'react';
+import { Pressable } from 'react-native';
+import { Dropdown, MultiSelect as _MultiSelect } from 'react-native-element-dropdown';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
-import {
-  Dropdown,
-  MultiSelect as _MultiSelect,
-} from 'react-native-element-dropdown';
-import { buildStyleSheet } from 'react-native-picasso/build/util/style-helpers';
 import { ThemeContext } from 'react-native-picasso/build/core/theming';
 import { Theme } from 'react-native-picasso/build/styles/defaultTheme';
+import { buildStyleSheet } from 'react-native-picasso/build/util/style-helpers';
+
 import { useThemeColor } from '@/hooks/useColors';
-import { Pressable } from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const DropdownWrapper = createPicassoComponent(Dropdown);
 const MultiSelectWrapper = createPicassoComponent(_MultiSelect);
@@ -20,12 +19,7 @@ export type SelectProps = React.ComponentProps<typeof DropdownWrapper> & {
   dropdownRef?: any;
 };
 
-export const Select: React.FC<SelectProps> = ({
-  showValue,
-  valueFixedWidth,
-  dropdownRef,
-  ...props
-}: SelectProps) => {
+export const Select: React.FC<SelectProps> = ({ showValue, valueFixedWidth, dropdownRef, ...props }: SelectProps) => {
   const renderItem = useCallback(
     (item: any, selected?: boolean): JSX.Element => {
       return (
@@ -40,9 +34,7 @@ export const Select: React.FC<SelectProps> = ({
               {item[props.valueField]}
             </Text>
           )}
-          <Text className="size-md color-surface">
-            {item[props.labelField]}
-          </Text>
+          <Text className="size-md color-surface">{item[props.labelField]}</Text>
         </View>
       );
     },
@@ -54,11 +46,7 @@ export const Select: React.FC<SelectProps> = ({
   return (
     <ThemeContext.Consumer>
       {(theme: Theme) => {
-        const selectedTextStyle = buildStyleSheet(
-          'size-md color-surface m-smm',
-          theme,
-          'text',
-        );
+        const selectedTextStyle = buildStyleSheet('size-md color-surface m-smm', theme, 'text');
         const containerStyle = buildStyleSheet(
           'bg-background b-1 bordercolor-outline radius-sm p-sm mt-xs',
           theme,
@@ -113,9 +101,7 @@ export const MultiSelect: React.FC<SelectProps> = ({
               {item[props.valueField]}
             </Text>
           )}
-          <Text className="size-md color-surface">
-            {item[props.labelField]}
-          </Text>
+          <Text className="size-md color-surface">{item[props.labelField]}</Text>
         </View>
       );
     },
@@ -126,14 +112,8 @@ export const MultiSelect: React.FC<SelectProps> = ({
     (item: any, unSelect?: (item: any) => void) => (
       <Pressable onPress={() => unSelect && unSelect(item)}>
         <View className="flex-row px-sm py-xs alignitems-center bg-background b-1 bordercolor-outline radius-sm mr-xs mt-xs">
-          <Text className="size-md color-surface mr-sm">
-            {item[props.valueField]}
-          </Text>
-          <MaterialCommunityIcons
-            name="window-close"
-            size={16}
-            color={iconColor}
-          />
+          <Text className="size-md color-surface mr-sm">{item[props.valueField]}</Text>
+          <MaterialCommunityIcons name="window-close" size={16} color={iconColor} />
         </View>
       </Pressable>
     ),
@@ -143,11 +123,7 @@ export const MultiSelect: React.FC<SelectProps> = ({
   return (
     <ThemeContext.Consumer>
       {(theme: Theme) => {
-        const selectedTextStyle = buildStyleSheet(
-          'size-md color-surface m-smm',
-          theme,
-          'text',
-        );
+        const selectedTextStyle = buildStyleSheet('size-md color-surface m-smm', theme, 'text');
         const containerStyle = buildStyleSheet(
           'bg-background b-1 bordercolor-outline radius-sm p-sm mt-xs',
           theme,

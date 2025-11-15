@@ -1,14 +1,16 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import t from '@/helpers/localization';
-import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
-import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import {
   MaterialTopTabNavigationEventMap,
   MaterialTopTabNavigationOptions,
   createMaterialTopTabNavigator,
 } from '@react-navigation/material-top-tabs';
-import { withLayoutContext } from 'expo-router';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
+
+import { withLayoutContext } from 'expo-router';
+
+import t from '@/helpers/localization';
+import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -23,8 +25,7 @@ const FlightsWrapper = () => {
   const themeName = useDynamicColorScheme() || 'light';
   const colorPrimary = useThemeColor('textColors.primary');
   const bgPrimary = useThemeColor('colors.primary');
-  const colorInactive =
-    themeName === 'light' ? usePaletteColor('NV-90') : usePaletteColor('NV-40');
+  const colorInactive = themeName === 'light' ? usePaletteColor('NV-90') : usePaletteColor('NV-40');
 
   return (
     <MaterialTopTabs
@@ -44,12 +45,7 @@ const FlightsWrapper = () => {
         options={{
           title: t('flights.actual'),
           tabBarIcon: ({ color }) => (
-            <FontAwesome5
-              name="plane-departure"
-              color={color}
-              size={14}
-              style={{ marginRight: 4, marginTop: -4 }}
-            />
+            <FontAwesome5 name="plane-departure" color={color} size={14} style={{ marginRight: 4, marginTop: -4 }} />
           ),
         }}
       />
@@ -58,12 +54,7 @@ const FlightsWrapper = () => {
         options={{
           title: t('flights.past'),
           tabBarIcon: ({ color }) => (
-            <FontAwesome5
-              name="plane-arrival"
-              color={color}
-              size={14}
-              style={{ marginRight: 4, marginTop: -4 }}
-            />
+            <FontAwesome5 name="plane-arrival" color={color} size={14} style={{ marginRight: 4, marginTop: -4 }} />
           ),
         }}
       />

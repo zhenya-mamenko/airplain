@@ -26,25 +26,13 @@ export const SvgArrowLong = (props: any) => (
 
 export const SvgCross = (props: any) => (
   <Svg viewBox="0 0 24 24" {...props}>
-    <Path
-      d="m16 8-8 8m0-8 8 8"
-      stroke={props.color}
-      strokeWidth={1.3}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <Path d="m16 8-8 8m0-8 8 8" stroke={props.color} strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
 
 export const SvgLine = (props: any) => (
   <Svg viewBox="0 0 48 24" {...props}>
-    <Path
-      d="M4 12h40"
-      stroke={props.color}
-      strokeWidth={1.3}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <Path d="M4 12h40" stroke={props.color} strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
 

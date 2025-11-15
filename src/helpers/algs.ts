@@ -45,11 +45,7 @@ export function squareToPolygon({ top, left, size }: Square): Polygon {
   ];
 }
 
-export function rotatePoint(
-  origin: Point,
-  point: Point,
-  radians: number,
-): Point {
+export function rotatePoint(origin: Point, point: Point, radians: number): Point {
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
   const nx = cos * (point.x - origin.x) + sin * (point.y - origin.y) + origin.x;
@@ -59,18 +55,11 @@ export function rotatePoint(
 
 export function rotatePolygon(poly: Polygon, radians: number): Polygon {
   const origin: Point = findPolygonCenter(poly);
-  const result = poly.map((point) =>
-    rotatePoint(origin, point, radians),
-  ) as Polygon;
+  const result = poly.map((point) => rotatePoint(origin, point, radians)) as Polygon;
   return result;
 }
 
-export function doLinesIntersect(
-  a1: Point,
-  a2: Point,
-  b1: Point,
-  b2: Point,
-): boolean {
+export function doLinesIntersect(a1: Point, a2: Point, b1: Point, b2: Point): boolean {
   const area1 = (a2.x - a1.x) * (b1.y - a1.y) - (b1.x - a1.x) * (a2.y - a1.y);
   const area2 = (a2.x - a1.x) * (b2.y - a1.y) - (b2.x - a1.x) * (a2.y - a1.y);
   const area3 = (b2.x - b1.x) * (a1.y - b1.y) - (a1.x - b1.x) * (b2.y - b1.y);
@@ -85,9 +74,7 @@ export function isPointInPolygon(point: Point, polygon: Polygon): boolean {
     if (
       polygon[i].y > point.y !== polygon[j].y > point.y &&
       point.x <
-        ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) /
-          (polygon[j].y - polygon[i].y) +
-          polygon[i].x
+        ((polygon[j].x - polygon[i].x) * (point.y - polygon[i].y)) / (polygon[j].y - polygon[i].y) + polygon[i].x
     ) {
       inside = !inside;
     }
@@ -106,17 +93,10 @@ export function doPolygonsIntersect(poly1: Polygon, poly2: Polygon): boolean {
     }
   }
 
-  return (
-    poly1.some((p) => isPointInPolygon(p, poly2)) ||
-    poly2.some((p) => isPointInPolygon(p, poly1))
-  );
+  return poly1.some((p) => isPointInPolygon(p, poly2)) || poly2.some((p) => isPointInPolygon(p, poly1));
 }
 
-export function doesLineIntersectPolygon(
-  lineStart: Point,
-  lineEnd: Point,
-  poly: Polygon,
-): boolean {
+export function doesLineIntersectPolygon(lineStart: Point, lineEnd: Point, poly: Polygon): boolean {
   for (let i = 0; i < poly.length; i++) {
     const next = (i + 1) % poly.length;
     if (doLinesIntersect(lineStart, lineEnd, poly[i], poly[next])) {
@@ -128,41 +108,20 @@ export function doesLineIntersectPolygon(
 
 function doOnHorizontal(poly1: Polygon, poly2: Polygon): boolean {
   for (const point of poly2) {
-    if (
-      doesLineIntersectPolygon(
-        { x: 0, y: point.y },
-        { x: 1e6, y: point.y },
-        poly1,
-      )
-    )
-      return true;
+    if (doesLineIntersectPolygon({ x: 0, y: point.y }, { x: 1e6, y: point.y }, poly1)) return true;
   }
   return false;
 }
 
 function doOnVertical(poly1: Polygon, poly2: Polygon): boolean {
   for (const point of poly2) {
-    if (
-      doesLineIntersectPolygon(
-        { x: point.x, y: 0 },
-        { x: point.x, y: 1e6 },
-        poly1,
-      )
-    )
-      return true;
+    if (doesLineIntersectPolygon({ x: point.x, y: 0 }, { x: point.x, y: 1e6 }, poly1)) return true;
   }
   return false;
 }
 
 export function calcHeight(polys: Array<Polygon>): number {
-  return polys.length > 0
-    ? polys
-        .flat()
-        .reduce(
-          (acc: number, point: Point) => (point.y > acc ? point.y : acc),
-          0,
-        )
-    : 0;
+  return polys.length > 0 ? polys.flat().reduce((acc: number, point: Point) => (point.y > acc ? point.y : acc), 0) : 0;
 }
 
 export function doPlace(polys: Array<Polygon>, poly: Polygon): boolean {

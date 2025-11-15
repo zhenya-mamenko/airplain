@@ -1,25 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Pressable, StatusBar } from 'react-native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import { Tabs, usePathname } from 'expo-router';
-import { ThemeProvider, View, Text } from 'react-native-picasso';
-import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
-import { useThemeColors } from '@/hooks/useColors';
-import useTheme from '@/hooks/useTheme';
-import t from '@/helpers/localization';
-import type { TabData } from '@/types';
-import emitter from '@/helpers/emitter';
 import { router } from 'expo-router';
+import React, { useContext, useEffect, useState } from 'react';
+import { Pressable, StatusBar } from 'react-native';
+import { Text, ThemeProvider, View } from 'react-native-picasso';
+
+import emitter from '@/helpers/emitter';
+import t from '@/helpers/localization';
+import { useThemeColors } from '@/hooks/useColors';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
+import useTheme from '@/hooks/useTheme';
+import type { TabData } from '@/types';
 
 export const unstable_settings = {
   initialRouteName: 'flights',
 };
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome5>['name'];
-  color: string;
-}) {
+function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome5>['name']; color: string }) {
   return <FontAwesome5 size={22} style={{ marginBottom: -3 }} {...props} />;
 }
 
@@ -51,31 +50,21 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
 
-  const [
-    colorBgPrimary,
-    colorBg,
-    colorPrimary,
-    colorShadow,
-    colorBgSecondary,
-    colorBgPrimaryContainer,
-  ] = useThemeColors([
-    'colors.primary',
-    'colors.background',
-    'textColors.primary',
-    'colors.shadow',
-    'colors.secondary',
-    'colors.primaryContainer',
-  ]);
+  const [colorBgPrimary, colorBg, colorPrimary, colorShadow, colorBgSecondary, colorBgPrimaryContainer] =
+    useThemeColors([
+      'colors.primary',
+      'colors.background',
+      'textColors.primary',
+      'colors.shadow',
+      'colors.secondary',
+      'colors.primaryContainer',
+    ]);
 
-  const [filterState, setFilterState] = useState<'filter' | 'filter-outline'>(
-    'filter-outline',
-  );
+  const [filterState, setFilterState] = useState<'filter' | 'filter-outline'>('filter-outline');
   const flightsType = usePathname().split('/').at(-1);
 
   useEffect(() => {
-    const setFlightFilterStateCallback = (
-      filterState: 'filter' | 'filter-outline',
-    ) => {
+    const setFlightFilterStateCallback = (filterState: 'filter' | 'filter-outline') => {
       setFilterState(filterState);
     };
     emitter.on('setFlightFilterState', setFlightFilterStateCallback);
@@ -91,10 +80,7 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
   return (
     // @ts-ignore
     <ThemeProvider theme={theme}>
-      <StatusBar
-        backgroundColor={colorBgPrimary}
-        barStyle={`${themeName}-content`}
-      />
+      <StatusBar backgroundColor={colorBgPrimary} barStyle={`${themeName}-content`} />
       <Tabs
         screenOptions={{
           animation: 'none',
@@ -116,10 +102,7 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
             options={{
               headerShadowVisible: tab.route.split('/')[0] !== 'flights',
               headerBackgroundContainerStyle: {
-                boxShadow:
-                  tab.route.split('/')[0] === 'flights'
-                    ? 'none'
-                    : `0 0 2px ${colorShadow}`,
+                boxShadow: tab.route.split('/')[0] === 'flights' ? 'none' : `0 0 2px ${colorShadow}`,
               },
               headerRight:
                 tab.route.split('/')[0] === 'flights'
@@ -134,21 +117,14 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
                           testID="flights-add-button"
                           onPress={addFlight}
                         >
-                          <FontAwesome5
-                            name="plus"
-                            size={18}
-                            style={{ margin: 4, color: tintColor }}
-                          />
+                          <FontAwesome5 name="plus" size={18} style={{ margin: 4, color: tintColor }} />
                         </Pressable>
                       </>
                     )
                   : undefined,
               headerTitle: ({ tintColor, children }) => (
                 <View className="flex-row justifycontent-start alignitems-center">
-                  <Text
-                    className="size-lg weight-bold"
-                    style={{ color: tintColor }}
-                  >
+                  <Text className="size-lg weight-bold" style={{ color: tintColor }}>
                     {children}
                   </Text>
                   {tab.route.split('/')[0] === 'flights' &&
@@ -185,9 +161,7 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
                 </View>
               ),
               tabBarButtonTestID: `${tab.route}-tab-button`,
-              tabBarIcon: ({ color }) => (
-                <TabBarIcon name={tab.icon as any} color={color} />
-              ),
+              tabBarIcon: ({ color }) => <TabBarIcon name={tab.icon as any} color={color} />,
               title: t(tab.title),
             }}
           />

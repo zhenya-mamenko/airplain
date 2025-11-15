@@ -1,10 +1,8 @@
-import t from '@/helpers/localization';
 import { DateTime } from 'luxon';
 
-export function durationToLocaleString(
-  duration: number,
-  locale: string,
-): string {
+import t from '@/helpers/localization';
+
+export function durationToLocaleString(duration: number, locale: string): string {
   // This is a workaround for the lack of support for Intl.RelativeTimeFormat in Expo.
   // const rtf = new Intl.RelativeTimeFormat(locale, { localeMatcher: 'best fit', style: 'narrow' });
   // const hours = rtf.formatToParts(Math.floor(duration / 60), 'hours');
@@ -42,10 +40,7 @@ export function makeDateLabel(
     day: 'numeric',
     timeZone: startTimezone,
   };
-  if (
-    start.year !== currentStart.year &&
-    (start.year !== end.year || end.day === start.day)
-  ) {
+  if (start.year !== currentStart.year && (start.year !== end.year || end.day === start.day)) {
     dateOptions.year = 'numeric';
   }
   let startLabel = startDate.toLocaleString(locale, dateOptions);
@@ -81,49 +76,40 @@ export const dateClass = (planned: number, actual?: number): string | null => {
   return actual > planned ? 'red' : 'green';
 };
 
-export function fromUTCtoLocalISOString(
-  utcISOString: string,
-  timezone: string,
-): string {
+export function fromUTCtoLocalISOString(utcISOString: string, timezone: string): string {
   const result = DateTime.fromISO(utcISOString.replace('Z', ''), {
     zone: 'utc',
-  })
-    .setZone(timezone)
-    .toFormat('y-MM-dd HH:mm:ssZZ');
-  return result ?? utcISOString;
+  });
+  if (!result.isValid) {
+    return utcISOString;
+  }
+  return result.setZone(timezone).toFormat('y-MM-dd HH:mm:ssZZ');
 }
 
-export function fromLocaltoLocalISOString(
-  localISOString: string,
-  timezone: string,
-): string {
+export function fromLocaltoLocalISOString(localISOString: string, timezone: string): string {
   const result = DateTime.fromISO(localISOString.replace('Z', ''), {
     zone: timezone,
-  }).toFormat('y-MM-dd HH:mm:ssZZ');
-  return result ?? localISOString;
+  });
+  if (!result.isValid) {
+    return localISOString;
+  }
+  return result.setZone(timezone).toFormat('y-MM-dd HH:mm:ssZZ');
 }
 
-export function fromLocalUTCtoUTCISOString(
-  utcISOString: string,
-  timezone: string,
-): string {
+export function fromLocalUTCtoUTCISOString(utcISOString: string, timezone: string): string {
   const result = DateTime.fromISO(utcISOString.replace('Z', ''), {
     zone: 'utc',
-  })
-    .setZone(timezone)
-    .toFormat('y-MM-dd HH:mm:ss');
-  return result ?? utcISOString;
+  });
+  if (!result.isValid) {
+    return utcISOString;
+  }
+  return result.setZone(timezone).toFormat('y-MM-dd HH:mm:ss');
 }
 
 export function fromLocaltoUTCISOString(localISOString: string): string {
-  const result = DateTime.fromFormat(localISOString, 'y-MM-dd HH:mm:ssZZ')
-    .setZone('utc')
-    .toFormat('y-MM-dd HH:mm:ss');
-  return result ?? localISOString;
-}
-
-export function replaceTimeZone(localString: string, timezone: string): string {
-  return DateTime.fromFormat(localString, 'y-MM-dd HH:mm:ssZZ')
-    .setZone(timezone, { keepLocalTime: true })
-    .toFormat('y-MM-dd HH:mm:ssZZ');
+  const result = DateTime.fromFormat(localISOString, 'y-MM-dd HH:mm:ssZZ');
+  if (!result.isValid) {
+    return localISOString;
+  }
+  return result.setZone('utc').toFormat('y-MM-dd HH:mm:ss');
 }

@@ -1,18 +1,13 @@
+import { router } from 'expo-router';
 import { Alert, Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
-  runOnJS,
-} from 'react-native-reanimated';
-import { deleteFlight } from '@/helpers/sqlite';
-import { router } from 'expo-router';
-import t from '@/helpers/localization';
-import { useThemeColor } from '@/hooks/useColors';
+import { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+
 import { flightsCheckTask, setFlightArchiveState } from '@/helpers/airdata';
 import { refreshFlights } from '@/helpers/common';
+import t from '@/helpers/localization';
+import { deleteFlight } from '@/helpers/sqlite';
+import { useThemeColor } from '@/hooks/useColors';
 
 const changeArchivedState = async (flightId: number, state: number) => {
   await setFlightArchiveState(flightId, state);
@@ -62,20 +57,15 @@ export const makeCardGestures = (
           text: t('buttons.delete'),
           style: 'destructive',
           onPress: () => {
-            border.value = withTiming(
-              `${colorPrimary}00`,
-              { duration: 100 },
-              () => {
-                runOnJS(doDelete)(flightId);
-              },
-            );
+            border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
+              runOnJS(doDelete)(flightId);
+            });
           },
         },
       ],
       {
         cancelable: true,
-        onDismiss: () =>
-          (border.value = withTiming(`${colorPrimary}00`, { duration: 100 })),
+        onDismiss: () => (border.value = withTiming(`${colorPrimary}00`, { duration: 100 })),
       },
     );
   };
@@ -83,10 +73,7 @@ export const makeCardGestures = (
   const pan = Gesture.Pan()
     .minDistance(20)
     .onUpdate((event) => {
-      if (
-        Math.abs(event.velocityX) > Math.abs(event.velocityY) &&
-        event.translationX > 0
-      ) {
+      if (Math.abs(event.velocityX) > Math.abs(event.velocityY) && event.translationX > 0) {
         translateX.value = event.translationX;
       }
     })
@@ -103,10 +90,7 @@ export const makeCardGestures = (
   const panUnarchive = Gesture.Pan()
     .minDistance(40)
     .onUpdate((event) => {
-      if (
-        Math.abs(event.velocityX) > Math.abs(event.velocityY) &&
-        event.translationX < 0
-      ) {
+      if (Math.abs(event.velocityX) > Math.abs(event.velocityY) && event.translationX < 0) {
         translateX.value = event.translationX;
       }
     })
@@ -126,15 +110,11 @@ export const makeCardGestures = (
     .requireExternalGestureToFail(refs ?? [])
     .onEnd((e, success) => {
       border.value = withTiming(`${colorPrimary}FF`, { duration: 100 }, () => {
-        border.value = withTiming(
-          `${colorPrimary}00`,
-          { duration: 100 },
-          () => {
-            if (success) {
-              runOnJS(doEdit)(flightId);
-            }
-          },
-        );
+        border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
+          if (success) {
+            runOnJS(doEdit)(flightId);
+          }
+        });
       });
     });
 
