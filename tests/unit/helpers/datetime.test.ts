@@ -83,12 +83,6 @@ describe('datetime helper', () => {
     expect(DT.fromLocaltoUTCISOString('2023-10-26 06:00:00-04:00')).toBe('2023-10-26 10:00:00');
   });
 
-  test('replaceTimeZone', () => {
-    expect(DT.replaceTimeZone('2023-10-26 13:00:00+03:00', 'America/New_York')).toBe('2023-10-26 11:00:00-04:00');
-    expect(DT.replaceTimeZone('2023-10-26 10:00:00+00:00', 'Europe/Moscow')).toBe('2023-10-26 11:00:00+03:00');
-    expect(DT.replaceTimeZone('2023-10-26 06:00:00-04:00', 'UTC')).toBe('2023-10-26 11:00:00+00:00');
-  });
-
   test('makeDateLabel with shortMonth', () => {
     const startDate = new Date('2023-10-26T10:00:00');
     startDate.setFullYear(new Date().getFullYear());
@@ -212,9 +206,5 @@ describe('datetime helper', () => {
 
   test('fromLocaltoUTCISOString with invalid date returns original string', () => {
     expect(DT.fromLocaltoUTCISOString('invalid-date')).toBe('invalid-date');
-  });
-
-  test('replaceTimeZone with invalid date returns original string', () => {
-    expect(DT.replaceTimeZone('invalid-date', 'Europe/Moscow')).toBe('invalid-date');
   });
 });

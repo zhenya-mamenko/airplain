@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import React, { useReducer, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Pressable, ScrollView, ToastAndroid } from 'react-native';
 import { Text, TextInput, ThemeProvider, View } from 'react-native-picasso';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/components/Button';
 import DatetimeInput from '@/components/DatetimeInput';
@@ -14,12 +14,7 @@ import { getAirlineData, getAirlinesData } from '@/helpers/airdata';
 import { BCBPData } from '@/helpers/boardingpass';
 import { haversine, showConfirmation } from '@/helpers/common';
 import { refreshFlights } from '@/helpers/common';
-import {
-  fromLocaltoLocalISOString,
-  fromLocaltoUTCISOString,
-  fromUTCtoLocalISOString,
-  replaceTimeZone,
-} from '@/helpers/datetime';
+import { fromLocaltoLocalISOString, fromUTCtoLocalISOString } from '@/helpers/datetime';
 import { getFlightData } from '@/helpers/flights';
 import t from '@/helpers/localization';
 import { useLocale } from '@/helpers/localization';

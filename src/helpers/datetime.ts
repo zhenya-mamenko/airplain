@@ -113,11 +113,3 @@ export function fromLocaltoUTCISOString(localISOString: string): string {
   }
   return result.setZone('utc').toFormat('y-MM-dd HH:mm:ss');
 }
-
-export function replaceTimeZone(localString: string, timezone: string): string {
-  const result = DateTime.fromFormat(localString, 'y-MM-dd HH:mm:ssZZ');
-  if (!result.isValid) {
-    return localString;
-  }
-  return result.setZone(timezone, { keepLocalTime: true }).toFormat('y-MM-dd HH:mm:ssZZ');
-}
