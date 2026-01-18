@@ -25,6 +25,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
   const [flights, setFlights] = useState<Flight[]>([]);
 
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // oxlint-disable-next-line no-unused-vars
   const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
   const flightsLoading = useRef(false);
 
@@ -45,7 +46,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
     loadFlightsRef.current = async (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {
       if (flightsLoading.current) return;
       flightsLoading.current = true;
-      if (!!timeoutId.current) {
+      if (timeoutId.current) {
         clearTimeout(timeoutId.current);
         timeoutId.current = null;
       }
@@ -82,7 +83,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
     emitter.on('updateActualFlights', callback);
 
     return () => emitter.off('updateActualFlights', callback);
-  }, []);
+  }, [settings.ONLY_MANUAL_REFRESH, props.now]);
 
   const appState = useRef(AppState.currentState);
   useEffect(() => {
@@ -122,7 +123,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
         ref.current.scrollToIndex({ animated: true, index });
       }
     }
-  }, [flightId]);
+  }, [flightId, flights]);
 
   return (
     <GestureHandlerRootView>

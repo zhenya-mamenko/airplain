@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, ScrollView, TextStyle } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Text, View } from 'react-native-picasso';
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import YearSelector from '@/components/YearSelector';
 import flags from '@/constants/flags.json';
@@ -84,7 +85,7 @@ const Card: React.FC<CardProps> = (props) => {
     } else if (value !== displayValue || year !== oldYear) {
       opacity.value = withTiming(0, { duration: 400 }, (finished) => {
         if (finished) {
-          runOnJS(createContent)();
+          scheduleOnRN(createContent);
           opacity.value = withTiming(1, { duration: 400 });
         }
       });
@@ -181,7 +182,7 @@ export default function Stats() {
     if (JSON.stringify(value) !== JSON.stringify(displayValue)) {
       opacity.value = withTiming(0, { duration: 400 }, (finished) => {
         if (finished) {
-          runOnJS(setDisplayValue)(value);
+          scheduleOnRN(setDisplayValue, value);
           opacity.value = withTiming(1, { duration: 400 });
         }
       });
@@ -196,7 +197,7 @@ export default function Stats() {
         const delta = velocityX > 0 ? -1 : 1;
         const index = years.indexOf(year);
         if (index + delta >= 0 && index + delta < years.length) {
-          runOnJS(setYear)(years[index + delta]);
+          scheduleOnRN(setYear, years[index + delta]);
         }
       }
     });

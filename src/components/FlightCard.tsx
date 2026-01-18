@@ -4,7 +4,8 @@ import { Image as _Image } from 'expo-image';
 import React, { useMemo } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
-import Animated, { runOnJS } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import flags from '@/constants/flags.json';
 import { SvgArrow, SvgArrowLong, SvgCross, SvgLine, SvgPlane } from '@/constants/svg';
@@ -27,11 +28,10 @@ const PlaceBlock = React.memo(
     city: string;
     country: string;
     date: string;
+    locale: string;
     planned: number;
     timeOptions: any;
   }) => {
-    const locale = useLocale();
-
     const flag = flags.find((x) => x.country_code === props.country)?.flag;
 
     const airport = (
@@ -45,7 +45,7 @@ const PlaceBlock = React.memo(
     const timeClass = dateClass(props.planned, props.actual);
     const actualTime = (
       <Text
-        className={`size-md color-surface alignself-end weight-bold m${props.align === 'start' ? 'l' : 'r'}-sm ${!!timeClass ? `color-${timeClass}` : ''}`}
+        className={`size-md color-surface alignself-end weight-bold m${props.align === 'start' ? 'l' : 'r'}-sm ${timeClass ? `color-${timeClass}` : ''}`}
       >
         {props.date}
       </Text>
@@ -63,7 +63,7 @@ const PlaceBlock = React.memo(
           textDecorationStyle: 'solid',
         }}
       >
-        {new Date(props.planned * 1000).toLocaleTimeString(locale, props.timeOptions)}
+        {new Date(props.planned * 1000).toLocaleTimeString(props.locale, props.timeOptions)}
       </Text>
     );
     const cityText = (
@@ -95,7 +95,7 @@ const PlaceBlock = React.memo(
           {props.align === 'start' ? airport : actualTime}
           {props.align === 'start' ? actualTime : airport}
         </View>
-        {!!dateClass(props.planned, props.actual) ? (
+        {dateClass(props.planned, props.actual) ? (
           <View className={`flex-row justifycontent-${props.align}`}>
             {props.align === 'start' ? hiddenAirport : plannedTime}
             {props.align === 'start' ? plannedTime : hiddenAirport}
@@ -126,10 +126,7 @@ const RouteSymbol = React.memo((props: { status: FlightStatus }) => {
     case 'en_route':
       return (
         <View className="flex-row justifycontent-center alignitems-center">
-          <SvgArrowLong
-            color={useThemeColor('textColors.surface')}
-            style={{ width: 60, height: 24, marginLeft: -22 }}
-          />
+          <SvgArrowLong color={colorSurface} style={{ width: 60, height: 24, marginLeft: -22 }} />
           <SvgPlane color={colorPrimary} style={{ width: 16, height: 16, marginLeft: -38 }} />
         </View>
       );
@@ -215,7 +212,7 @@ const FlightCard = React.memo(
     const stateTimeString = stateTime ? durationToLocaleString(stateTime, locale) : '';
 
     const tap = Gesture.Tap().onEnd(() => {
-      runOnJS(openUrl)(onlineCheckInLink ?? '');
+      scheduleOnRN(openUrl, onlineCheckInLink!);
     });
     const tresholdDate = new Date();
     tresholdDate.setHours(tresholdDate.getHours() - 1);
@@ -258,6 +255,7 @@ const FlightCard = React.memo(
               city={departureAirportData?.municipality_name ?? ''}
               country={departureAirportData?.country_code ?? ''}
               date={departureDate.toLocaleTimeString(locale, departureTimeOptions as Intl.DateTimeFormatOptions)}
+              locale={locale}
               planned={startDatetime}
               timeOptions={departureTimeOptions}
             />
@@ -277,6 +275,7 @@ const FlightCard = React.memo(
               city={arrivalAirportData?.municipality_name ?? ''}
               country={arrivalAirportData?.country_code ?? ''}
               date={arrivalDate.toLocaleTimeString(locale, arrivalTimeOptions as Intl.DateTimeFormatOptions)}
+              locale={locale}
               planned={endDatetime}
               timeOptions={arrivalTimeOptions}
             />
@@ -313,7 +312,7 @@ const FlightCard = React.memo(
                 </>
               ) : (
                 <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>
-                  {!!state
+                  {state
                     ? `${t('flights.statuses.' + state).toLocaleLowerCase()}`
                     : !onlineCheckInText
                       ? `${t('flights.whishes').toLocaleLowerCase()}`
@@ -326,7 +325,7 @@ const FlightCard = React.memo(
       </View>
     );
 
-    return !!props.noGestures ? (
+    return props.noGestures ? (
       component
     ) : (
       <GestureDetector gesture={gestures}>

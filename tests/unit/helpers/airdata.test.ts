@@ -55,6 +55,7 @@ jest.mock('@/constants/settings', () => ({
   },
 }));
 
+// oxlint-disable-next-line no-unused-vars
 const mockMakeCheckInLink = jest.fn((link: string, date: string, dep: string, pnr: string, flight: string) => link);
 const mockStopBackgroundTask = jest.fn();
 
@@ -650,7 +651,7 @@ describe('updateFlightsState', () => {
   });
 
   test('updateFlightsState - en_route status unchanged when refreshed status differs', async () => {
-    const baseDate = new Date('2023-03-10T10:00:00.000Z');
+    const baseDate = new Date('2026-01-18T20:00:00.000Z');
     const startTime = new Date(baseDate.getTime() + 2 * 60 * 60 * 1000).toISOString();
     const endTime = new Date(baseDate.getTime() + 9 * 60 * 60 * 1000).toISOString();
 
@@ -854,20 +855,24 @@ describe('updateFlightsState', () => {
     const startTime = DateTime.now().minus({ hours: 8 }).toISO();
     const endTime = DateTime.now().minus({ minutes: 15 }).toISO();
 
-    mockGetFlightData.mockResolvedValue({
-      baggageBelt: 'B5',
-    } as any);
+    mockGetFlightData
+      .mockResolvedValueOnce({
+        baggageBelt: undefined,
+      } as any)
+      .mockResolvedValue({
+        baggageBelt: 'B6',
+      } as any);
 
     mockGetActualFlights.mockResolvedValue([
       createMockFlight({
         startDatetime: startTime!,
         endDatetime: endTime!,
-        status: 'en_route',
+        status: 'arrived',
         baggageBelt: undefined,
       }),
     ]);
 
-    await fetchActualFlights(new Date());
+    await fetchActualFlights(new Date(), true);
 
     expect(mockGetFlightData).toHaveBeenCalled();
     expect(mockShowFlightNotification).toHaveBeenCalled();

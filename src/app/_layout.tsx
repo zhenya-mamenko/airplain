@@ -8,7 +8,7 @@ import { Stack } from 'expo-router';
 import { router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, {
   Easing,
   interpolate,
@@ -63,6 +63,7 @@ function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [animationStarted, setAnimationStarted] = useState(false);
 
+  const { width, height } = useWindowDimensions();
   const bgImage = useImage(require('@/assets/images/profile-background.png'));
   const { stampsColors, setAchievements } = useContext(GlobalContext);
   const themeName = useDynamicColorScheme();
@@ -75,14 +76,14 @@ function RootLayout() {
   const refreshAchievementsCallback = useRef<() => Promise<void>>(() => Promise.resolve());
   useEffect(() => {
     refreshAchievementsCallback.current = async () => {
-      const achievements = await prepareAchievements(stampsColors, bgImage, themeName ?? 'light');
+      const achievements = await prepareAchievements(stampsColors, bgImage, themeName ?? 'light', width, height);
       setAchievements(achievements);
     };
     emitter.on('refreshAchievements', refreshAchievementsCallback.current);
     return () => {
       emitter.off('refreshAchievements', refreshAchievementsCallback.current);
     };
-  }, [bgImage, themeName]);
+  }, [bgImage, themeName, stampsColors, width, height, setAchievements]);
 
   useEffect(() => {
     if (!animationStarted) {
@@ -132,7 +133,7 @@ function RootLayout() {
       }
     }
 
-    if (!!bgImage) prepare();
+    if (bgImage) prepare();
 
     return () => {
       closeDatabase();
@@ -163,7 +164,7 @@ function RootLayout() {
   const onImageLoaded = useCallback(() => {
     try {
       SplashScreen.hide();
-    } catch (e) {}
+    } catch {}
   }, []);
 
   if (!appIsReady) {

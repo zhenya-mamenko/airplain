@@ -3,7 +3,7 @@ import { default as Icon } from '@expo/vector-icons/FontAwesome5';
 import { Image as _Image } from 'expo-image';
 import { useNavigation } from 'expo-router';
 import { router } from 'expo-router';
-import React, { useContext, useEffect, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { KeyboardAvoidingView, ListRenderItemInfo, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Text, ThemeProvider, View, createPicassoComponent } from 'react-native-picasso';
@@ -158,7 +158,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const dataCardOnSave = async (values: any) => {
     const result: any = {};
     Object.entries(values)
-      .filter(([field, value]) => value !== null && value !== undefined)
+      .filter(([_field, value]) => value !== null && value !== undefined)
       .forEach(([field, value]) => {
         dispatch({ field, value });
         result[field] = value;
@@ -176,7 +176,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
   const navigation = useNavigation();
   const [dragEnabled, setDragEnabled] = useState(false);
 
-  const getFlightDataFromApi = () => {
+  const getFlightDataFromApi = useCallback(() => {
     const confirmationDialog: ConfirmationDialogSettings = {
       closeButton: t('buttons.no'),
       confirmButton: t('buttons.yes'),
@@ -185,11 +185,12 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       showOnlyCloseButton: false,
       onConfirm: async () => {
         const flightData = await getFlightData(state.airline, state.flightNumber, state.startDatetime.substring(0, 10));
-        if (!!flightData) {
+        if (flightData) {
           const result: any = {};
           Object.entries(flightData)
-            .filter(([field, value]) => value !== null && value !== undefined)
+            .filter(([_field, value]) => value !== null && value !== undefined)
             .forEach(([field, value]) => {
+              if (field === 'status' && state['status'] === 'arrived') return;
               dispatch({ field, value });
               result[field] = value;
             });
@@ -201,7 +202,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       },
     };
     showConfirmation(confirmationDialog);
-  };
+  }, [state, dispatch]);
 
   useEffect(() => {
     navigation?.setOptions({
@@ -221,7 +222,7 @@ const EditFlight = React.memo((props: { data: Flight }) => {
         </>
       ),
     });
-  }, [dragEnabled, navigation]);
+  }, [dragEnabled, navigation, colorPrimary, getFlightDataFromApi]);
 
   const departureDataCard = () => (
     <DataCard

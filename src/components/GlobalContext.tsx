@@ -27,7 +27,7 @@ export const GlobalContext = createContext<GlobalProps>({
   setAchievements: () => {},
 });
 
-export const GlobalContextProvider = forwardRef(({ children }: { children: any }, ref) => {
+export const GlobalContextProvider = forwardRef(({ children }: { children: any }, _ref) => {
   const [achievements, setAchievements] = useState<{
     image: SkImage | null | undefined;
     data: ContextData[];

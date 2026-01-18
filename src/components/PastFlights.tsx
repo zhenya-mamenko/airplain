@@ -17,6 +17,8 @@ export default function PastFlights() {
   const [timeoutId, setTimeoutId] = useState<any | null>(null);
 
   const flightsFilter = useContext(GlobalContext).flightsFilter;
+
+  // oxlint-disable-next-line no-unused-vars
   const loadFlightsRef = useRef((refreshAnimation: boolean = false, forceRefresh: boolean = false) => {});
 
   const subscribe = (callback: Function) => {
@@ -31,24 +33,24 @@ export default function PastFlights() {
   const settings = useSyncExternalStore(subscribe, () => _settings);
 
   useEffect(() => {
-    loadFlightsRef.current = async (refreshAnimation: boolean = false, forceRefresh: boolean = false) => {
+    loadFlightsRef.current = async (refreshAnimation: boolean = false, _forceRefresh: boolean = false) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
       if (refreshAnimation) setRefreshing(true);
       try {
         const filter: Array<Condition | string> = [];
-        if (!!flightsFilter) {
-          if (!!flightsFilter.dateFrom) {
-            const value = flightsFilter.dateFrom.toISOString().substring(0, 10);
+        if (flightsFilter) {
+          if (flightsFilter.dateFrom) {
+            const value = flightsFilter.dateFrom.substring(0, 10);
             filter.push({
               field: 'substr(start_datetime, 1, 10)',
               operator: '>=',
               value,
             });
           }
-          if (!!flightsFilter.dateTo) {
-            const value = flightsFilter.dateTo.toISOString().substring(0, 10);
+          if (flightsFilter.dateTo) {
+            const value = flightsFilter.dateTo.substring(0, 10);
             filter.push({
               field: 'substr(start_datetime, 1, 10)',
               operator: '<=',
@@ -74,7 +76,7 @@ export default function PastFlights() {
       }
     };
     loadFlightsRef.current(true);
-  }, [flightsFilter]);
+  }, [flightsFilter, settings.FLIGHTS_LIMIT, settings.REFRESH_INTERVAL]);
 
   useEffect(() => {
     const callback = ({ refreshing, forceRefresh }: { refreshing?: boolean; forceRefresh?: boolean }) =>

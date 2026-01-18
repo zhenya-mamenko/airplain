@@ -7,6 +7,5 @@ declare global {
     splice(start: number, replacement: string): string;
   }
 
-  // eslint-disable-next-line no-var
   var Buffer: typeof BufferType;
 }

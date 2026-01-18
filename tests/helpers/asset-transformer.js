@@ -1,11 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+import { readFileSync } from 'fs';
 
-module.exports = {
-  process(sourceText, sourcePath) {
-    const content = fs.readFileSync(sourcePath, 'utf8');
-    return {
-      code: `module.exports = ${JSON.stringify(content)};`,
-    };
-  },
-};
+export function process(_sourceText, sourcePath) {
+  const content = readFileSync(sourcePath, 'utf8');
+  return {
+    code: `module.exports = ${JSON.stringify(content)};`,
+  };
+}

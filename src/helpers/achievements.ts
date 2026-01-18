@@ -1,7 +1,6 @@
 import { SkImage, SkPath, Skia } from '@shopify/react-native-skia';
 
-import { Directory, File, Paths } from 'expo-file-system';
-import { Dimensions } from 'react-native';
+import { File, Paths } from 'expo-file-system';
 
 import { getSetting, setSetting } from '@/constants/settings';
 import {
@@ -134,7 +133,7 @@ export const loadAchievements = async (
       id: a.id,
       paths: null,
     };
-    if (!!file) {
+    if (file) {
       result.paths = await processSvg(file);
     }
     results.push(result);
@@ -146,8 +145,10 @@ export const prepareAchievements = async (
   stampsColors: { light: {}; dark: {} },
   bgImage: SkImage | null,
   themeName: 'light' | 'dark',
+  screenWidth: number,
+  screenHeight: number,
 ): Promise<{ image: SkImage | null; data: ContextData[] }> => {
-  if (!stampsColors || !bgImage) return { image: null, data: [] };
+  if (!stampsColors || !bgImage || !themeName || !screenWidth || !screenHeight) return { image: null, data: [] };
 
   function addStamp(
     width: number,
@@ -213,9 +214,8 @@ export const prepareAchievements = async (
   };
 
   try {
-    let { width, height } = Dimensions.get('screen');
-    width = Math.round(width);
-    height = Math.round(height) - 240;
+    let width = Math.round(screenWidth);
+    let height = Math.round(screenHeight) - 300;
 
     const list = await getAchievements();
     const achievements: Achievement[] = list.map((a) => {
@@ -246,9 +246,9 @@ export const prepareAchievements = async (
     if (getSetting('achievements_hash', '$$$====$$$') === hash) {
       const image = await importImage(themeName);
       const saved = await importData();
-      if (!!saved) {
+      if (saved) {
         const data = makeData(saved, achievements);
-        if (!!image) return { image, data };
+        if (image) return { image, data };
       }
     }
 
@@ -303,7 +303,7 @@ export const prepareAchievements = async (
     setSetting('achievements_hash', hash);
     const data = makeData(saved, achievements);
     return { image, data };
-  } catch (e) {
+  } catch {
     return { image: null, data: [] };
   }
 };
@@ -315,7 +315,7 @@ export const createCachedImage = async (
   stamps: Stamp[],
   colors: any,
 ): Promise<SkImage | null> => {
-  if (width === 0 || height === 0 || !bgImage) return null;
+  if (!width || !height || !bgImage) return null;
   height = Math.max(calcHeight(stamps.map((x) => x.hull)) + 50, height);
 
   const skiaCanvas = Skia.Surface.Make(width * 2, height * 2);
@@ -323,18 +323,16 @@ export const createCachedImage = async (
   const skCanvas = skiaCanvas.getCanvas();
   skCanvas.scale(2, 2);
 
-  if (bgImage) {
-    const paint = Skia.Paint();
-    paint.setAlphaf(0.1);
-    let rx = 0;
-    while (rx < width) {
-      let ry = 0;
-      while (ry < height) {
-        skCanvas.drawImage(bgImage, rx, ry, paint);
-        ry += bgImage.height();
-      }
-      rx += bgImage.width();
+  const paint = Skia.Paint();
+  paint.setAlphaf(0.1);
+  let rx = 0;
+  while (rx < width) {
+    let ry = 0;
+    while (ry < height) {
+      skCanvas.drawImage(bgImage, rx, ry, paint);
+      ry += bgImage.height();
     }
+    rx += bgImage.width();
   }
 
   stamps.map(async (stamp) => {
@@ -383,11 +381,11 @@ const exportImage = async (image: SkImage, themeName: string) => {
   if (!image) return;
   const data = image.encodeToBase64();
   if (!data) return;
-  const path = `${Paths.cache}achievements-${themeName}.png`;
+  const path = `${Paths.cache.uri}achievements-${themeName}.png`;
   try {
     const file = new File(path);
-    await file.write(data, { encoding: 'base64' });
-    //sharing image
+    file.write(data, { encoding: 'base64' });
+
     const surface = Skia.Surface.Make(image.width(), image.height());
     if (!surface) return;
     const canvas = surface.getCanvas();
@@ -396,34 +394,34 @@ const exportImage = async (image: SkImage, themeName: string) => {
     canvas.scale(0.5, 0.5);
     const result = surface.makeImageSnapshot().encodeToBase64();
     if (!result) return;
-    const shareFile = new File(`${Paths.cache}achievements-share-${themeName}.png`);
-    await shareFile.write(result, { encoding: 'base64' });
-  } catch (e) {}
+    const shareFile = new File(`${Paths.cache.uri}achievements-share-${themeName}.png`);
+    shareFile.write(result, { encoding: 'base64' });
+  } catch {}
 };
 
 const exportData = async (data: { id: string; hull: Point[]; color: string }[]) => {
-  const path = `${Paths.cache}achievements-data.json`;
+  const path = `${Paths.cache.uri}achievements-data.json`;
   try {
     const file = new File(path);
-    await file.write(JSON.stringify(data));
-  } catch (e) {}
+    file.write(JSON.stringify(data), { encoding: 'utf8' });
+  } catch {}
 };
 
 const importImage = async (themeName: string) => {
-  const path = `${Paths.cache}achievements-${themeName}.png`;
+  const path = `${Paths.cache.uri}achievements-${themeName}.png`;
   const file = new File(path);
   if (!file.exists) return null;
 
   try {
     const data = await file.base64();
     const image = Skia.Image.MakeImageFromEncoded(Skia.Data.fromBase64(data));
-    if (!!image) return image;
-  } catch (e) {}
+    if (image) return image;
+  } catch {}
   return null;
 };
 
 const importData = async (): Promise<{ id: string; hull: Point[]; color: string }[] | null> => {
-  const path = `${Paths.cache}achievements-data.json`;
+  const path = `${Paths.cache.uri}achievements-data.json`;
   const file = new File(path);
   if (!file.exists) return null;
 
@@ -431,6 +429,6 @@ const importData = async (): Promise<{ id: string; hull: Point[]; color: string 
     const data = await file.text();
     const result = JSON.parse(data);
     return result;
-  } catch (e) {}
+  } catch {}
   return null;
 };

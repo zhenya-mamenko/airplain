@@ -110,7 +110,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
           flight.flightNumber,
           startDatetime.toISOString().substring(0, 10),
         );
-        if (!!flightData) {
+        if (flightData) {
           const messages = [];
           if (!!flightData.status && flight.status !== flightData.status) {
             if (flight.status === 'en_route') {
@@ -288,8 +288,7 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
     if (
       arrivalMinutes < 30 &&
       arrivalMinutes >= 0 &&
-      (arrivalMinutes % 5 === 0 || forceRefresh) &&
-      !flight.baggageBelt
+      ((arrivalMinutes % 5 === 0 && !flight.baggageBelt) || forceRefresh)
     ) {
       const flightData = await getFlightData(
         flight.airline,
@@ -318,6 +317,10 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
 
     if (isFlightUpdated) {
       await updateFlight(flight);
+      if (flight.status === 'arrived') {
+        emitter.emit('updateStats');
+        emitter.emit('refreshAchievements');
+      }
     }
     if (arrivalMinutes >= 60) {
       await setFlightArchiveState(flight.flightId, 1);

@@ -1,4 +1,5 @@
 {
+  "endOfLine": "auto",
   "importOrder": ["^[react]", "^@/(?!/)", "^@/", "^[./]"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,

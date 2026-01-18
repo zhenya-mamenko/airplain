@@ -111,7 +111,7 @@ const Settings = React.memo(() => {
           closeButton: t('buttons.close'),
           showOnlyCloseButton: true,
         });
-      } catch (e) {
+      } catch {
         showConfirmation({
           title: t('settings.import_error_title'),
           description: t('settings.import_error_description'),
@@ -180,7 +180,7 @@ const Settings = React.memo(() => {
     updateSettings();
   };
 
-  const apiList = {
+  const _apiList = {
     aerodatabox: 'AeroDataBox API',
     aeroapi: 'FlightAware AeroAPI',
   };
@@ -396,7 +396,7 @@ const Settings = React.memo(() => {
           </View>
         </View> */}
         <Button
-          className="px-lg mt-lg"
+          className="px-lg mt-md mb-sm"
           title={t('buttons.test_connection')}
           onPress={() => testFlightsApiConnection()}
         />

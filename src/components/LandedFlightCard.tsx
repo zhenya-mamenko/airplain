@@ -1,13 +1,11 @@
 import { Image as _Image } from 'expo-image';
 import { useNetworkState } from 'expo-network';
-import React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { GestureDetector } from 'react-native-gesture-handler';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
 import Animated from 'react-native-reanimated';
 
 import flags from '@/constants/flags.json';
-import { settings } from '@/constants/settings';
 import { SvgBaggageBelt, SvgTimezoneAlert } from '@/constants/svg';
 import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
 import { dateClass, durationToLocaleString, makeDateLabel } from '@/helpers/datetime';
@@ -65,14 +63,8 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
         setAirportWeather(parseWeather((data as any).current, colorPrimaryContainer, 16));
       }
     }
-  }, [
-    lat,
-    lon,
-    network.isInternetReachable,
-    settings.TEMPERATURE_UNITS,
-    settings.TEMPERATURE_TYPE,
-    settings.WEATHER_API_KEY,
-  ]);
+  }, [lat, lon, network.isInternetReachable, colorPrimaryContainer]);
+
   useEffect(() => {
     loadWeatherCallback();
   }, [loadWeatherCallback]);
@@ -159,7 +151,7 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
             <View className="flex-row px-md justifycontent-between alignitems-start">
               <View className="flex-column">
                 <Text
-                  className={`size-lg ${!!timeClassDeparture ? `color-${timeClassDeparture}` : 'color-primaryContainer'}`}
+                  className={`size-lg ${timeClassDeparture ? `color-${timeClassDeparture}` : 'color-primaryContainer'}`}
                   style={{ marginTop: -2 }}
                 >
                   {departureDate.toLocaleTimeString(locale, departureTimeOptions)}
@@ -206,13 +198,13 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
             <View className="flex-row px-md justifycontent-between alignitems-start pb-md">
               <View className="flex-column alignitems-center">
                 <Text
-                  className={`size-xxl ${!!timeClassArrival ? `color-${timeClassArrival}` : 'color-green'}`}
+                  className={`size-xxl ${timeClassArrival ? `color-${timeClassArrival}` : 'color-green'}`}
                   style={{ marginTop: -2 }}
                 >
                   {arrivalDate.toLocaleTimeString(locale, arrivalTimeOptions)}
                 </Text>
                 <Text
-                  className={`size-sm ${!!timeClassArrival ? `color-${timeClassArrival}` : 'color-green'}`}
+                  className={`size-sm ${timeClassArrival ? `color-${timeClassArrival}` : 'color-green'}`}
                   style={{ fontVariant: ['small-caps'], marginTop: -1 }}
                 >
                   {`${timeStatus}`}

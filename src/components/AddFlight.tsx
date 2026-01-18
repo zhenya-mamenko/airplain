@@ -154,7 +154,7 @@ export default function AddFlight(props: { today?: Date }) {
         showOnlyCloseButton: true,
         onConfirm: () => {},
       };
-      if (!!state.bcbp.data) {
+      if (state.bcbp.data) {
         value.showOnlyCloseButton = false;
         value.description += '\n' + t('add.flight_already_added_description_bcbp');
         value.onConfirm = () => updateFlightFromBCBP(flightId);
@@ -167,7 +167,7 @@ export default function AddFlight(props: { today?: Date }) {
         state.search.flightNumber,
         state.search.departureDate.substring(0, 10),
       );
-      if (!!flight) {
+      if (flight) {
         if (await insertFlight(flight)) {
           setProcessing(false);
           refreshFlights(true, false);

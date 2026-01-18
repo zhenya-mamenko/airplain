@@ -29,7 +29,7 @@ export const Select: React.FC<SelectProps> = ({ showValue, valueFixedWidth, drop
           {showValue && (
             <Text
               className={`weight-bold size-md color-surface ${!valueFixedWidth ? 'mr-sm' : ''}`}
-              style={{ ...(valueFixedWidth ? { width: valueFixedWidth } : {}) }}
+              style={valueFixedWidth ? { width: valueFixedWidth } : {}}
             >
               {item[props.valueField]}
             </Text>
@@ -96,7 +96,7 @@ export const MultiSelect: React.FC<SelectProps> = ({
           {showValue && (
             <Text
               className={`weight-bold size-md color-surface ${!valueFixedWidth ? 'mr-sm' : ''}`}
-              style={{ ...(valueFixedWidth ? { width: valueFixedWidth } : {}) }}
+              style={valueFixedWidth ? { width: valueFixedWidth } : {}}
             >
               {item[props.valueField]}
             </Text>
@@ -117,7 +117,7 @@ export const MultiSelect: React.FC<SelectProps> = ({
         </View>
       </Pressable>
     ),
-    [props.labelField, props.valueField],
+    [iconColor, props.valueField],
   );
 
   return (

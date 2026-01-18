@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { Alert, Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
-import { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import { flightsCheckTask, setFlightArchiveState } from '@/helpers/airdata';
 import { refreshFlights } from '@/helpers/common';
@@ -9,9 +10,13 @@ import t from '@/helpers/localization';
 import { deleteFlight } from '@/helpers/sqlite';
 import { useThemeColor } from '@/hooks/useColors';
 
+import emitter from './emitter';
+
 const changeArchivedState = async (flightId: number, state: number) => {
   await setFlightArchiveState(flightId, state);
   refreshFlights(true, false);
+  emitter.emit('updateStats');
+  emitter.emit('refreshAchievements');
 };
 
 const doEdit = (flightId: number) => {
@@ -20,8 +25,10 @@ const doEdit = (flightId: number) => {
 
 const doDelete = async (flightId: number) => {
   if (await deleteFlight(flightId)) {
-    flightsCheckTask();
+    await flightsCheckTask();
     refreshFlights(true);
+    emitter.emit('updateStats');
+    emitter.emit('refreshAchievements');
   }
 };
 
@@ -58,7 +65,7 @@ export const makeCardGestures = (
           style: 'destructive',
           onPress: () => {
             border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
-              runOnJS(doDelete)(flightId);
+              scheduleOnRN(doDelete, flightId);
             });
           },
         },
@@ -80,7 +87,7 @@ export const makeCardGestures = (
     .onEnd((event) => {
       if (event.translationX > SWIPE_THRESHOLD) {
         translateX.value = withTiming(SCREEN_WIDTH, { duration: 300 }, () => {
-          runOnJS(changeArchivedState)(flightId, 1);
+          scheduleOnRN(changeArchivedState, flightId, 1);
         });
       } else {
         translateX.value = withSpring(0);
@@ -97,7 +104,7 @@ export const makeCardGestures = (
     .onEnd((event) => {
       if (event.translationX < -SWIPE_THRESHOLD) {
         translateX.value = withTiming(-SCREEN_WIDTH, { duration: 300 }, () => {
-          runOnJS(changeArchivedState)(flightId, 0);
+          scheduleOnRN(changeArchivedState, flightId, 0);
         });
       } else {
         translateX.value = withSpring(0);
@@ -112,19 +119,19 @@ export const makeCardGestures = (
       border.value = withTiming(`${colorPrimary}FF`, { duration: 100 }, () => {
         border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
           if (success) {
-            runOnJS(doEdit)(flightId);
+            scheduleOnRN(doEdit, flightId);
           }
         });
       });
     });
 
   const longpress = Gesture.LongPress()
-    .onStart((e) => {
+    .onStart((_) => {
       border.value = withTiming(`${colorPrimary}FF`, { duration: 200 });
     })
     .onEnd((e, success) => {
       if (success) {
-        runOnJS(showConfirmation)(flightId);
+        scheduleOnRN(showConfirmation, flightId);
       } else {
         border.value = `${colorPrimary}00`;
       }

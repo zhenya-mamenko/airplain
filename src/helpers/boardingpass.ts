@@ -58,7 +58,7 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
     return { image: `data:image/png;base64,${base64Content}`, ratio };
   };
 
-  const unzipDir = `${Paths.cache}pkpass/`;
+  const unzipDir = `${Paths.cache.uri}pkpass/`;
 
   const dir = new Directory(unzipDir);
   if (dir.exists) {
@@ -225,7 +225,7 @@ export async function createPKPass(bcbp: string, format: BCBPFormat = 'PKBarcode
       image = await fetch(airlineLogoUri(airline, true) as string, {
         timeout: 1000,
       });
-    } catch (error) {
+    } catch {
       return null;
     }
     image = image && image.ok && image.status === 200 ? await image.arrayBuffer() : null;

@@ -57,7 +57,7 @@ export async function getFlightData(
         const errorData = await response.json();
         console.debug(`Error data from aerodatabox API:\n${JSON.stringify(errorData, null, 2)}`);
       }
-    } catch (error) {}
+    } catch {}
     return null;
   }
   const data = await response.json();

@@ -19,7 +19,7 @@ export function makeQueryParams(conditions: Array<Condition | string>): {
   params: any[];
 } {
   const where = conditions
-    .map((c) => (typeof c === 'string' ? c : `${c.field} ${c.operator} ${!!c.isPlain ? c.value : '?'}`))
+    .map((c) => (typeof c === 'string' ? c : `${c.field} ${c.operator} ${c.isPlain ? c.value : '?'}`))
     .join(' AND ');
   const params = conditions
     .filter((c) => typeof c !== 'string')
@@ -132,8 +132,8 @@ function resolveAssets(assets?: DatabaseAssets): ResolvedDatabaseAssets {
   return {
     schema: assets.schema ? [...assets.schema] : [...defaults.schema],
     dml: assets.dml ? [...assets.dml] : [...defaults.dml],
-    csvTables: { ...defaults.csvTables, ...(assets.csvTables ?? {}) },
-    jsonTables: { ...defaults.jsonTables, ...(assets.jsonTables ?? {}) },
+    csvTables: { ...defaults.csvTables, ...assets.csvTables },
+    jsonTables: { ...defaults.jsonTables, ...assets.jsonTables },
   };
 }
 
@@ -278,7 +278,7 @@ class SQLiteRepositoryImpl implements SQLiteRepository {
     try {
       const result: any = await this.database.getFirstAsync(query, airline, flightNumber, date);
       return result?.flight_id;
-    } catch (e) {
+    } catch {
       return undefined;
     }
   }

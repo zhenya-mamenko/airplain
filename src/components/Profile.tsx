@@ -5,7 +5,7 @@ import { Canvas, Image, Path } from '@shopify/react-native-skia';
 import { Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Dimensions, Modal, Pressable, ScrollView } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, useWindowDimensions } from 'react-native';
 import { Text, View } from 'react-native-picasso';
 import { captureRef } from 'react-native-view-shot';
 
@@ -26,7 +26,7 @@ export default function Profile() {
   const colorGray = useThemeColor('textColors.gray');
   const themeName = useDynamicColorScheme() ?? 'light';
 
-  const height = Dimensions.get('screen').height;
+  const { height } = useWindowDimensions();
 
   const [achievementsHeight, setAchievementsHeight] = useState(0);
   const [content, setContent] = useState<React.JSX.Element>();
@@ -47,7 +47,7 @@ export default function Profile() {
   useEffect(() => {
     const refreshAchievementsCallback = async () => {
       const cachedImage = achievements.image;
-      if (!!cachedImage) {
+      if (cachedImage) {
         setCanvasHeight(cachedImage.height() / 2);
         setContent(
           <Image image={cachedImage} x={0} y={0} width={cachedImage.width() / 2} height={cachedImage.height() / 2} />,
@@ -78,21 +78,21 @@ export default function Profile() {
   };
 
   const handleLayoutModal = (event: any) => {
-    const { height } = event.nativeEvent.layout;
-    setModalContentTop(Dimensions.get('screen').height - height - 32);
+    const { height: layoutHeight } = event.nativeEvent.layout;
+    setModalContentTop(height - layoutHeight - 32);
   };
 
   const dataCardOnSave = async (values: { [key: string]: string }) => {
     const { notes, firstname, surname } = values;
-    if (!!notes) {
+    if (notes) {
       setNotes(notes);
       setSetting('notes', notes);
     }
-    if (!!firstname) {
+    if (firstname) {
       setFirstname(firstname);
       setSetting('firstname', firstname);
     }
-    if (!!surname) {
+    if (surname) {
       setSurname(surname);
       setSetting('surname', surname);
     }
@@ -151,7 +151,7 @@ export default function Profile() {
               <Pressable
                 hitSlop={5}
                 onPress={async () => {
-                  await Sharing.shareAsync(`${Paths.cache}achievements-share.png`, {
+                  await Sharing.shareAsync(`${Paths.cache.uri}achievements-share-${themeName}.png`, {
                     mimeType: 'image/png',
                   });
                 }}
@@ -226,7 +226,7 @@ export default function Profile() {
           >
             <View className="flex-row pb-sm mt-md bg-background alignitems-between justifycontent-center">
               <Text className="flex-column size-xxl weight-bold color-surface">
-                {!!achievement ? achievement.achievement.departureAirport : ''}
+                {achievement ? achievement.achievement.departureAirport : ''}
               </Text>
               <FontAwesome5
                 color={colorSurface}
@@ -240,11 +240,11 @@ export default function Profile() {
                 }}
               />
               <Text className="flex-column size-xxl weight-bold color-surface">
-                {!!achievement ? achievement.achievement.arrivalAirport : ''}
+                {achievement ? achievement.achievement.arrivalAirport : ''}
               </Text>
             </View>
             <Text className="size-md color-primaryContainer mb-xl">
-              {!!achievement ? achievement.achievement.date : ''}
+              {achievement ? achievement.achievement.date : ''}
             </Text>
             <Canvas style={{ width: 256, height: 256 }}>
               {!!achievement &&
@@ -253,7 +253,7 @@ export default function Profile() {
                 ))}
             </Canvas>
             <Text className="size-md color-primaryContainer my-xl">
-              {!!achievement ? achievement.achievement.name : ''}
+              {achievement ? achievement.achievement.name : ''}
             </Text>
           </View>
         </Pressable>

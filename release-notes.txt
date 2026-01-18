@@ -1,6 +1,1 @@
-Bugfix: Changing flight status created white screen and no response.
-Bugfix: Seat number not shown after boarding pass loading.
-
-Feature: Added buttons to test API connections.
-
-Chore: Updated dependencies.
+Fixed multiple bug fixes after dependencies updates.

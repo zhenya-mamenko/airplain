@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 
 import t from '@/helpers/localization';
 
+// oxlint-disable-next-line no-unused-vars
 export function durationToLocaleString(duration: number, locale: string): string {
   // This is a workaround for the lack of support for Intl.RelativeTimeFormat in Expo.
   // const rtf = new Intl.RelativeTimeFormat(locale, { localeMatcher: 'best fit', style: 'narrow' });
@@ -34,7 +35,7 @@ export function makeDateLabel(
   const currentEnd = DateTime.now().setZone(endTimezone);
   const start = DateTime.fromJSDate(startDate).setZone(startTimezone);
   const end = DateTime.fromJSDate(endDate).setZone(endTimezone);
-  const month = !!shortMonth ? 'short' : 'long';
+  const month = shortMonth ? 'short' : 'long';
   let dateOptions: Intl.DateTimeFormatOptions = {
     month,
     day: 'numeric',
