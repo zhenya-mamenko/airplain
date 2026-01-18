@@ -19,7 +19,7 @@ export function camelCase(obj: any) {
   const result: any = {};
   for (let d in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, d)) {
-      const k: string = d.replace(/(\_\w)/g, function (k) {
+      const k: string = d.replace(/(_\w)/g, function (k) {
         return k[1].toUpperCase();
       });
       result[k] = obj[d];
@@ -191,15 +191,23 @@ export const showConfirmation = (confirmationDialog: ConfirmationDialogSettings)
 
 export const startBackgroundTask = () => {
   if (getSetting('backgroundTaskStarted', 'false') === 'false') {
-    AirPlainBgModule.startBackgroundTask();
-    setSetting('backgroundTaskStarted', 'true');
+    try {
+      AirPlainBgModule.startBackgroundTask();
+      setSetting('backgroundTaskStarted', 'true');
+    } catch (error) {
+      console.warn('Failed to start background task, app will work normally:', error);
+    }
   }
 };
 
 export const stopBackgroundTask = () => {
   if (getSetting('backgroundTaskStarted', 'false') === 'true') {
-    AirPlainBgModule.stopBackgroundTask();
-    setSetting('backgroundTaskStarted', 'false');
+    try {
+      AirPlainBgModule.stopBackgroundTask();
+      setSetting('backgroundTaskStarted', 'false');
+    } catch (error) {
+      console.warn('Failed to stop background task:', error);
+    }
   }
 };
 

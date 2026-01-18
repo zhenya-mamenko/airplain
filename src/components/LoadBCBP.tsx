@@ -3,8 +3,8 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
-import { Dimensions, Modal, StyleSheet, ToastAndroid } from 'react-native';
+import { useState } from 'react';
+import { Modal, StyleSheet, ToastAndroid, useWindowDimensions } from 'react-native';
 import { View } from 'react-native-picasso';
 
 import Button from '@/components/Button';
@@ -19,7 +19,7 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
   const colorPrimary = useThemeColor('textColors.primary');
   const [cameraModal, setCameraModal] = useState(false);
 
-  const { width, height } = Dimensions.get('window');
+  const { width, height } = useWindowDimensions();
 
   const setFlightDataFromBCBP = (leg: any) => {
     dispatch({
@@ -39,9 +39,9 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
     }).then(async (result) => {
       if (!result.canceled) {
         const pkpass = await loadPKPass(result.assets[0].uri);
-        if (!!pkpass) {
+        if (pkpass) {
           const bcbp = decodeBCBP(pkpass.barcode.message);
-          if (!!bcbp) {
+          if (bcbp) {
             setFlightDataFromBCBP(bcbp?.data?.legs?.[0]);
             dispatch({
               type: 'bcbp',
@@ -72,7 +72,7 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
           if (!!bcbpData && (bcbpData?.data?.legs?.length ?? 0) > 0) {
             setFlightDataFromBCBP(bcbpData?.data?.legs?.[0]);
             const pkpass = await createPKPass(bcbp, format);
-            if (!!pkpass) {
+            if (pkpass) {
               dispatch({
                 type: 'bcbp',
                 value: {
@@ -105,7 +105,7 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
         setFlightDataFromBCBP(bcbpData?.data?.legs?.[0]);
         const format = BCBPFormatMap[type];
         const pkpass = await createPKPass(bcbp, format);
-        if (!!pkpass) {
+        if (pkpass) {
           dispatch({
             type: 'bcbp',
             value: {

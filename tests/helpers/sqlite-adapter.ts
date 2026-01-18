@@ -68,11 +68,7 @@ export class NodeSQLiteAdapter implements Partial<ExpoSQLiteDatabase> {
   }
 
   async withTransactionAsync(task: () => Promise<void>): Promise<void> {
-    try {
-      await task();
-    } catch (error) {
-      throw error;
-    }
+    await task();
   }
 }
 

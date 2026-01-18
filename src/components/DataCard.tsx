@@ -7,6 +7,7 @@ import { Text, TextInput, View } from 'react-native-picasso';
 import { Select as _Select } from '@/components/Select';
 import { useThemeColor } from '@/hooks/useColors';
 
+// oxlint-disable-next-line no-unused-vars
 export const DataCardContext = createContext(({ field, value }: { field: string; value: any }) => {});
 
 export interface DataCardProps {
@@ -21,7 +22,7 @@ export interface DataCardProps {
 }
 
 export const DataCard = forwardRef(
-  ({ caption, children, className, dataClassName, rightBlock, onLayout, onSave, markAsSaved }: DataCardProps, ref) => {
+  ({ caption, children, className, dataClassName, rightBlock, onLayout, onSave, markAsSaved }: DataCardProps, _ref) => {
     const colorGray = useThemeColor('textColors.gray');
     const allowEditing = children.length === 2;
 
@@ -68,7 +69,7 @@ export const DataCard = forwardRef(
               )}
             </View>
           </View>
-          <View className={!!dataClassName ? dataClassName : 'px-md pb-sm radiusbr-md radiusbl-md bg-background'}>
+          <View className={dataClassName ? dataClassName : 'px-md pb-sm radiusbr-md radiusbl-md bg-background'}>
             {allowEditing ? (!editing ? children[0] : children[1]) : children}
           </View>
         </View>
@@ -90,7 +91,7 @@ export const Value = React.memo(({ caption, value, lines = 1, width = '100%', se
     <View
       className="flex-column"
       // @ts-ignore
-      style={{ ...(!!width ? { width } : {}) }}
+      style={width ? { width } : {}}
     >
       {caption.length !== 0 && (
         <Text
@@ -140,7 +141,7 @@ export const Input = React.memo(({ caption, field, keyboardType, lines = 1, valu
     <View
       className="flex-column"
       // @ts-ignore
-      style={{ ...(!!width ? { width } : {}) }}
+      style={width ? { width } : {}}
     >
       {caption.length !== 0 && (
         <Text
@@ -190,7 +191,7 @@ export const Select = React.memo(({ caption, field, value, data, width }: Select
     <View
       className="flex-column"
       // @ts-ignore
-      style={{ ...(!!width ? { width } : {}) }}
+      style={width ? { width } : {}}
     >
       <Text
         className="size-md color-primaryContainer mb-sm"
@@ -246,7 +247,7 @@ export const Switch = React.memo(({ caption, field, value, valuesCaptions, width
     <View
       className="flex-column"
       // @ts-ignore
-      style={{ ...(!!width ? { width } : {}) }}
+      style={width ? { width } : {}}
     >
       {caption.length !== 0 && (
         <Text

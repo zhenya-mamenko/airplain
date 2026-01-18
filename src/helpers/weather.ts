@@ -71,7 +71,7 @@ export const parseWeather = (data: any, color: string, iconSize: number = 20): W
 };
 
 export const loadWeather = async (latitude: number, longitude: number): Promise<any | null> => {
-  const WEATHER_API_ENDPOINT = !!settings.WEATHER_API_KEY
+  const WEATHER_API_ENDPOINT = settings.WEATHER_API_KEY
     ? `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=`
     : null;
   if (!WEATHER_API_ENDPOINT || !latitude || !longitude) {
@@ -81,7 +81,7 @@ export const loadWeather = async (latitude: number, longitude: number): Promise<
   let response = null;
   try {
     response = await fetch(url, { timeout: 3000 });
-  } catch (e) {
+  } catch {
     return null;
   }
   if (response && response.ok && response.status === 200) {

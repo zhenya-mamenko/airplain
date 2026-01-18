@@ -7,7 +7,7 @@ import translations from '@/constants/translations.json';
 export const useLocale = () => getLocales()[0]?.languageTag ?? 'en-US';
 
 const i18n = new I18n(translations);
-i18n.missingTranslation.register('return', (_i18n, scope, options) => scope as string);
+i18n.missingTranslation.register('return', (_i18n, scope, _options) => scope as string);
 i18n.missingBehavior = 'return';
 i18n.defaultLocale = 'en';
 i18n.enableFallback = true;

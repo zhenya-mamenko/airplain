@@ -179,8 +179,8 @@ export interface FlightCardData {
 }
 
 export interface FlightsFilter {
-  dateFrom: Date | undefined;
-  dateTo: Date | undefined;
+  dateFrom: string | undefined;
+  dateTo: string | undefined;
   airports: Array<string>;
 }
 

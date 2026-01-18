@@ -22,7 +22,7 @@ export default function Edit() {
 
   useEffect(() => {
     getFlight(parseInt(flightId)).then((flight) => {
-      if (!!flight) {
+      if (flight) {
         const departureDate = new Date(flight.actualStartDatetime ?? flight.startDatetime);
         const arrivalDate = new Date(flight.actualEndDatetime ?? flight.endDatetime);
         const dateLabel = makeDateLabel(
@@ -38,7 +38,7 @@ export default function Edit() {
         setFlight(flight);
       }
     });
-  }, [flightId, navigation]);
+  }, [flightId, navigation, locale]);
 
   return (
     <SafeAreaProvider>
@@ -52,7 +52,7 @@ export default function Edit() {
           margin: 0,
         }}
       >
-        {!!flight ? <EditFlight data={flight} /> : <ActivityIndicator size="large" color={colorPrimary} />}
+        {flight ? <EditFlight data={flight} /> : <ActivityIndicator size="large" color={colorPrimary} />}
       </View>
     </SafeAreaProvider>
   );

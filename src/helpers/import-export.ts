@@ -114,10 +114,8 @@ export async function processImportData(records: any): Promise<Array<any>> {
     if (!!flight.actual_start_datetime && isNaN(Date.parse(flight.actual_start_datetime))) continue;
     if (!!flight.actual_end_datetime && isNaN(Date.parse(flight.actual_end_datetime))) continue;
 
-    flight.actual_start_datetime = !!flight.actual_start_datetime
-      ? flight.actual_start_datetime
-      : flight.start_datetime;
-    flight.actual_end_datetime = !!flight.actual_end_datetime ? flight.actual_end_datetime : flight.end_datetime;
+    flight.actual_start_datetime = flight.actual_start_datetime ? flight.actual_start_datetime : flight.start_datetime;
+    flight.actual_end_datetime = flight.actual_end_datetime ? flight.actual_end_datetime : flight.end_datetime;
 
     if (!flight.status) {
       flight.status = new Date(flight.actual_end_datetime) < new Date() ? 'scheduled' : 'arrived';

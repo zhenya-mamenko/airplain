@@ -22,7 +22,9 @@ export default function FlightsFilterModal() {
   const { flightsFilter, setFlightsFilter } = useContext(GlobalContext);
   const [params, setParams] = useState<FlightsFilter>(flightsFilter);
 
+  // oxlint-disable-next-line no-unused-vars
   const modifyFilter = useRef((state: boolean) => {});
+
   useEffect(() => {
     modifyFilter.current = (state: boolean) => {
       setFilterModal(state);
@@ -63,7 +65,7 @@ export default function FlightsFilterModal() {
               mode="date"
               timezone="UTC"
               value={params.dateFrom}
-              onChange={(date: Date) => {
+              onChange={(date: string) => {
                 setParams({ ...params, dateFrom: date });
               }}
             />
@@ -81,7 +83,7 @@ export default function FlightsFilterModal() {
               mode="date"
               timezone="UTC"
               value={params.dateTo}
-              onChange={(date: Date) => {
+              onChange={(date: string) => {
                 setParams({ ...params, dateTo: date });
               }}
             />

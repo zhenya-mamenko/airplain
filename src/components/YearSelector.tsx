@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
 
 import t from '@/helpers/localization';

@@ -99,7 +99,7 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
     if (props.selectedKey !== selected) changeSelected(props.selectedKey ?? props.data[0]?.key);
   }, [props.selectedKey]);
 
-  const viewableItemsChanged = useRef((info: { changed: any[]; viewableItems: any[] }) => {});
+  const viewableItemsChanged = useRef((_info: { changed: any[]; viewableItems: any[] }) => {});
   useEffect(() => {
     viewableItemsChanged.current = (info: { changed: any[]; viewableItems: any[] }) => {
       const viewableKeys = info.viewableItems.map((v) => v.item.key);

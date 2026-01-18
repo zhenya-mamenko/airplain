@@ -1,10 +1,9 @@
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { DateTime } from 'luxon';
 
-import React, { useEffect, useImperativeHandle, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
 import Button from '@/components/Button';
-import { fromLocaltoUTCISOString } from '@/helpers/datetime';
 import { useLocale } from '@/helpers/localization';
 
 interface Props {
@@ -31,18 +30,26 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
     const [text, setText] = useState('');
 
     const locale = useLocale();
-    const dateOptions: Intl.DateTimeFormatOptions = dateFormatOptions ?? {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-      timeZone: timezone,
-    };
-    const timeOptions: Intl.DateTimeFormatOptions = timeFormatOptions ?? {
-      hour: 'numeric',
-      minute: 'numeric',
-      dayPeriod: 'short',
-      timeZone: timezone,
-    };
+    const dateOptions: Intl.DateTimeFormatOptions = useMemo(
+      () =>
+        dateFormatOptions ?? {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+          timeZone: timezone,
+        },
+      [dateFormatOptions, timezone],
+    );
+    const timeOptions: Intl.DateTimeFormatOptions = useMemo(
+      () =>
+        timeFormatOptions ?? {
+          hour: 'numeric',
+          minute: 'numeric',
+          dayPeriod: 'short',
+          timeZone: timezone,
+        },
+      [timeFormatOptions, timezone],
+    );
 
     useEffect(() => {
       const v = props.value ?? '';
@@ -67,7 +74,7 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
             : date.toLocaleTimeString(locale, timeOptions);
         setText(text);
       }
-    }, [props.mode, value]);
+    }, [props.mode, value, locale, dateOptions, timeOptions]);
 
     const open = () => DateTimePickerAndroid.open(params);
 
@@ -89,7 +96,7 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
     const params = {
       ...props,
       value: dateValue,
-      design: 'material',
+      design: 'material' as const,
       onChange: setDate,
     };
 

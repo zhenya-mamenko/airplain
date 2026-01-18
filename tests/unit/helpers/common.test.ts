@@ -441,7 +441,7 @@ describe('fetch', () => {
         }),
     );
 
-    const fetchPromise = fetch('https://example.com/api', { timeout: 5000 });
+    fetch('https://example.com');
 
     jest.advanceTimersByTime(5000);
 
