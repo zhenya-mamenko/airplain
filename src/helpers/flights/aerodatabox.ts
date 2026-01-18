@@ -17,6 +17,21 @@ const adbFlightStatuses: { [key: string]: FlightStatus } = {
   Unknown: 'unknown',
 };
 
+export async function checkApi(apiUrl: string, apiKey: string): Promise<boolean> {
+  const url = `${apiUrl}/airports/Iata/KJA/time/local`;
+  const headers = {
+    'x-magicapi-key': apiKey,
+  };
+  let response = null;
+  try {
+    response = await fetch(url, { headers, timeout: 3000 });
+  } catch (error) {
+    console.debug(`Error fetching flight data from aerodatabox API: ${error}`);
+    return false;
+  }
+  return !!response && response.ok && response.status === 200;
+}
+
 export async function getFlightData(
   airline: string,
   flightNumber: string,

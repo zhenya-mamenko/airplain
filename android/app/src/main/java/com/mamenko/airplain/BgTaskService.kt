@@ -8,9 +8,9 @@ import com.facebook.react.bridge.Arguments
 import android.util.Log
 
 class BgTaskService : HeadlessJsTaskService() {
-    override fun getTaskConfig(intent: Intent): HeadlessJsTaskConfig? {
+    override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig? {
         Log.d("AirPlain", "getTaskConfig")
-        val extras = intent.extras
+        val extras = intent?.extras
         val data = if (extras != null) Arguments.fromBundle(extras) else Arguments.createMap()
         return HeadlessJsTaskConfig(
             "flightsCheckTask",

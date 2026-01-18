@@ -1,9 +1,40 @@
-import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 
 import type { SQLiteDatabase as ExpoSQLiteDatabase } from 'expo-sqlite';
 
-export class BetterSQLite3Adapter implements Partial<ExpoSQLiteDatabase> {
-  constructor(private db: Database.Database) {}
+type SupportedValueType = null | number | bigint | string | Uint8Array;
+
+export class NodeSQLiteAdapter implements Partial<ExpoSQLiteDatabase> {
+  private isClosed = false;
+
+  constructor(private db: DatabaseSync) {}
+
+  private filterParam(p: any): SupportedValueType {
+    if (p === undefined) return null;
+    if (p === null) return null;
+    if (typeof p === 'number') return p;
+    if (typeof p === 'string') return p;
+    if (typeof p === 'bigint') return p;
+    if (p instanceof Uint8Array) return p;
+    if (Buffer.isBuffer(p)) return new Uint8Array(p);
+    if (typeof p === 'boolean') return p ? 1 : 0;
+    console.warn('Unexpected parameter type:', typeof p, p);
+    return JSON.stringify(p);
+  }
+
+  private normalizeParams(params: any[]): SupportedValueType[] {
+    // Handle case where params is [array] - expo-sqlite style
+    if (params.length === 1 && Array.isArray(params[0])) {
+      return params[0].map((p: any) => this.filterParam(p));
+    }
+    return params.map((p) => this.filterParam(p));
+  }
+
+  // Convert null-prototype objects to regular objects
+  private normalizeResult(row: any): any {
+    if (row === null || row === undefined) return row;
+    return { ...row };
+  }
 
   async execAsync(source: string): Promise<void> {
     this.db.exec(source);
@@ -11,35 +42,29 @@ export class BetterSQLite3Adapter implements Partial<ExpoSQLiteDatabase> {
 
   async getAllAsync(source: string, ...params: any[]): Promise<any[]> {
     const stmt = this.db.prepare(source);
-    const filteredParams = params.map((p) => (p === undefined ? null : p));
-    return stmt.all(...filteredParams);
+    const filteredParams = this.normalizeParams(params);
+    const results = stmt.all(...filteredParams) as any[];
+    return results.map((row) => this.normalizeResult(row));
   }
 
   async getFirstAsync(source: string, ...params: any[]): Promise<any> {
     const stmt = this.db.prepare(source);
-    const filteredParams = params.map((p) => (p === undefined ? null : p));
-    return stmt.get(...filteredParams);
+    const filteredParams = this.normalizeParams(params);
+    const result = stmt.get(...filteredParams);
+    return this.normalizeResult(result);
   }
 
   async runAsync(source: string, ...params: any[]): Promise<any> {
     const stmt = this.db.prepare(source);
-    const actualParams = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
-    const filteredParams = actualParams.map((p) => {
-      if (p === undefined) return null;
-      if (p === null) return null;
-      if (typeof p === 'number') return p;
-      if (typeof p === 'string') return p;
-      if (typeof p === 'bigint') return p;
-      if (Buffer.isBuffer(p)) return p;
-      if (typeof p === 'boolean') return p ? 1 : 0;
-      console.warn('Unexpected parameter type:', typeof p, p);
-      return JSON.stringify(p);
-    });
+    const filteredParams = this.normalizeParams(params);
     return stmt.run(...filteredParams);
   }
 
   async closeAsync(): Promise<void> {
-    this.db.close();
+    if (!this.isClosed) {
+      this.db.close();
+      this.isClosed = true;
+    }
   }
 
   async withTransactionAsync(task: () => Promise<void>): Promise<void> {
@@ -52,6 +77,6 @@ export class BetterSQLite3Adapter implements Partial<ExpoSQLiteDatabase> {
 }
 
 export async function openDatabaseAsync(name: string): Promise<any> {
-  const db = new Database(name);
-  return new BetterSQLite3Adapter(db);
+  const db = new DatabaseSync(name);
+  return new NodeSQLiteAdapter(db);
 }

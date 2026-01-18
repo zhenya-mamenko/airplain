@@ -74,7 +74,7 @@ export const loadWeather = async (latitude: number, longitude: number): Promise<
   const WEATHER_API_ENDPOINT = !!settings.WEATHER_API_KEY
     ? `${WEATHER_API_URL}/current.json?key=${settings.WEATHER_API_KEY}&aqi=no&q=`
     : null;
-  if (!WEATHER_API_ENDPOINT || WEATHER_API_ENDPOINT.length === 0 || !latitude || !longitude) {
+  if (!WEATHER_API_ENDPOINT || !latitude || !longitude) {
     return null;
   }
   const url = `${WEATHER_API_ENDPOINT}${latitude},${longitude}`;

@@ -1,7 +1,6 @@
-Bugfix: Fixed an error that occurred when adding passenger data.
+Bugfix: Changing flight status created white screen and no response.
+Bugfix: Seat number not shown after boarding pass loading.
 
-Refactoring: Refactored SQLite module for better performance and maintainability.
+Feature: Added buttons to test API connections.
 
-Update: Updated UTC timezone display in flight details card for clarity.
-
-Improvement: Added comprehensive test coverage.
+Chore: Updated dependencies.

@@ -7,8 +7,8 @@ import { useThemeColor } from '@/hooks/useColors';
 interface Props {
   className?: string;
   disabled?: boolean;
-  leftIcon?: JSX.Element;
-  rightIcon?: JSX.Element;
+  leftIcon?: React.JSX.Element;
+  rightIcon?: React.JSX.Element;
   textClass?: string;
   textStyle?: any;
   title: string;

@@ -426,9 +426,12 @@ describe('SQLite Integration Tests', () => {
     };
 
     it('should return false when flightId is not provided', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const flight = { ...mockFlight };
       const result = await repository.updateFlight(flight);
       expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('flightId not provided');
+      consoleErrorSpy.mockRestore();
     });
 
     it('should update existing flight', async () => {
@@ -1639,6 +1642,7 @@ describe('SQLite Module-Level Functions', () => {
     });
 
     it('should handle insertFlight transaction errors gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       await database.closeAsync();
 
       const mockFlight: Flight = {
@@ -1663,9 +1667,11 @@ describe('SQLite Module-Level Functions', () => {
 
       const result = await repository.insertFlight(mockFlight);
       expect(result).toBe(false);
+      consoleErrorSpy.mockRestore();
     });
 
     it('should handle updateFlight transaction errors gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const mockFlight: Flight = {
         flightId: 1,
         airline: 'AA',
@@ -1690,9 +1696,11 @@ describe('SQLite Module-Level Functions', () => {
       await database.closeAsync();
       const result = await repository.updateFlight(mockFlight);
       expect(result).toBe(false);
+      consoleErrorSpy.mockRestore();
     });
 
     it('should handle insertPassengerFromBCBP transaction errors gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const bcbpData: any = {
         data: {
           passengerName: 'JOHN DOE',
@@ -1725,12 +1733,15 @@ describe('SQLite Module-Level Functions', () => {
       await database.closeAsync();
       const result = await repository.insertPassengerFromBCBP(1, bcbpData, 'iata', pkpassData);
       expect(result).toBe(false);
+      consoleErrorSpy.mockRestore();
     });
 
     it('should handle deleteFlight transaction errors gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       await database.closeAsync();
       const result = await repository.deleteFlight(1);
       expect(result).toBe(false);
+      consoleErrorSpy.mockRestore();
     });
 
     it('should handle updateFlight with unknown airline (no airlineId)', async () => {

@@ -1,5 +1,5 @@
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system';
 import { Alert, AlertButton, Linking, NativeModules } from 'react-native';
 
 import { getSetting, setSetting } from '@/constants/settings';
@@ -18,7 +18,7 @@ const { AirPlainBgModule } = NativeModules;
 export function camelCase(obj: any) {
   const result: any = {};
   for (let d in obj) {
-    if (obj.hasOwnProperty(d)) {
+    if (Object.prototype.hasOwnProperty.call(obj, d)) {
       const k: string = d.replace(/(\_\w)/g, function (k) {
         return k[1].toUpperCase();
       });
@@ -31,7 +31,7 @@ export function camelCase(obj: any) {
 export function snakeCase(obj: any) {
   const result: any = {};
   for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const newKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
       result[newKey] = obj[key];
     }
@@ -136,7 +136,9 @@ export function haversine(lat1: number, lon1: number, lat2: number, lon2: number
 
 export async function readFileToString(file: any): Promise<string | null> {
   const [{ localUri }] = await Asset.loadAsync(file);
-  return localUri ? await FileSystem.readAsStringAsync(localUri) : null;
+  if (!localUri) return null;
+  const fileHandle = new File(localUri);
+  return fileHandle.text();
 }
 
 export function openUrl(url: string) {

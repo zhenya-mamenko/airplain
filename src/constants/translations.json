@@ -299,6 +299,7 @@
       "delete": "Delete",
       "no": "No",
       "save": "Save",
+      "test_connection": "Test connection",
       "update": "Update",
       "yes": "Yes"
     },
@@ -431,6 +432,10 @@
       "temperature_type": "Temperature type",
       "temperature_units": "Temperature units",
       "temperature_windchill": "windchill",
+      "test_api_connection_error_title": "Connection error",
+      "test_api_connection_error_description": "Could not connect to the API, please check your API key and internet connection.",
+      "test_api_connection_success_title": "Connection was successful",
+      "test_api_connection_success_description": "Successfully connected to the API.",
       "title": "Settings",
       "weather": "Weather",
       "weather_api": "Weather API Key"
@@ -753,6 +758,7 @@
       "delete": "Удалить",
       "no": "Нет",
       "save": "Сохранить",
+      "test_connection": "Проверить подключение",
       "update": "Обновить",
       "yes": "Да"
     },
@@ -885,6 +891,10 @@
       "temperature_type": "Тип температуры",
       "temperature_units": "Градусы",
       "temperature_windchill": "с учётом ветра",
+      "test_api_connection_error_title": "Ошибка подключения",
+      "test_api_connection_error_description": "Не удалось подключиться к API, проверьте ключ API и подключение к интернету.",
+      "test_api_connection_success_title": "Подключение успешно",
+      "test_api_connection_success_description": "Успешное подключение к API.",
       "title": "Настройки",
       "weather": "Погода",
       "weather_api": "Ключ WeatherAPI"

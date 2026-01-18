@@ -1,6 +1,4 @@
-import { parse } from 'csv-parse/dist/esm/sync';
-import { Asset } from 'expo-asset';
-import { readAsStringAsync } from 'expo-file-system';
+import { parse } from 'csv-parse/sync';
 import { type SQLiteDatabase, openDatabaseAsync } from 'expo-sqlite';
 
 import airports from '@/constants/airports.json';

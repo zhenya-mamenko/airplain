@@ -43,13 +43,13 @@ const Card: React.FC<CardProps> = (props) => {
         return 20;
     }
   })();
-  const [content, setContent] = useState<Array<JSX.Element>>([]);
+  const [content, setContent] = useState<Array<React.JSX.Element>>([]);
   const valueColor = useThemeColor('textColors.surface');
   const unitsColor = useThemeColor('textColors.primaryContainer');
 
   useEffect(() => {
     function createContent() {
-      const c: Array<JSX.Element> = [];
+      const c: Array<React.JSX.Element> = [];
       const v = value?.toString()?.split('|') ?? [''];
       const u = units?.toString()?.split('|') ?? [''];
       v.forEach((v, i) => {

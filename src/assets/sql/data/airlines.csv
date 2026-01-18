@@ -261,7 +261,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 699,AH,Air Algerie,https://checkin.si.amadeus.net/static/PRD/AH/#/checkindirect?IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST}&ln=en,24
 828,AI,Air India,https://travel.airindia.in/ssci/identification,48
 307,AJ,Aztec Airways,,0
-761,AK,AirAsia,https://www.airasia.com/check-in/v2/en/gb,24
+761,AK,AirAsia,https://www.airasia.com/check-in/v2/en/gb,240
 327,AL,Malta Air,,0
 772,AM,Aeromexico,https://aeromexico.com/en-us/check-in?last-name={LAST}&pnr={PNR},24
 548,AN,HOP!,,0
@@ -351,7 +351,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 1013,D4,Georgian Wings,,0
 195,D5,DHL Aero Expreso S.A.,,0
 196,D6,Inter Air,,0
-768,D7,AirAsia X,https://www.airasia.com/check-in/v2/en/gb,24
+768,D7,AirAsia X,https://www.airasia.com/check-in/v2/en/gb,240
 1060,D8,Norwegian Air International,,0
 386,D9,Donavia,,0
 1102,DB,Brit Air,,0
@@ -425,7 +425,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 1088,FA,Safair,https://app.flysafair.co.za/check-in?confirmationNumber={PNR}&bookingLastName={LAST},24
 562,FB,Bulgaria Air,https://digital.air.bg/ssci/identification?ln=en&IIdentificationType=PNR&identifier={PNR}&lastName={LAST}&lang=en-GB,24
 331,FC,Link Airways,,0
-286,FD,Thai AirAsia,https://www.airasia.com/check-in/v2/en/gb,24
+286,FD,Thai AirAsia,https://www.airasia.com/check-in/v2/en/gb,240
 1077,FE,Far Eastern Air Transport,,0
 24,FF,Airshop B.V.,,0
 129,FG,Ariana Afghan Airlines,,0
@@ -1023,7 +1023,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 337,XG,SunExpress Deutschland,,0
 726,XH,Special Ground Handling Service -XH,,0
 114,XI,Aeronautical Telecommunications Ltd.(AEROTEL),,0
-767,XJ,Thai AirAsia X,,0
+767,XJ,Thai AirAsia X,https://www.airasia.com/check-in/v2/en/gb,240
 288,XK,Air Corsica,https://checkin.si.amadeus.net/1ASIHSSCMCIXK/sscmxk/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
 410,XL,LATAM Ecuador,,0
 48,XM,C.A.I. First,,0

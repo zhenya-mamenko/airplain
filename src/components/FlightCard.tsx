@@ -51,7 +51,7 @@ const PlaceBlock = React.memo(
       </Text>
     );
     const hiddenAirport = (
-      <Text className="size-lg alignself-start weight-bold" style={{ fontSize: 28, color: 'transparent', height: 16 }}>
+      <Text className="size-lg alignself-start weight-bold" style={{ fontSize: 28, opacity: 0, height: 16 }}>
         {props.airport}
       </Text>
     );
@@ -107,14 +107,19 @@ const PlaceBlock = React.memo(
 );
 
 const RouteSymbol = React.memo((props: { status: FlightStatus }) => {
+  const colorSurface = useThemeColor('textColors.surface');
+  const colorRed = useThemeColor('textColors.red');
+  const colorPrimary = useThemeColor('colors.primary');
+  const colorT50 = usePaletteColor('T-50');
+
   switch (props.status) {
     case 'canceled':
-      return <SvgCross color={useThemeColor('textColors.red')} style={{ width: 24, height: 24 }} />;
+      return <SvgCross color={colorRed} style={{ width: 24, height: 24 }} />;
     case 'arrived':
       return (
         <View className="flex-row justifycontent-around alignitems-center">
-          <SvgLine color={useThemeColor('textColors.surface')} style={{ width: 48, height: 24, marginRight: -4 }} />
-          <SvgPlane color={useThemeColor('textColors.surface')} style={{ width: 16, height: 16 }} />
+          <SvgLine color={colorSurface} style={{ width: 48, height: 24, marginRight: -4 }} />
+          <SvgPlane color={colorSurface} style={{ width: 16, height: 16 }} />
         </View>
       );
     case 'departed':
@@ -125,21 +130,21 @@ const RouteSymbol = React.memo((props: { status: FlightStatus }) => {
             color={useThemeColor('textColors.surface')}
             style={{ width: 60, height: 24, marginLeft: -22 }}
           />
-          <SvgPlane color={useThemeColor('colors.primary')} style={{ width: 16, height: 16, marginLeft: -38 }} />
+          <SvgPlane color={colorPrimary} style={{ width: 16, height: 16, marginLeft: -38 }} />
         </View>
       );
     case 'delayed':
       return (
         <View className="flex-row justifycontent-around alignitems-center">
-          <SvgPlane color={usePaletteColor('T-50')} style={{ width: 16, height: 16 }} />
-          <SvgArrow color={useThemeColor('textColors.surface')} style={{ width: 48, height: 24, marginLeft: -4 }} />
+          <SvgPlane color={colorT50} style={{ width: 16, height: 16 }} />
+          <SvgArrow color={colorSurface} style={{ width: 48, height: 24, marginLeft: -4 }} />
         </View>
       );
     default:
       return (
         <View className="flex-row justifycontent-around alignitems-center">
-          <SvgPlane color={useThemeColor('textColors.surface')} style={{ width: 16, height: 16 }} />
-          <SvgLine color={useThemeColor('textColors.surface')} style={{ width: 48, height: 24, marginLeft: -4 }} />
+          <SvgPlane color={colorSurface} style={{ width: 16, height: 16 }} />
+          <SvgLine color={colorSurface} style={{ width: 48, height: 24, marginLeft: -4 }} />
         </View>
       );
   }

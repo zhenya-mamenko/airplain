@@ -362,7 +362,7 @@ describe('readFileToString', () => {
     expect(result).toBe(null);
   });
 
-  it('should call readAsStringAsync when file is an asset object', async () => {
+  it('should call File.text() when file is an asset object', async () => {
     const result = await readFileToString(1);
     expect(result).toBe(1);
   });
