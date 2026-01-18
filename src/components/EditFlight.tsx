@@ -3,7 +3,7 @@ import { default as Icon } from '@expo/vector-icons/FontAwesome5';
 import { Image as _Image } from 'expo-image';
 import { useNavigation } from 'expo-router';
 import { router } from 'expo-router';
-import React, { useContext, useEffect, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { KeyboardAvoidingView, ListRenderItemInfo, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Text, ThemeProvider, View, createPicassoComponent } from 'react-native-picasso';
@@ -137,22 +137,21 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     locale,
   );
 
+  const boardingpassMarkAsSaved = useRef<Function>(() => {});
+
   const bcbpDispatch = async (action: any) => {
     const { type, value } = action;
     if (type === 'bcbp') {
       const leg = value.data.data?.legs?.[0];
-      const result: any = {
+      const result: Partial<Flight> = {
         bcbp: value,
+        bcbpPkpass: value.pkpass,
         seatNumber: leg?.seatNumber?.replace(/^0+/, '') ?? '',
         pnr: leg?.operatingCarrierPNR ?? '',
         passengerName: value.data.data?.passengerName ?? '',
       };
-      dispatch({ field: 'bcbp', value: result['bcbp'] });
-      dispatch({ field: 'seatNumber', value: result['seatNumber'] });
-      dispatch({ field: 'pnr', value: result['pnr'] });
-      dispatch({ field: 'passengerName', value: result['passengerName'] });
-      await updateFlight({ ...state, ...result });
-      refreshFlights(false);
+      await dataCardOnSave(result);
+      boardingpassMarkAsSaved.current();
     }
   };
 
@@ -442,14 +441,15 @@ const EditFlight = React.memo((props: { data: Flight }) => {
       }
       key={`boardingpass-${dragEnabled ? 'drag' : 'copy'}`}
       onSave={dataCardOnSave}
+      markAsSaved={boardingpassMarkAsSaved}
       rightBlock={
-        !!props.data.bcbpPkpass ? (
+        state.bcbpPkpass ? (
           <Pressable
             hitSlop={5}
             onPress={() => {
               router.push({
                 pathname: '/pass',
-                params: { pkpass: JSON.stringify(props.data.bcbpPkpass) },
+                params: { pkpass: JSON.stringify(state.bcbpPkpass) },
               });
             }}
           >

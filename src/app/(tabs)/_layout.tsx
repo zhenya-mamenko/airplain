@@ -3,7 +3,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { Tabs, usePathname } from 'expo-router';
 import { router } from 'expo-router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, StatusBar } from 'react-native';
 import { Text, ThemeProvider, View } from 'react-native-picasso';
 

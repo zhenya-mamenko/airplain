@@ -7,7 +7,10 @@
       "@/*": ["./src/*"]
     },
     "target": "ESNext",
-    "module": "ESNext"
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules"]
 }

@@ -7,7 +7,7 @@ import * as Notifications from 'expo-notifications';
 import { Stack } from 'expo-router';
 import { router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StrictMode, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
@@ -30,32 +30,16 @@ import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
 function useNotificationObserver() {
-  useEffect(() => {
-    let isMounted = true;
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
 
-    function redirect(notification: Notifications.Notification) {
-      const url = notification.request.content.data?.url;
+  useEffect(() => {
+    if (lastNotificationResponse) {
+      const url = lastNotificationResponse.notification.request.content.data?.url;
       if (url) {
-        router.replace(url);
+        router.replace(url as any);
       }
     }
-
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (!isMounted || !response?.notification) {
-        return;
-      }
-      redirect(response?.notification);
-    });
-
-    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      redirect(response.notification);
-    });
-
-    return () => {
-      isMounted = false;
-      subscription.remove();
-    };
-  }, []);
+  }, [lastNotificationResponse]);
 }
 
 export const unstable_settings = {

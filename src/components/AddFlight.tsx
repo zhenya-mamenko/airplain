@@ -201,18 +201,18 @@ export default function AddFlight(props: { today?: Date }) {
   };
 
   const refs = {
-    searchAirline: useRef<any>(),
-    searchFlightNumber: useRef<any>(),
-    searchDate: useRef<any>(),
-    airline: useRef<any>(),
-    airlineName: useRef<any>(),
-    flightNumber: useRef<any>(),
-    departureAirport: useRef<any>(),
-    departureDate: useRef<any>(),
-    departureTime: useRef<any>(),
-    arrivalAirport: useRef<any>(),
-    arrivalDate: useRef<any>(),
-    arrivalTime: useRef<any>(),
+    searchAirline: useRef<any>(null),
+    searchFlightNumber: useRef<any>(null),
+    searchDate: useRef<any>(null),
+    airline: useRef<any>(null),
+    airlineName: useRef<any>(null),
+    flightNumber: useRef<any>(null),
+    departureAirport: useRef<any>(null),
+    departureDate: useRef<any>(null),
+    departureTime: useRef<any>(null),
+    arrivalAirport: useRef<any>(null),
+    arrivalDate: useRef<any>(null),
+    arrivalTime: useRef<any>(null),
   };
 
   return (

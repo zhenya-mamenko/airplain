@@ -3,7 +3,7 @@
     "jsEngine": "hermes",
     "name": "AirPlain",
     "slug": "airplain",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "airplain",
@@ -28,8 +28,7 @@
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM",
         "USE_EXACT_ALARM"
-      ],
-      "useNextNotificationsApi": true
+      ]
     },
     "web": {
       "bundler": "metro",

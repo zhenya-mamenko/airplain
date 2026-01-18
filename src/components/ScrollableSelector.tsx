@@ -65,7 +65,7 @@ interface ScrollableSelectorProps {
    * @param isSelected - Whether the item is currently selected.
    * @returns A JSX element representing the rendered item.
    */
-  onRenderItem: (item: any, isSelected: boolean) => JSX.Element;
+  onRenderItem: (item: any, isSelected: boolean) => React.JSX.Element;
 }
 
 const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
@@ -115,7 +115,7 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
   }, [keys, selected]);
 
   const renderItem = useCallback(
-    ({ item }: { item: Item }): JSX.Element => {
+    ({ item }: { item: Item }): React.JSX.Element => {
       const isSelected = item.key === selected;
       const renderedItem = props.onRenderItem ? (
         <Pressable onPress={() => changeSelected(item.key)}>{props.onRenderItem(item, isSelected)}</Pressable>

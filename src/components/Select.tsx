@@ -21,7 +21,7 @@ export type SelectProps = React.ComponentProps<typeof DropdownWrapper> & {
 
 export const Select: React.FC<SelectProps> = ({ showValue, valueFixedWidth, dropdownRef, ...props }: SelectProps) => {
   const renderItem = useCallback(
-    (item: any, selected?: boolean): JSX.Element => {
+    (item: any, selected?: boolean): React.JSX.Element => {
       return (
         <View
           className={`flex-row alignitems-end justifycontent-start bg-${selected ? 'surfaceVariant' : 'background'} py-sm pl-xs`}
@@ -88,7 +88,7 @@ export const MultiSelect: React.FC<SelectProps> = ({
   const iconColor = useThemeColor('textColors.surface');
 
   const renderItem = useCallback(
-    (item: any, selected?: boolean): JSX.Element => {
+    (item: any, selected?: boolean): React.JSX.Element => {
       return (
         <View
           className={`flex-row alignitems-end justifycontent-start bg-${selected ? 'surfaceVariant' : 'background'} py-sm pl-xs`}

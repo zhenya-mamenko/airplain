@@ -44,3 +44,15 @@ export const getFlightData = async (airline: string, flightNumber: string, date:
   }
   return await api.module.getFlightData(airline, flightNumber, date, api.url, api.key);
 };
+
+export const testApiConnection = async (): Promise<boolean> => {
+  const state = await NetInfo.fetch();
+  if (!state.isConnected) {
+    return false;
+  }
+  const api = getApi();
+  if (!api || !api.key || !api.url || !api.module) {
+    return false;
+  }
+  return await api.module.checkApi(api.url, api.key);
+};

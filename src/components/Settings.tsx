@@ -1,7 +1,7 @@
 import { DownloadDirectoryPath, exists, readFile, writeFile } from '@dr.pogodin/react-native-fs';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
-import { parse } from 'csv-parse/dist/esm/sync';
+import { parse } from 'csv-parse/sync';
 import * as DocumentPicker from 'expo-document-picker';
 import React, { useCallback, useReducer } from 'react';
 import { KeyboardAvoidingView, ListRenderItemInfo } from 'react-native';
@@ -13,9 +13,11 @@ import { DataCard, Input, Select, Switch, Value } from '@/components/DataCard';
 import { getSetting, setSetting, settings } from '@/constants/settings';
 import { refreshFlights, showConfirmation, startBackgroundTask, stopBackgroundTask } from '@/helpers/common';
 import emitter from '@/helpers/emitter';
+import { testApiConnection } from '@/helpers/flights';
 import { processExportData, processImportData } from '@/helpers/import-export';
 import t from '@/helpers/localization';
 import { exportFlights, fillDataFromArray } from '@/helpers/sqlite';
+import { loadWeather } from '@/helpers/weather';
 import { useThemeColor } from '@/hooks/useColors';
 
 const Settings = React.memo(() => {
@@ -121,6 +123,44 @@ const Settings = React.memo(() => {
     }
   };
 
+  const testWeatherApiConnection = async () => {
+    const weather = await loadWeather(56.02668, 92.90765);
+    if (weather) {
+      showConfirmation({
+        title: t('settings.test_api_connection_success_title'),
+        description: t('settings.test_api_connection_success_description'),
+        closeButton: t('buttons.close'),
+        showOnlyCloseButton: true,
+      });
+    } else {
+      showConfirmation({
+        title: t('settings.test_api_connection_error_title'),
+        description: t('settings.test_api_connection_error_description'),
+        closeButton: t('buttons.close'),
+        showOnlyCloseButton: true,
+      });
+    }
+  };
+
+  const testFlightsApiConnection = async () => {
+    const isApiWorking = await testApiConnection();
+    if (isApiWorking) {
+      showConfirmation({
+        title: t('settings.test_api_connection_success_title'),
+        description: t('settings.test_api_connection_success_description'),
+        closeButton: t('buttons.close'),
+        showOnlyCloseButton: true,
+      });
+    } else {
+      showConfirmation({
+        title: t('settings.test_api_connection_error_title'),
+        description: t('settings.test_api_connection_error_description'),
+        closeButton: t('buttons.close'),
+        showOnlyCloseButton: true,
+      });
+    }
+  };
+
   const dataCardOnSave = async (values: { [key: string]: string }) => {
     Object.entries(values).forEach(([field, value]) => {
       if (['REFRESH_INTERVAL', 'FLIGHTS_LIMIT'].includes(field)) {
@@ -201,12 +241,17 @@ const Settings = React.memo(() => {
             />
           </View>
         </View>
-        <View className="flex-row mb-sm">
+        <View className="flex-column mb-sm">
           <Input
             caption={t('settings.weather_api')}
             field="WEATHER_API_KEY"
             value={state['WEATHER_API_KEY']}
             width="100%"
+          />
+          <Button
+            className="px-lg mt-lg"
+            title={t('buttons.test_connection')}
+            onPress={() => testWeatherApiConnection()}
           />
         </View>
       </View>
@@ -350,6 +395,11 @@ const Settings = React.memo(() => {
             />
           </View>
         </View> */}
+        <Button
+          className="px-lg mt-lg"
+          title={t('buttons.test_connection')}
+          onPress={() => testFlightsApiConnection()}
+        />
       </View>
     </DataCard>
   );

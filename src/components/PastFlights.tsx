@@ -35,7 +35,7 @@ export default function PastFlights() {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      if (!!refreshAnimation) setRefreshing(true);
+      if (refreshAnimation) setRefreshing(true);
       try {
         const filter: Array<Condition | string> = [];
         if (!!flightsFilter) {

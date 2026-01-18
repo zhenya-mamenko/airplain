@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { unzipSync } from 'fflate';
 
 import { scanFromURLAsync } from 'expo-camera';
-import * as FileSystem from 'expo-file-system';
+import { Directory, File, Paths } from 'expo-file-system';
 import { PixelRatio } from 'react-native';
 
 import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
@@ -35,19 +35,17 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
     let base64Content = null;
     while (ratio >= 1) {
       let filepath = ratio > 1 ? `${unzipDir}${filename}@${ratio}x.png` : `${unzipDir}${filename}.png`;
-      let fileInfo = await FileSystem.getInfoAsync(filepath);
-      if (!fileInfo.exists) {
+      let file = new File(filepath);
+      if (!file.exists) {
         filepath = ratio > 1 ? `${unzipDir}en.lproj/${filename}@${ratio}x.png` : `${unzipDir}en.lproj/${filename}.png`;
-        fileInfo = await FileSystem.getInfoAsync(filepath);
-        if (!fileInfo.exists) {
+        file = new File(filepath);
+        if (!file.exists) {
           ratio--;
           continue;
         }
       }
       try {
-        base64Content = await FileSystem.readAsStringAsync(filepath, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
+        base64Content = await file.base64();
         break;
       } catch (error) {
         console.error('Error reading file:', error);
@@ -60,48 +58,43 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
     return { image: `data:image/png;base64,${base64Content}`, ratio };
   };
 
-  const unzipDir = FileSystem.cacheDirectory + 'pkpass/';
+  const unzipDir = `${Paths.cache}pkpass/`;
 
-  const dirInfo = await FileSystem.getInfoAsync(unzipDir);
-  if (dirInfo.exists) {
-    await FileSystem.deleteAsync(unzipDir);
+  const dir = new Directory(unzipDir);
+  if (dir.exists) {
+    await dir.delete();
   }
-  await FileSystem.makeDirectoryAsync(unzipDir);
+  dir.create();
 
-  const zipFileBase64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
+  const zipFileHandle = new File(uri);
+  const zipFileBase64 = await zipFileHandle.base64();
   const zipArray = new Uint8Array(Buffer.from(zipFileBase64, 'base64'));
   try {
     const unzippedFiles = unzipSync(zipArray);
     for (let [fileName, fileData] of Object.entries(unzippedFiles)) {
       if (fileName.indexOf('/') !== -1) {
         const parts = fileName.split('/');
-        let dir = unzipDir;
+        let dirPath = unzipDir;
         for (let i = 0; i < parts.length - 1; i++) {
-          dir += parts[i] + '/';
-          const dirInfo = await FileSystem.getInfoAsync(dir);
-          if (!dirInfo.exists) {
-            await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+          dirPath += parts[i] + '/';
+          const subDir = new Directory(dirPath);
+          if (!subDir.exists) {
+            subDir.create();
           }
         }
         fileName = parts[parts.length - 1];
       }
       const filePath = unzipDir + fileName;
       const base64Content = Buffer.from(fileData).toString('base64');
-      await FileSystem.writeAsStringAsync(filePath, base64Content, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+      const outputFile = new File(filePath);
+      await outputFile.write(base64Content, { encoding: 'base64' });
     }
   } catch (error) {
     console.error('Error unzipping file:', error);
     return null;
   }
-  const pass = JSON.parse(
-    await FileSystem.readAsStringAsync(unzipDir + 'pass.json', {
-      encoding: FileSystem.EncodingType.UTF8,
-    }),
-  );
+  const passFileHandle = new File(unzipDir + 'pass.json');
+  const pass = JSON.parse(await passFileHandle.text());
   if (pass.formatVersion !== 1 || pass.boardingPass.transitType !== 'PKTransitTypeAir') {
     console.error(
       `Unsupported pass format version: ${pass.formatVersion} or transitType: ${pass.boardingPass.transitType}`,

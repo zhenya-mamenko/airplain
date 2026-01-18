@@ -2,7 +2,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Canvas, Image, Path } from '@shopify/react-native-skia';
 
-import * as FileSystem from 'expo-file-system';
+import { Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Modal, Pressable, ScrollView } from 'react-native';
@@ -29,7 +29,7 @@ export default function Profile() {
   const height = Dimensions.get('screen').height;
 
   const [achievementsHeight, setAchievementsHeight] = useState(0);
-  const [content, setContent] = useState<JSX.Element>();
+  const [content, setContent] = useState<React.JSX.Element>();
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
   const { achievements, stampsColors } = useContext(GlobalContext);
 
@@ -151,7 +151,7 @@ export default function Profile() {
               <Pressable
                 hitSlop={5}
                 onPress={async () => {
-                  await Sharing.shareAsync(`${FileSystem.cacheDirectory}achievements-share.png`, {
+                  await Sharing.shareAsync(`${Paths.cache}achievements-share.png`, {
                     mimeType: 'image/png',
                   });
                 }}

@@ -20,9 +20,7 @@ jest.mock('expo-sqlite/kv-store', () => {
   };
 });
 
-jest.mock('csv-parse/dist/esm/sync', () => {
-  return require('csv-parse/sync');
-});
+// csv-parse is mapped via moduleNameMapper in package.json
 
 jest.mock('expo-asset', () => {
   return {
@@ -34,6 +32,20 @@ jest.mock('expo-asset', () => {
 
 jest.mock('expo-file-system', () => {
   return {
-    readAsStringAsync: jest.fn((content) => Promise.resolve(content)),
+    Paths: {
+      cache: '/mock/cache/',
+      document: '/mock/document/',
+    },
+    Directory: jest.fn().mockImplementation((path) => ({
+      exists: true,
+      create: jest.fn(),
+      delete: jest.fn(() => Promise.resolve()),
+    })),
+    File: jest.fn().mockImplementation((uri) => ({
+      exists: true,
+      text: jest.fn(() => Promise.resolve(uri)),
+      base64: jest.fn(() => Promise.resolve(uri)),
+      write: jest.fn(() => Promise.resolve()),
+    })),
   };
 });

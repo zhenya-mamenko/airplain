@@ -1,6 +1,6 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-import React, { createContext, forwardRef, useContext, useState } from 'react';
+import React, { Ref, createContext, forwardRef, useContext, useState } from 'react';
 import { KeyboardAvoidingView, KeyboardTypeOptions, Pressable, Switch as _Switch } from 'react-native';
 import { Text, TextInput, View } from 'react-native-picasso';
 
@@ -10,22 +10,29 @@ import { useThemeColor } from '@/hooks/useColors';
 export const DataCardContext = createContext(({ field, value }: { field: string; value: any }) => {});
 
 export interface DataCardProps {
-  caption: string | JSX.Element;
+  caption: string | React.JSX.Element;
   children: any;
   className?: string;
   dataClassName?: string;
-  rightBlock?: JSX.Element;
+  rightBlock?: React.JSX.Element;
   onLayout?: (event: any) => void;
   onSave?: (values: any) => void;
+  markAsSaved?: Ref<Function>;
 }
 
 export const DataCard = forwardRef(
-  ({ caption, children, className, dataClassName, rightBlock, onLayout, onSave }: DataCardProps, ref) => {
+  ({ caption, children, className, dataClassName, rightBlock, onLayout, onSave, markAsSaved }: DataCardProps, ref) => {
     const colorGray = useThemeColor('textColors.gray');
     const allowEditing = children.length === 2;
 
     const [editing, setEditing] = useState(false);
     const [state, setState] = useState({});
+
+    if (markAsSaved && typeof markAsSaved !== 'function') {
+      markAsSaved.current = () => {
+        setEditing(false);
+      };
+    }
 
     const dispatch = ({ field, value }: { field: string; value: any }) => {
       setState((oldState) => ({ ...oldState, [field]: value }));
@@ -74,7 +81,7 @@ export interface ValueProps {
   caption: string;
   lines?: number;
   selectable?: boolean;
-  value: string | number | JSX.Element;
+  value: string | number | React.JSX.Element;
   width?: string;
 }
 
