@@ -1,1 +1,5 @@
-Fixed multiple bug fixes after dependencies updates.
+Feature: Weather forecast displays in flight details card.
+
+Update: Achievments' cache clears on refresh.
+
+Bugfix: Fixed crash on show Date/Time dialog.

@@ -1,11 +1,12 @@
 import { WEATHER_API_URL, settings } from '@/constants/settings';
 import { SvgHeaveWind, SvgLightWind, SvgModerateWind } from '@/constants/svg/weather';
 import { weatherIcons } from '@/constants/weather';
-import { fetch } from '@/helpers/common';
-import { loadWeather, parseWeather } from '@/helpers/weather';
+import { celciusToFahrenheit, fetch } from '@/helpers/common';
+import { loadForecast, loadWeather, parseWeather } from '@/helpers/weather';
 
 jest.mock('@/helpers/common', () => ({
   fetch: jest.fn(),
+  celciusToFahrenheit: jest.fn((celsius: number) => (celsius * 9) / 5 + 32),
 }));
 
 jest.mock('@/constants/settings', () => ({
@@ -19,6 +20,7 @@ jest.mock('@/constants/settings', () => ({
 }));
 
 const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+const mockCelciusToFahrenheit = celciusToFahrenheit as jest.MockedFunction<typeof celciusToFahrenheit>;
 
 describe('weather helper', () => {
   beforeEach(() => {
@@ -188,18 +190,16 @@ describe('weather helper', () => {
 
     test('loadWeather return weather data if the API call is successful', async () => {
       const mockWeatherData = {
-        current: {
-          is_day: 1,
-          condition: { code: 1000 },
-          wind_kph: 25,
-          temp_c: 15,
-          temp_f: 59,
-        },
+        is_day: 1,
+        condition: { code: 1000 },
+        wind_kph: 25,
+        temp_c: 15,
+        temp_f: 59,
       };
       mockFetch.mockResolvedValue({
         ok: true,
         status: 200,
-        json: jest.fn().mockResolvedValue(mockWeatherData),
+        json: jest.fn().mockResolvedValue({ current: mockWeatherData }),
       } as any);
       const result = await loadWeather(10, 20);
       expect(result).toEqual(mockWeatherData);
@@ -213,6 +213,104 @@ describe('weather helper', () => {
       settings.WEATHER_API_KEY = '';
       const result = await loadWeather(10, 20);
       expect(result).toBeNull();
+    });
+  });
+
+  describe('loadForecast', () => {
+    beforeEach(() => {
+      settings.WEATHER_API_KEY = 'test-api-key';
+      mockCelciusToFahrenheit.mockClear();
+    });
+
+    test('loadForecast return null if required parameters are missing', async () => {
+      const result1 = await loadForecast(undefined as any, 20, '2024-01-15', 12);
+      expect(result1).toBeNull();
+
+      const result2 = await loadForecast(10, undefined as any, '2024-01-15', 12);
+      expect(result2).toBeNull();
+
+      const result3 = await loadForecast(10, 20, undefined as any, 12);
+      expect(result3).toBeNull();
+
+      const result4 = await loadForecast(10, 20, '2024-01-15', undefined as any);
+      expect(result4).toBeNull();
+    });
+
+    test('loadForecast return null if WEATHER_API_KEY is not set', async () => {
+      settings.WEATHER_API_KEY = '';
+      const result = await loadForecast(10, 20, '2024-01-15', 12);
+      expect(result).toBeNull();
+    });
+
+    test('loadForecast return null if fetch fails', async () => {
+      mockFetch.mockRejectedValue(new Error('API Error'));
+      const result = await loadForecast(10, 20, '2024-01-15', 12);
+      expect(result).toBeNull();
+      expect(mockFetch).toHaveBeenCalledWith(
+        `${WEATHER_API_URL}/forecast.json?key=test-api-key&days=1&dt=2024-01-15&hour=12&alerts=no&aqi=no&q=10,20`,
+        { timeout: 3000 },
+      );
+    });
+
+    test('loadForecast return null if response is not ok', async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 404,
+      } as any);
+      const result = await loadForecast(10, 20, '2024-01-15', 12);
+      expect(result).toBeNull();
+      expect(mockFetch).toHaveBeenCalledWith(
+        `${WEATHER_API_URL}/forecast.json?key=test-api-key&days=1&dt=2024-01-15&hour=12&alerts=no&aqi=no&q=10,20`,
+        { timeout: 3000 },
+      );
+    });
+
+    test('loadForecast return null if forecast data is missing', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: jest.fn().mockResolvedValue({ forecast: {} }),
+      } as any);
+      const result = await loadForecast(10, 20, '2024-01-15', 12);
+      expect(result).toBeNull();
+    });
+
+    test('loadForecast return forecast data with converted temperatures', async () => {
+      const mockForecastData = {
+        temp_c: 20,
+        feelslike_c: 18,
+        wind_kph: 15,
+        condition: { code: 1000 },
+      };
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: jest.fn().mockResolvedValue({
+          forecast: {
+            forecastday: [
+              {
+                hour: [mockForecastData],
+              },
+            ],
+          },
+        }),
+      } as any);
+
+      const result = await loadForecast(10, 20, '2024-01-15', 12);
+
+      expect(result).not.toBeNull();
+      expect(result?.temp_c).toBe(20);
+      expect(result?.feelslike_c).toBe(18);
+      expect(result?.temp_f).toBe(68);
+      expect(result?.feelslike_f).toBe(64.4);
+      expect(result?.windchill_f).toBe(64.4);
+      expect(mockCelciusToFahrenheit).toHaveBeenCalledTimes(3);
+      expect(mockCelciusToFahrenheit).toHaveBeenCalledWith(20);
+      expect(mockCelciusToFahrenheit).toHaveBeenCalledWith(18);
+      expect(mockFetch).toHaveBeenCalledWith(
+        `${WEATHER_API_URL}/forecast.json?key=test-api-key&days=1&dt=2024-01-15&hour=12&alerts=no&aqi=no&q=10,20`,
+        { timeout: 3000 },
+      );
     });
   });
 });

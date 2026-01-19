@@ -62,7 +62,7 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
 
   const dir = new Directory(unzipDir);
   if (dir.exists) {
-    await dir.delete();
+    dir.delete();
   }
   dir.create();
 
@@ -87,7 +87,7 @@ export async function loadPKPass(uri: string): Promise<PKPassData | null> {
       const filePath = unzipDir + fileName;
       const base64Content = Buffer.from(fileData).toString('base64');
       const outputFile = new File(filePath);
-      await outputFile.write(base64Content, { encoding: 'base64' });
+      outputFile.write(base64Content, { encoding: 'base64' });
     }
   } catch (error) {
     console.error('Error unzipping file:', error);

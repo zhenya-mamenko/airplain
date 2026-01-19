@@ -2,7 +2,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { Canvas, Image, Path } from '@shopify/react-native-skia';
 
-import { Paths } from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, useWindowDimensions } from 'react-native';
@@ -42,6 +42,25 @@ export default function Profile() {
     if (!event?.nativeEvent?.layout) return;
     const h = height - 250 - event.nativeEvent.layout.height;
     setAchievementsHeight(h);
+  };
+
+  const refreshAchievements = () => {
+    const files = [
+      'achievements-data.json',
+      'achievements-light.png',
+      'achievements-share-light.png',
+      'achievements-dark.png',
+      'achievements-share-dark.png',
+    ];
+    for (const file of files) {
+      const f = new File(Paths.cache, file);
+      if (f.exists) {
+        f.delete();
+      }
+    }
+    setSetting('achievements_hash', 'refresh');
+    setContent(undefined);
+    emitter.emit('refreshAchievements');
   };
 
   useEffect(() => {
@@ -159,14 +178,7 @@ export default function Profile() {
                 <Icon name="share-variant" size={16} color={colorGray} style={{ marginTop: 4, marginRight: 16 }} />
               </Pressable>
             )}
-            <Pressable
-              hitSlop={5}
-              onPress={() => {
-                setSetting('achievements_hash', 'refresh');
-                setContent(undefined);
-                emitter.emit('refreshAchievements');
-              }}
-            >
+            <Pressable hitSlop={5} onPress={() => refreshAchievements()}>
               <Icon name="refresh" size={20} color={colorGray} style={{ marginTop: 2 }} />
             </Pressable>
           </View>

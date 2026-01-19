@@ -1,7 +1,7 @@
 {
   "name": "airplain",
   "main": "./index.js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -110,6 +110,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "latest",
     "@testing-library/react-native": "^13.3.3",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/jest": "^29.5.14",

@@ -381,9 +381,8 @@ const exportImage = async (image: SkImage, themeName: string) => {
   if (!image) return;
   const data = image.encodeToBase64();
   if (!data) return;
-  const path = `${Paths.cache.uri}achievements-${themeName}.png`;
   try {
-    const file = new File(path);
+    const file = new File(Paths.cache, `achievements-${themeName}.png`);
     file.write(data, { encoding: 'base64' });
 
     const surface = Skia.Surface.Make(image.width(), image.height());
@@ -394,22 +393,20 @@ const exportImage = async (image: SkImage, themeName: string) => {
     canvas.scale(0.5, 0.5);
     const result = surface.makeImageSnapshot().encodeToBase64();
     if (!result) return;
-    const shareFile = new File(`${Paths.cache.uri}achievements-share-${themeName}.png`);
+    const shareFile = new File(Paths.cache, `achievements-share-${themeName}.png`);
     shareFile.write(result, { encoding: 'base64' });
   } catch {}
 };
 
 const exportData = async (data: { id: string; hull: Point[]; color: string }[]) => {
-  const path = `${Paths.cache.uri}achievements-data.json`;
   try {
-    const file = new File(path);
+    const file = new File(Paths.cache, 'achievements-data.json');
     file.write(JSON.stringify(data), { encoding: 'utf8' });
   } catch {}
 };
 
 const importImage = async (themeName: string) => {
-  const path = `${Paths.cache.uri}achievements-${themeName}.png`;
-  const file = new File(path);
+  const file = new File(Paths.cache, `achievements-${themeName}.png`);
   if (!file.exists) return null;
 
   try {
@@ -421,8 +418,7 @@ const importImage = async (themeName: string) => {
 };
 
 const importData = async (): Promise<{ id: string; hull: Point[]; color: string }[] | null> => {
-  const path = `${Paths.cache.uri}achievements-data.json`;
-  const file = new File(path);
+  const file = new File(Paths.cache, 'achievements-data.json');
   if (!file.exists) return null;
 
   try {
