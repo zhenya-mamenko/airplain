@@ -94,9 +94,9 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
     };
 
     const params = {
-      ...props,
+      mode: props.mode,
+      display: props.display,
       value: dateValue,
-      design: 'material' as const,
       onChange: setDate,
     };
 

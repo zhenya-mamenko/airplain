@@ -1,6 +1,7 @@
 import { default as Icon } from '@expo/vector-icons/FontAwesome5';
 
 import { Image as _Image } from 'expo-image';
+import { useNetworkState } from 'expo-network';
 import { useNavigation } from 'expo-router';
 import { router } from 'expo-router';
 import React, { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
@@ -25,10 +26,11 @@ import { durationToLocaleString } from '@/helpers/datetime';
 import { getFlightData } from '@/helpers/flights';
 import t, { useLocale } from '@/helpers/localization';
 import { updateFlight } from '@/helpers/sqlite';
+import { loadForecast, parseWeather } from '@/helpers/weather';
 import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import useTheme from '@/hooks/useTheme';
-import { type ConfirmationDialogSettings, type Flight, FlightStatusValues } from '@/types';
+import { type ConfirmationDialogSettings, type Flight, FlightStatusValues, WeatherData } from '@/types';
 
 const Image = createPicassoComponent(_Image);
 
@@ -97,7 +99,8 @@ const Card: React.FC<{ dataCards: any; item: string; dragEnabled: boolean }> = R
   },
 );
 
-const EditFlight = React.memo((props: { data: Flight }) => {
+const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
+  const today = props.today ?? new Date();
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
@@ -224,6 +227,71 @@ const EditFlight = React.memo((props: { data: Flight }) => {
     });
   }, [dragEnabled, navigation, colorPrimary, getFlightDataFromApi]);
 
+  const network = useNetworkState();
+
+  const [departureAirportWeather, setDepartureAirportWeather] = useState<WeatherData | null>(null);
+  const [departureAirportLat, departureAirportLon] = [
+    departureAirportData?.airport_latitude,
+    departureAirportData?.airport_longitude,
+  ];
+  useEffect(() => {
+    const loadWeather = async () => {
+      const data = await loadForecast(
+        departureAirportLat!,
+        departureAirportLon!,
+        departureDate.toISOString().slice(0, 10),
+        departureDate.getHours(),
+      );
+      setDepartureAirportWeather(data ? parseWeather(data, colorPrimaryContainer, 13) : null);
+    };
+    if (
+      departureDate.valueOf() > today.valueOf() - 14 * 60 * 60 * 1000 &&
+      today.valueOf() < departureDate.valueOf() &&
+      network.isInternetReachable &&
+      departureAirportLat &&
+      departureAirportLon
+    ) {
+      loadWeather();
+    } else {
+      setDepartureAirportWeather(null);
+    }
+  }, [
+    departureAirportLat,
+    departureAirportLon,
+    network.isInternetReachable,
+    colorPrimaryContainer,
+    departureDate,
+    today,
+  ]);
+
+  const [arrivalAirportWeather, setArrivalAirportWeather] = useState<WeatherData | null>(null);
+  const [arrivalAirportLat, arrivalAirportLon] = [
+    arrivalAirportData?.airport_latitude,
+    arrivalAirportData?.airport_longitude,
+  ];
+  useEffect(() => {
+    const loadWeather = async () => {
+      const data = await loadForecast(
+        arrivalAirportLat!,
+        arrivalAirportLon!,
+        arrivalDate.toISOString().slice(0, 10),
+        arrivalDate.getHours(),
+      );
+      setArrivalAirportWeather(data ? parseWeather(data, colorPrimaryContainer, 13) : null);
+    };
+    if (
+      arrivalDate.valueOf() > today.valueOf() - 14 * 60 * 60 * 1000 &&
+      today.valueOf() < arrivalDate.valueOf() &&
+      network.isInternetReachable &&
+      arrivalAirportLat &&
+      arrivalAirportLon
+    ) {
+      loadWeather();
+    } else {
+      setArrivalAirportWeather(null);
+    }
+  }, [arrivalAirportLat, arrivalAirportLon, network.isInternetReachable, colorPrimaryContainer, arrivalDate, today]);
+
   const departureDataCard = () => (
     <DataCard
       caption={
@@ -294,21 +362,38 @@ const EditFlight = React.memo((props: { data: Flight }) => {
             paddingTop: 4,
           }}
         >
-          <Icon name="clock" size={13} color={colorPrimaryContainer} style={{ marginTop: 6 }} />
-          <Text
-            className="size-smm color-primaryContainer ml-sm"
-            ellipsizeMode="tail"
-            numberOfLines={1}
-            style={{
-              fontWeight: 'bold',
-              marginTop: 2,
-              fontVariant: ['small-caps'],
-            }}
-          >
-            {`UTC ${
-              props.data.startDatetime.slice(-5) !== '00:00' ? props.data.startDatetime.slice(-6).replace('-', '–') : ''
-            }`.toLocaleLowerCase()}
-          </Text>
+          <View className="flex-row" style={{ width: '50%' }}>
+            <Icon name="clock" size={13} color={colorPrimaryContainer} style={{ marginTop: 6 }} />
+            <Text
+              className="size-smm color-primaryContainer ml-sm"
+              style={{
+                fontWeight: 'bold',
+                marginTop: 2,
+                fontVariant: ['small-caps'],
+              }}
+            >
+              {`UTC ${
+                props.data.startDatetime.slice(-5) !== '00:00'
+                  ? props.data.startDatetime.slice(-6).replace('-', '–')
+                  : ''
+              }`.toLocaleLowerCase()}
+            </Text>
+          </View>
+          <View className="flex-row justifycontent-end alignitems-center alignself-end" style={{ width: '50%' }}>
+            {departureAirportWeather && (
+              <Text
+                className="size-smm color-primaryContainer align-right"
+                style={{
+                  fontWeight: 'bold',
+                  marginTop: 2,
+                  fontVariant: ['small-caps'],
+                }}
+              >
+                {departureAirportWeather.temperatureOut}
+              </Text>
+            )}
+            {departureAirportWeather?.icons?.length ? departureAirportWeather.icons : null}
+          </View>
         </View>
       </View>
       <View className="flex-column">
@@ -402,21 +487,36 @@ const EditFlight = React.memo((props: { data: Flight }) => {
             paddingTop: 4,
           }}
         >
-          <Icon name="clock" size={13} color={colorPrimaryContainer} style={{ marginTop: 6 }} />
-          <Text
-            className="size-smm color-primaryContainer ml-sm"
-            ellipsizeMode="tail"
-            numberOfLines={1}
-            style={{
-              fontWeight: 'bold',
-              marginTop: 2,
-              fontVariant: ['small-caps'],
-            }}
-          >
-            {`UTC ${
-              props.data.endDatetime.slice(-5) !== '00:00' ? props.data.endDatetime.slice(-6).replace('-', '–') : ''
-            }`.toLocaleLowerCase()}
-          </Text>
+          <View className="flex-row" style={{ width: '50%' }}>
+            <Icon name="clock" size={13} color={colorPrimaryContainer} style={{ marginTop: 6 }} />
+            <Text
+              className="size-smm color-primaryContainer ml-sm"
+              style={{
+                fontWeight: 'bold',
+                marginTop: 2,
+                fontVariant: ['small-caps'],
+              }}
+            >
+              {`UTC ${
+                props.data.endDatetime.slice(-5) !== '00:00' ? props.data.endDatetime.slice(-6).replace('-', '–') : ''
+              }`.toLocaleLowerCase()}
+            </Text>
+          </View>
+          <View className="flex-row justifycontent-end alignitems-center alignself-end" style={{ width: '50%' }}>
+            {arrivalAirportWeather && (
+              <Text
+                className="size-smm color-primaryContainer align-right"
+                style={{
+                  fontWeight: 'bold',
+                  marginTop: 2,
+                  fontVariant: ['small-caps'],
+                }}
+              >
+                {arrivalAirportWeather.temperatureOut}
+              </Text>
+            )}
+            {arrivalAirportWeather?.icons?.length ? arrivalAirportWeather.icons : null}
+          </View>
         </View>
       </View>
       <View className="flex-column">

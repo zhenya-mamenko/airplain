@@ -1,5 +1,6 @@
 import {
   camelCase,
+  celciusToFahrenheit,
   fetch,
   flightToDepartingFlightData,
   flightToFlightData,
@@ -9,6 +10,10 @@ import {
   readFileToString,
   snakeCase,
 } from '@/helpers/common';
+
+jest.mock('expo-file-system/legacy', () => ({
+  readAsStringAsync: jest.fn((file: any) => file),
+}));
 
 jest.mock('@/constants/settings', () => ({
   __esModule: true,
@@ -504,5 +509,39 @@ describe('fetch', () => {
     const result = await fetch('https://example.com/api', { timeout: 0 });
 
     expect(result).toBe(mockResponse);
+  });
+});
+
+describe('celciusToFahrenheit', () => {
+  test('converts 0°C to 32°F', () => {
+    expect(celciusToFahrenheit(0)).toBe(32);
+  });
+
+  test('converts 100°C to 212°F', () => {
+    expect(celciusToFahrenheit(100)).toBe(212);
+  });
+
+  test('converts -40°C to -40°F', () => {
+    expect(celciusToFahrenheit(-40)).toBe(-40);
+  });
+
+  test('converts 37°C to 98.6°F', () => {
+    expect(celciusToFahrenheit(37)).toBeCloseTo(98.6, 1);
+  });
+
+  test('converts negative temperatures correctly', () => {
+    expect(celciusToFahrenheit(-10)).toBe(14);
+  });
+
+  test('converts decimal temperatures correctly', () => {
+    expect(celciusToFahrenheit(25.5)).toBeCloseTo(77.9, 1);
+  });
+
+  test('handles very high temperatures', () => {
+    expect(celciusToFahrenheit(1000)).toBe(1832);
+  });
+
+  test('handles very low temperatures', () => {
+    expect(celciusToFahrenheit(-273.15)).toBeCloseTo(-459.67, 1);
   });
 });

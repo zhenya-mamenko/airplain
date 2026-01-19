@@ -60,7 +60,7 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
     if (lat && lon && network.isInternetReachable) {
       const data = await loadWeather(lat, lon);
       if (data) {
-        setAirportWeather(parseWeather((data as any).current, colorPrimaryContainer, 16));
+        setAirportWeather(parseWeather(data, colorPrimaryContainer, 16));
       }
     }
   }, [lat, lon, network.isInternetReachable, colorPrimaryContainer]);

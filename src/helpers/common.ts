@@ -1,5 +1,5 @@
 import { Asset } from 'expo-asset';
-import { File } from 'expo-file-system';
+import { readAsStringAsync } from 'expo-file-system/legacy';
 import { Alert, AlertButton, Linking, NativeModules } from 'react-native';
 
 import { getSetting, setSetting } from '@/constants/settings';
@@ -136,9 +136,7 @@ export function haversine(lat1: number, lon1: number, lat2: number, lon2: number
 
 export async function readFileToString(file: any): Promise<string | null> {
   const [{ localUri }] = await Asset.loadAsync(file);
-  if (!localUri) return null;
-  const fileHandle = new File(localUri);
-  return fileHandle.text();
+  return localUri ? await readAsStringAsync(localUri) : null;
 }
 
 export function openUrl(url: string) {
@@ -240,3 +238,7 @@ Object.defineProperty(String.prototype, 'splice', {
   writable: true,
   configurable: true,
 });
+
+export const celciusToFahrenheit = (celsius: number): number => {
+  return (celsius * 9) / 5 + 32;
+};

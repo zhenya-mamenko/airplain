@@ -4,6 +4,10 @@ import { SQLDIR } from '@/constants/settings';
 import * as db from '@/helpers/sqlite';
 import type { Flight } from '@/types';
 
+jest.mock('expo-file-system/legacy', () => ({
+  readAsStringAsync: jest.fn((file: any) => file),
+}));
+
 describe('SQLite Integration Tests', () => {
   let database: any;
   let repository: db.SQLiteRepository;

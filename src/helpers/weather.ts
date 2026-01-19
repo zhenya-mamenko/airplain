@@ -3,22 +3,21 @@ import React from 'react';
 import { WEATHER_API_URL, settings } from '@/constants/settings';
 import { SvgHeaveWind, SvgLightWind, SvgModerateWind } from '@/constants/svg/weather';
 import { weatherIcons } from '@/constants/weather';
-import { fetch } from '@/helpers/common';
+import { celciusToFahrenheit, fetch } from '@/helpers/common';
 import type { WeatherData } from '@/types';
 
 export const parseWeather = (data: any, color: string, iconSize: number = 20): WeatherData | null => {
   if (!data) {
     return null;
   }
+  const code = data.condition.code;
   const icons: Array<React.JSX.Element> = [];
   const iconsProps = {
     color,
     style: { width: iconSize, height: iconSize, marginLeft: 4 },
   };
 
-  const weatherIcon = ((data.is_day == 0 ? weatherIcons.night : weatherIcons.day) as any)[
-    data.condition.code.toString()
-  ];
+  const weatherIcon = ((data.is_day == 0 ? weatherIcons.night : weatherIcons.day) as any)[`${code}`];
   if (weatherIcon) {
     if (Array.isArray(weatherIcon)) {
       let i = 0;
@@ -26,7 +25,7 @@ export const parseWeather = (data: any, color: string, iconSize: number = 20): W
         icons.push(
           React.createElement(icon, {
             ...iconsProps,
-            key: `weather-icon-${data.condition.code}-${++i}`,
+            key: `weather-icon-${code}-${++i}`,
           }),
         );
       }
@@ -34,7 +33,7 @@ export const parseWeather = (data: any, color: string, iconSize: number = 20): W
       icons.push(
         React.createElement(weatherIcon, {
           ...iconsProps,
-          key: `weather-icon-${data.condition.code}`,
+          key: `weather-icon-${code}`,
         }),
       );
     }
@@ -65,7 +64,7 @@ export const parseWeather = (data: any, color: string, iconSize: number = 20): W
     temperature,
     temperatureOut,
     icons,
-    code: data.condition.code,
+    code,
   };
   return weatherData;
 };
@@ -85,7 +84,39 @@ export const loadWeather = async (latitude: number, longitude: number): Promise<
     return null;
   }
   if (response && response.ok && response.status === 200) {
-    return await response.json();
+    const result = await response.json();
+    return result?.current || null;
+  }
+  return null;
+};
+
+export const loadForecast = async (
+  latitude: number,
+  longitude: number,
+  date: string,
+  hour: number,
+): Promise<any | null> => {
+  const WEATHER_API_ENDPOINT = settings.WEATHER_API_KEY
+    ? `${WEATHER_API_URL}/forecast.json?key=${settings.WEATHER_API_KEY}&days=1&dt=${date}&hour=${hour}&alerts=no&aqi=no&q=`
+    : null;
+  if (!WEATHER_API_ENDPOINT || !latitude || !longitude || !date || !hour) {
+    return null;
+  }
+  const url = `${WEATHER_API_ENDPOINT}${latitude},${longitude}`;
+  let response = null;
+  try {
+    response = await fetch(url, { timeout: 3000 });
+  } catch {
+    return null;
+  }
+  if (response && response.ok && response.status === 200) {
+    const result = await response.json();
+    const data = result?.forecast?.forecastday?.[0]?.hour?.[0] || null;
+    if (!data) return null;
+    data['temp_f'] = celciusToFahrenheit(data['temp_c']);
+    data['feelslike_f'] = celciusToFahrenheit(data['feelslike_c']);
+    data['windchill_f'] = celciusToFahrenheit(data['feelslike_c']);
+    return data;
   }
   return null;
 };
