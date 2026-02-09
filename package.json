@@ -1,7 +1,7 @@
 {
   "name": "airplain",
   "main": "./index.js",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -51,6 +51,9 @@
       "\\.(sql|csv)$": "<rootDir>/tests/helpers/asset-transformer.js"
     }
   },
+  "overrides": {
+    "fast-xml-parser": "^5.3.4"
+  },
   "dependencies": {
     "@bwip-js/react-native": "^4.5.1",
     "@dr.pogodin/react-native-fs": "^2.36.2",
@@ -63,7 +66,7 @@
     "bcbp": "^6.0.2",
     "buffer": "^6.0.3",
     "csv-parse": "^5.6.0",
-    "expo": "~54.0.31",
+    "expo": "~54.0.33",
     "expo-application": "~7.0.8",
     "expo-asset": "~12.0.12",
     "expo-brightness": "~14.0.8",
@@ -81,7 +84,7 @@
     "expo-localization": "~17.0.8",
     "expo-network": "~8.0.8",
     "expo-notifications": "~0.32.16",
-    "expo-router": "~6.0.21",
+    "expo-router": "~6.0.23",
     "expo-sharing": "~14.0.8",
     "expo-splash-screen": "~31.0.13",
     "expo-sqlite": "~16.0.10",
@@ -91,9 +94,9 @@
     "i18n-js": "^4.5.0",
     "luxon": "^3.5.0",
     "mitt": "^3.0.1",
-    "react": "^19.1.0",
+    "react": "19.1.0",
     "react-dom": "^19.1.0",
-    "react-native": "^0.81.5",
+    "react-native": "0.81.5",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-pager-view": "^6.9.1",
@@ -106,18 +109,18 @@
     "react-native-tab-view": "^4.0.5",
     "react-native-view-shot": "~4.0.3",
     "react-native-web": "^0.21.2",
-    "react-native-worklets": "^0.5.2"
+    "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@react-native-community/cli": "latest",
+    "@react-native-community/cli": "^14.0.1",
     "@testing-library/react-native": "^13.3.3",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/jest": "^29.5.14",
     "@types/luxon": "^3.4.2",
     "@types/react": "~19.1.10",
     "jest": "^29.2.1",
-    "jest-expo": "~54.0.16",
+    "jest-expo": "~54.0.17",
     "jest-junit": "^16.0.0",
     "oxlint": "^1.39.0",
     "prettier": "^3.6.2",

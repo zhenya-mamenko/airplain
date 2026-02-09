@@ -1,5 +1,3 @@
-Feature: Weather forecast displays in flight details card.
+Bugfix: Fixed possible race condition in database opening/reading.
 
-Update: Achievments' cache clears on refresh.
-
-Bugfix: Fixed crash on show Date/Time dialog.
+Chore: Updated dependencies.

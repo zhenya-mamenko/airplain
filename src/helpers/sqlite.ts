@@ -558,9 +558,12 @@ export async function createSQLiteRepository(
   return new SQLiteRepositoryImpl(database);
 }
 
-function getRepositoryOrThrow(errorMessage: string): SQLiteRepository {
+async function getRepositoryOrThrow(errorMessage: string): Promise<SQLiteRepository> {
   if (!defaultRepository) {
-    throw new Error(errorMessage);
+    const result = await openDatabase();
+    if (!result || !defaultRepository) {
+      throw new Error(errorMessage);
+    }
   }
   return defaultRepository;
 }
@@ -605,7 +608,7 @@ export async function closeDatabase() {
 }
 
 export async function fillDataFromArray(table: string, records: Array<any>) {
-  const repository = getRepositoryOrThrow("Can't insert data: database not opened");
+  const repository = await getRepositoryOrThrow("Can't insert data: database not opened");
   await repository.fillDataFromArray(table, records);
 }
 
@@ -615,7 +618,7 @@ export async function getFlights(
   offset: number = 0,
   order: string = 'DESC',
 ): Promise<Flight[]> {
-  const repository = getRepositoryOrThrow("Can't select flights: database not opened");
+  const repository = await getRepositoryOrThrow("Can't select flights: database not opened");
   return repository.getFlights(conditions, limit, offset, order);
 }
 
@@ -632,22 +635,22 @@ export async function getPastFlights(
 }
 
 export async function isFlightExists(airline: string, flightNumber: string, date: string): Promise<number | undefined> {
-  const repository = getRepositoryOrThrow("Can't select from flights: database not opened");
+  const repository = await getRepositoryOrThrow("Can't select from flights: database not opened");
   return repository.isFlightExists(airline, flightNumber, date);
 }
 
 export async function getFlight(flightId: number): Promise<Flight | undefined> {
-  const repository = getRepositoryOrThrow("Can't select from flights: database not opened");
+  const repository = await getRepositoryOrThrow("Can't select from flights: database not opened");
   return repository.getFlight(flightId);
 }
 
 export async function insertFlight(flight: Flight): Promise<boolean> {
-  const repository = getRepositoryOrThrow("Can't insert flight: database not opened");
+  const repository = await getRepositoryOrThrow("Can't insert flight: database not opened");
   return repository.insertFlight(flight);
 }
 
 export async function updateFlight(flight: Flight): Promise<boolean> {
-  const repository = getRepositoryOrThrow("Can't insert flight: database not opened");
+  const repository = await getRepositoryOrThrow("Can't insert flight: database not opened");
   return repository.updateFlight(flight);
 }
 
@@ -657,36 +660,36 @@ export async function insertPassengerFromBCBP(
   format: string,
   pkpass: PKPassData,
 ): Promise<boolean> {
-  const repository = getRepositoryOrThrow("Can't insert passenger: database not opened");
+  const repository = await getRepositoryOrThrow("Can't insert passenger: database not opened");
   return repository.insertPassengerFromBCBP(flightId, data, format, pkpass);
 }
 
 export async function archiveFlight(flightId: number, state: number = 1) {
-  const repository = getRepositoryOrThrow("Can't archive flight: database not opened");
+  const repository = await getRepositoryOrThrow("Can't archive flight: database not opened");
   await repository.archiveFlight(flightId, state);
 }
 
 export async function deleteFlight(flightId: number): Promise<boolean> {
-  const repository = getRepositoryOrThrow("Can't delete flight: database not opened");
+  const repository = await getRepositoryOrThrow("Can't delete flight: database not opened");
   return repository.deleteFlight(flightId);
 }
 
 export async function getStats(): Promise<StatsData> {
-  const repository = getRepositoryOrThrow("Can't get stats: database not opened");
+  const repository = await getRepositoryOrThrow("Can't get stats: database not opened");
   return repository.getStats();
 }
 
 export async function getAchievements(): Promise<AchievementData[]> {
-  const repository = getRepositoryOrThrow("Can't get achievement: database not opened");
+  const repository = await getRepositoryOrThrow("Can't get achievement: database not opened");
   return repository.getAchievements();
 }
 
 export async function exportFlights(): Promise<any[]> {
-  const repository = getRepositoryOrThrow("Can't select flights: database not opened");
+  const repository = await getRepositoryOrThrow("Can't select flights: database not opened");
   return repository.exportFlights();
 }
 
 export async function getAirlines(): Promise<Array<AirlineData>> {
-  const repository = getRepositoryOrThrow("Can't get achievement: database not opened");
+  const repository = await getRepositoryOrThrow("Can't get achievement: database not opened");
   return repository.getAirlines();
 }

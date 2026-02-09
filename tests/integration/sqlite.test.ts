@@ -1188,6 +1188,7 @@ describe('SQLite Module-Level Functions', () => {
         await database.closeAsync();
       }
       db.setDatabaseRepository(undefined);
+      jest.restoreAllMocks();
     });
 
     it('should set and get repository', async () => {
@@ -1198,16 +1199,19 @@ describe('SQLite Module-Level Functions', () => {
 
     it('should throw error when calling getFlights without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.getFlights([], 10, 0, 'DESC')).rejects.toThrow("Can't select flights: database not opened");
     });
 
     it('should throw error when calling fillDataFromArray without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.fillDataFromArray('test', [])).rejects.toThrow("Can't insert data: database not opened");
     });
 
     it('should throw error when calling isFlightExists without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.isFlightExists('AA', '100', '2024-01-01')).rejects.toThrow(
         "Can't select from flights: database not opened",
       );
@@ -1215,23 +1219,27 @@ describe('SQLite Module-Level Functions', () => {
 
     it('should throw error when calling getFlight without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.getFlight(1)).rejects.toThrow("Can't select from flights: database not opened");
     });
 
     it('should throw error when calling insertFlight without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       const mockFlight: any = { airline: 'AA', flightNumber: '100' };
       await expect(db.insertFlight(mockFlight)).rejects.toThrow("Can't insert flight: database not opened");
     });
 
     it('should throw error when calling updateFlight without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       const mockFlight: any = { flightId: 1, airline: 'AA', flightNumber: '100' };
       await expect(db.updateFlight(mockFlight)).rejects.toThrow("Can't insert flight: database not opened");
     });
 
     it('should throw error when calling insertPassengerFromBCBP without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.insertPassengerFromBCBP(1, {} as any, 'iata', {} as any)).rejects.toThrow(
         "Can't insert passenger: database not opened",
       );
@@ -1239,31 +1247,37 @@ describe('SQLite Module-Level Functions', () => {
 
     it('should throw error when calling archiveFlight without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.archiveFlight(1)).rejects.toThrow("Can't archive flight: database not opened");
     });
 
     it('should throw error when calling deleteFlight without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.deleteFlight(1)).rejects.toThrow("Can't delete flight: database not opened");
     });
 
     it('should throw error when calling getStats without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.getStats()).rejects.toThrow("Can't get stats: database not opened");
     });
 
     it('should throw error when calling getAchievements without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.getAchievements()).rejects.toThrow("Can't get achievement: database not opened");
     });
 
     it('should throw error when calling exportFlights without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.exportFlights()).rejects.toThrow("Can't select flights: database not opened");
     });
 
     it('should throw error when calling getAirlines without repository', async () => {
       db.setDatabaseRepository(undefined);
+      jest.spyOn(require('expo-sqlite'), 'openDatabaseAsync').mockRejectedValueOnce(new Error('Database error'));
       await expect(db.getAirlines()).rejects.toThrow("Can't get achievement: database not opened");
     });
 
