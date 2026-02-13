@@ -1,3 +1,1 @@
-Bugfix: Fixed possible race condition in database opening/reading.
-
-Chore: Updated dependencies.
+Feature: Added more statistics.

@@ -65,6 +65,7 @@
 781,Boeing 787-10
 788,Boeing 787-8
 789,Boeing 787-9
+7S8,Boeing 737-800 (twin-jet)
 919,COMAC C919
 14F,BAe 146 Freighter (-100/200/300QT & QC)
 14X,BAe 146 Freighter (-100QT & QC)
@@ -155,7 +156,7 @@ A58,Antonov An-158
 A5F,Antonov An-225 Mriya
 A81,Antonov An-148
 AB3,Airbus Industrie A300 pax
-AB4,Airbus A300B2, A300B4 and A300C4
+AB4,"Airbus A300B2, A300B4 and A300C4"
 AB6,Airbus A300-600
 ABB,"Airbus A300-600ST ""Super Transporter"" / ""Beluga"""
 ABF,Airbus Industrie A300 Freighter
@@ -229,7 +230,7 @@ CS3,Bombardier C Series CS300
 CS5,CASA/IPTN CN-235
 CV2,Convair CV-240 pax
 CV4,Convair CV-440 Metropolitan pax
-CV5,Convair CV-580, Convair CV-600, Convair CV-640
+CV5,"Convair CV-580, Convair CV-600, Convair CV-640"
 CVF,Convair CV-240 / 440 / 580 / 600 / 640 Freighter
 CVR,Convair CV-240 / 440 / 580 / 600 / 640 pax
 CVV,Convair CV-240 Freighter

@@ -49,6 +49,7 @@ AS
     JSON_EXTRACT(bcbp, '$.pkpass') as bcbp_pkpass
   FROM passengers;
 
+DROP VIEW IF EXISTS vw_stats;
 CREATE VIEW IF NOT EXISTS vw_stats
 AS
   WITH
@@ -70,31 +71,51 @@ AS
       WHERE is_archived = 1 and status != 'canceled'
     ),
     airports_source AS (
-      SELECT DISTINCT
+      SELECT
         year,
-        departure_airport as airport
-      FROM source
-      UNION
-      SELECT DISTINCT
-        year,
-        arrival_airport as airport
-      FROM source
-      WHERE status != 'diverted'
+        airport,
+        COUNT(DISTINCT flight_id) AS cnt
+      FROM (
+        SELECT DISTINCT
+          year,
+          departure_airport as airport,
+          flight_id
+        FROM source
+        UNION
+        SELECT DISTINCT
+          year,
+          arrival_airport as airport,
+          flight_id
+        FROM source
+        WHERE status != 'diverted'
+      )
+      GROUP BY year, airport
     ),
     airports AS (
       SELECT
         year,
-        COUNT(DISTINCT airport) as airports
+        COUNT(airport) as airports,
+        STRING_AGG(CONCAT(airport, ':', CAST(cnt AS STRING)), '|' ORDER BY airport) as airports_data
       FROM airports_source
       GROUP BY year
       UNION ALL
-      SELECT DISTINCT
+      SELECT
         'all' as year,
-        COUNT(DISTINCT airport) as airports
-      FROM airports_source
+        COUNT(airport) as airports,
+        STRING_AGG(CONCAT(airport, ':', CAST(cnt AS STRING)), '|' ORDER BY airport) as airports_data
+      FROM (
+        SELECT
+          airport,
+          SUM(cnt) as cnt
+        FROM airports_source
+        GROUP BY airport
+      )
     ),
     countries_source AS (
-      SELECT year, country_code, COUNT(DISTINCT flight_id) as cnt
+      SELECT
+        year,
+        country_code,
+        COUNT(DISTINCT flight_id) as cnt
       FROM (
         SELECT
           flight_id,
@@ -116,15 +137,84 @@ AS
       SELECT
         year,
         COUNT(country_code) as countries,
-        GROUP_CONCAT(country_code, ',') as country_codes
+        STRING_AGG(country_code, ',') as country_codes,
+        STRING_AGG(CONCAT(country_code, ':', CAST(cnt AS STRING)), '|' ORDER BY country_code) as countries_data
       FROM countries_source
       GROUP BY year
       UNION ALL
-      SELECT DISTINCT
+      SELECT
         'all' as year,
-        COUNT(DISTINCT country_code) as countries,
-        GROUP_CONCAT(country_code, ',') as country_codes
-      FROM (SELECT DISTINCT country_code FROM countries_source GROUP BY country_code ORDER BY SUM(cnt) DESC, country_code)
+        COUNT(country_code) as countries,
+        STRING_AGG(country_code, ',') as country_codes,
+        STRING_AGG(CONCAT(country_code, ':', CAST(cnt AS STRING)), '|' ORDER BY country_code) as countries_data
+      FROM (
+        SELECT
+          country_code,
+          SUM(cnt) as cnt
+        FROM countries_source
+        GROUP BY country_code
+        ORDER BY SUM(cnt) DESC, country_code
+      )
+    ),
+    airlines_source AS (
+      SELECT
+        year,
+        airline,
+        COUNT(DISTINCT flight_id) as cnt
+      FROM source
+      GROUP BY year, airline
+      ORDER BY 1, 3 DESC, 2
+    ),
+    airlines AS (
+      SELECT
+        year,
+        COUNT(airline) as airlines,
+        STRING_AGG(CONCAT(airline, ':', CAST(cnt AS STRING)), '|' ORDER BY airline) as airlines_data
+      FROM airlines_source
+      GROUP BY year
+      UNION ALL
+      SELECT
+        'all' as year,
+        COUNT(airline) as airlines,
+        STRING_AGG(CONCAT(airline, ':', CAST(cnt AS STRING)), '|' ORDER BY airline) as airlines_data
+      FROM (
+        SELECT
+          airline,
+          SUM(cnt) as cnt
+        FROM airlines_source
+        GROUP BY airline
+        ORDER BY SUM(cnt) DESC, airline
+      )
+    ),
+    aircrafts_source AS (
+      SELECT
+        year,
+        aircraft_type,
+        COUNT(DISTINCT flight_id) as cnt
+      FROM source
+      GROUP BY year, aircraft_type
+      ORDER BY 1, 3 DESC, 2
+    ),
+    aircrafts AS (
+      SELECT
+        year,
+        COUNT(aircraft_type) as aircrafts,
+        STRING_AGG(CONCAT(aircraft_type, ':', CAST(cnt AS STRING)), '|' ORDER BY aircraft_type) as aircrafts_data
+      FROM aircrafts_source
+      GROUP BY year
+      UNION ALL
+      SELECT
+        'all' as year,
+        COUNT(aircraft_type) as aircrafts,
+        STRING_AGG(CONCAT(aircraft_type, ':', CAST(cnt AS STRING)), '|' ORDER BY aircraft_type) as aircrafts_data
+      FROM (
+        SELECT
+          aircraft_type,
+          SUM(cnt) as cnt
+        FROM aircrafts_source
+        GROUP BY aircraft_type
+        ORDER BY SUM(cnt) DESC, aircraft_type
+      )
     ),
     data AS (
       SELECT
@@ -135,8 +225,6 @@ AS
         SUM(IIF(departure_country = arrival_country, 1, 0)) as domestic_flights,
         SUM(IIF(departure_country = arrival_country, 0, 1)) as international_flights,
         SUM(IIF(duration >= 480, 1, 0)) as long_haul_flights,
-        COUNT(DISTINCT aircraft_type) as aircrafts,
-        COUNT(DISTINCT airline) as airlines,
         SUM(delay) as delay
       FROM source
       GROUP BY year
@@ -149,8 +237,6 @@ AS
         SUM(IIF(departure_country = arrival_country, 1, 0)) as domestic_flights,
         SUM(IIF(departure_country = arrival_country, 0, 1)) as international_flights,
         SUM(IIF(duration >= 480, 1, 0)) as long_haul_flights,
-        COUNT(DISTINCT aircraft_type) as aircrafts,
-        COUNT(DISTINCT airline) as airlines,
         SUM(delay) as delay
       FROM source
     )
@@ -163,16 +249,22 @@ AS
     international_flights,
     long_haul_flights,
     aircrafts,
+    aircrafts_data,
     airlines,
+    airlines_data,
     airports,
+    airports_data,
     countries,
     country_codes,
+    countries_data,
     distance / flights as avg_distance,
     duration / flights as avg_duration,
     delay / flights as avg_delay
   FROM data
     INNER JOIN airports USING (year)
-    INNER JOIN countries USING (year);
+    INNER JOIN countries USING (year)
+    INNER JOIN airlines USING (year)
+    INNER JOIN aircrafts USING (year);
 
 CREATE VIEW IF NOT EXISTS vw_achievements
 AS

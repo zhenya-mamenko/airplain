@@ -30,9 +30,9 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 641,1A,Amadeus IT Group SA,,0
 679,1B,Abacus International Pte. Ltd.,,0
 585,1C,Hewlett-Packard (Schweiz) GmbH,,0
-255,1D,Radixx Solutions International, Inc.,,0
+255,1D,"Radixx Solutions International, Inc.",,0
 681,1E,Travelsky Technology Limited,,0
-915,1F,INFINI Travel Information, Inc.,,0
+915,1F,"INFINI Travel Information, Inc.",,0
 846,1G,Travelport Global Distribution SystemB.V.,,0
 184,1H,"JSC ""Sirena-Travel""",,0
 133,1I,ChallengAir,,0
@@ -53,8 +53,8 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 1030,2A,Deutsche Bahn AG,,0
 934,2B,Ak Bars Aero,,0
 954,2C,SNCF,,0
-943,2D,Eastern Airlines, LLC,,0
-635,2E,Smokey Bay Air, Inc.,,0
+943,2D,"Eastern Airlines, LLC",,0
+635,2E,"Smokey Bay Air, Inc.",,0
 814,2F,Afrinat International Airlines,,0
 359,2G,Angara Airlines,,0
 144,2H,Eurostar,,0
@@ -66,7 +66,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 223,2N,Nextjet,,0
 131,2O,Redemption Inc.,,0
 155,2P,PAL Express,https://checkin.si.amadeus.net/static/PRD/PR/#/checkindirect?LANGUAGE=EN&ln=en&ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR},24
-879,2Q,Air Cargo Carriers, LLC.,,0
+879,2Q,"Air Cargo Carriers, LLC.",,0
 320,2R,VIA Rail Canada Inc.,,0
 157,2S,Southwind,,0
 929,2T,Bermudair,,0
@@ -142,7 +142,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 853,5O,ASL Airlines France,,0
 964,5P,Panorama Airways,,0
 277,5Q,BQB Lineas Aereas,,0
-966,5R,Rutas Aereas, C.A. dba  RUTACA,,0
+966,5R,"Rutas Aereas, C.A. dba  RUTACA",,0
 403,5S,Global Aviation Services Group,,0
 67,5T,Canadian North,https://checkin.canadiannorth.com/dx/5TCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
 35,5U,TAG Airlines,,0
@@ -315,7 +315,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 273,C1,Tectimes Sudamerica,,0
 1034,C2,CEIBA Intercontinental,,0
 207,C3,Trade Air,,0
-882,C4,Conquest Air, Inc.,,0
+882,C4,"Conquest Air, Inc.",,0
 251,C5,CommutAir,,0
 601,C6,Centrum Air,,0
 1044,C7,Cinnamon Air,,0
@@ -338,7 +338,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 1081,CP,Compass Airlines,,0
 1001,CQ,Coastal Travels,,0
 134,CR,OAG,,0
-1027,CS,Continental Micronesia, Inc.,,0
+1027,CS,"Continental Micronesia, Inc.",,0
 115,CT,Alitalia CityLiner,,0
 663,CU,Cubana de Aviación,https://checkin.si.amadeus.net/static/PRD/CU/#/identification,24
 1054,CV,Cargolux,,0
@@ -456,12 +456,12 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 818,G8,Go!,,0
 136,G9,Air Arabia,https://webcheckin.airarabia.com/accelaero/en/index.html#/,24
 120,GA,Garuda Indonesia,https://checkin.si.amadeus.net/1ASIHSSCMCIGA/sscmga/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&IDate={DEP_DATE_EU},24
-803,GB,ABX Air, Inc.,,0
+803,GB,"ABX Air, Inc.",,0
 725,GC,Gambia International Airlines,,0
 784,GD,Aviair,,0
 861,GE,Lift,,0
 978,GF,Gulf Air,https://dxcheckin.gulfair.com/dx/GFCI/#/check-in/deep-link?deepLink=true&locale=en-US&recordLocator={PNR}&lastName={LAST},24
-870,GG,Sky Lease I, Inc.,,0
+870,GG,"Sky Lease I, Inc.",,0
 125,GH,Globus Airlines,,0
 382,GI,Itek Air,,0
 1050,GJ,Loong Air,,0
@@ -475,7 +475,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 653,GS,Tianjin Airlines,,0
 1056,GT,Vista Georgia,,0
 706,GU,Aviateca,,0
-88,GV,Grant Aviation, Inc.,,0
+88,GV,"Grant Aviation, Inc.",,0
 1029,GW,GetJet,,0
 1048,GY,Colorful Guizhou Airlines,,0
 577,GZ,Air Rarotonga,,0
@@ -505,7 +505,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 664,HQ,Thomas Cook Airlines Belgium,,0
 211,HR,Hahn Air,,0
 40,HS,Héli Sécurité Hélicopter Airline,,0
-732,HT,Ningxia Cargo Airlines CO.,LTD,,0
+732,HT,"Ningxia Cargo Airlines CO.,LTD",,0
 595,HU,Hainan Airlines,https://www.hainanairlines.com/GB/GB/Check-in,24
 371,HV,Transavia,https://www.transavia.com/en-UK/my-transavia/check-in/login/,24
 531,HW,North-Wright Airways,,0
@@ -542,7 +542,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 341,IY,Yemenia,,0
 1032,IZ,Arkia,,0
 257,J0,Jetlink Express,,0
-1103,J1,One Jet, Inc.,,0
+1103,J1,"One Jet, Inc.",,0
 694,J2,Azerbaijan Airlines,https://book.azal.az/checkin/select-passengers?lang=en&passengerId={LAST}&number={PNR},24
 711,J3,Northwestern Air,,0
 319,J4,BADR AIRLINES,,0
@@ -611,7 +611,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 573,KY,Kunming Airlines,,0
 682,KZ,Nippon Cargo Airlines,,0
 553,L1,E-Savtravel,,0
-534,L2,Lynden Air Cargo, LLC,,0
+534,L2,"Lynden Air Cargo, LLC",,0
 477,L3,Lynx Aviation,,0
 574,L4,Air Service Liege,,0
 557,L6,Mauritania Airlines International,,0
@@ -622,7 +622,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 778,LB,Bul Air,,0
 995,LC,Skyway Costa Rica,,0
 843,LD,AHK Air Hong Kong Limited,,0
-594,LE,Laparkan Airways, Inc.,,0
+594,LE,"Laparkan Airways, Inc.",,0
 19,LG,Luxair,https://checkin.si.amadeus.net/static/PRD/LG/#/checkindirect?ln=en&ghAirline=LG&ISurname={LAST}&IFormOfIdentification=PNR&IIdentification={PNR},24
 138,LH,Lufthansa,https://www.lufthansa.com/us/en/online-check-in,24
 86,LI,Liat,,0
@@ -709,7 +709,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 1061,NY,Air Iceland,,0
 600,NZ,Air New Zealand,https://flightbookings.airnewzealand.com/vmanage/actions/mobi/webcheck,24
 284,O2,Linear Air,,0
-677,O3,Orange Air, LLCN/A,,0
+677,O3,"Orange Air, LLCN/A",,0
 91,O4,Antrak Air,,0
 718,O6,Avianca Brazil,,0
 217,O8,Marathon Airlines,,0
@@ -761,7 +761,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 986,PL,Southern Air Charter,,0
 444,PM,Canaryfly,,0
 893,PN,West Air,,0
-110,PO,Polar Air Cargo Worldwide, Inc.,,0
+110,PO,"Polar Air Cargo Worldwide, Inc.",,0
 373,PP,Jet Aviation Business,,0
 571,PQ,SkyUp Airlines,,0
 63,PR,Philippine Airlines,https://checkin.philippineairlines.com/ssci/identification,24
@@ -807,7 +807,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 14,QY,European Air Transport,,0
 103,QZ,AirAsia Indonesia,https://www.airasia.com/check-in/v2/en/gb,48
 22,R0,Russian Railways,,0
-884,R1,Zapways, Inc.,,0
+884,R1,"Zapways, Inc.",,0
 264,R2,Transair Senegal,,0
 749,R3,Yakutia Airlines,https://checkin.yakutia.aero/web-checkin/?lang=en#search,24
 994,R4,RUS Aviation,,0
@@ -943,7 +943,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 1114,UY,Air Caucasus,,0
 306,UZ,Buraq Air Transport (BRQ),,0
 1076,V0,Conviasa,https://wc2-v0.kiusys.net/,24
-516,V1,IBS Software Services Americas, Inc.,,0
+516,V1,"IBS Software Services Americas, Inc.",,0
 989,V2,Vision Airlines,,0
 56,V3,Carpatair,,0
 235,V4,Vieques Air Link,,0
@@ -954,7 +954,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 328,V9,L'Odyssey,,0
 495,VA,Virgin Australia,https://check-in.virginaustralia.com/checkin/index.html#/login?pnr={PNR}&surname={LAST}&port={IATA_DEP},24
 401,VB,VivaAerobus,https://www.vivaaerobus.com/en-us/manage/find-booking,24
-333,VC,Charter Air Transport, Inc.,,0
+333,VC,"Charter Air Transport, Inc.",,0
 199,VE,C.A.I. Second,,0
 886,VF,AJet,,0
 925,VG,VLM Airlines,,0
@@ -1009,25 +1009,25 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 54,WZ,Red Wings,https://flyredwings.com/en/check-in/#/search/{PNR}/{LAST}/submit/,24
 580,X1,Hahn Air Technologies,,0
 957,X3,TUI fly,https://www.tui.co.uk/destinations/your-account/managemybooking/login,24
-829,X4,Air Excursion, LLC,,0
+829,X4,"Air Excursion, LLC",,0
 1083,X5,S.C. Ten Airways S.R.L.,,0
-683,X7,Exec Air, Inc. of Naples,,0
+683,X7,"Exec Air, Inc. of Naples",,0
 610,X8,Airmax S.A.,,0
 979,X9,Avion Express,,0
-312,XA,ARINC(Aeronautical Radio, Inc.),,0
+312,XA,"ARINC(Aeronautical Radio, Inc.)",,0
 432,XB,IATA - Clearing HouseInternational Air Transport Association,,0
 423,XC,Corendon Airlines,,0
 735,XD,Air Transport Association of Americad\b\a Airlines for America,,0
 907,XE,ExpressJet,,0
 875,XF,Vladivostok Air,,0
 337,XG,SunExpress Deutschland,,0
-726,XH,Special Ground Handling Service -XH,,0
+726,XH,Special Ground Handling Service,,0
 114,XI,Aeronautical Telecommunications Ltd.(AEROTEL),,0
 767,XJ,Thai AirAsia X,https://www.airasia.com/check-in/v2/en/gb,240
 288,XK,Air Corsica,https://checkin.si.amadeus.net/1ASIHSSCMCIXK/sscmxk/checkindirect?ln=en&IFormOfIdentification=PNR&IIdentification={PNR}&ISurname={LAST},24
 410,XL,LATAM Ecuador,,0
 48,XM,C.A.I. First,,0
-276,XO,South East Asian Airlines (SEAIR)International, Inc.,,0
+276,XO,South East Asian Airlines,,0
 1014,XP,Avelo Airlines,,0
 65,XQ,Sun Express,https://www.sunexpress.com/WebCheckIn/web/checkin?firstName={FIRST}&lastName={LAST}&locale=en_US&mode=webCheckIn&pnrNumber={PNR},24
 205,XR,Corendon Airlines Europe,,0
@@ -1042,7 +1042,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 159,Y1,Travel Technology Interactive SA,,0
 810,Y2,Air Century,,0
 261,Y4,Volaris,https://www.volaris.com/mytrips?culture=en-US,24
-1092,Y5,Golden Myanmar Airlines Public Co., Ltd,,0
+1092,Y5,Golden Myanmar Airlines,,0
 161,Y7,NordStar,https://www.nordstar.ru/en/check-in/#/,24
 667,Y8,Yangtze River Express,,0
 598,Y9,Lynx Air,,0
@@ -1050,7 +1050,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 730,YE,Yan Air Ltd,,0
 309,YF,Department of National Defence,,0
 170,YG,South Airlines,,0
-821,YH,Sunsplash Aviation, LLC.,,0
+821,YH,"Sunsplash Aviation, LLC.",,0
 336,YI,Air Sunshine Inc.,,0
 50,YJ,Asian Wings Airways Limited,,0
 877,YK,Avia Traffic Company,,0
@@ -1060,7 +1060,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 299,YO,Heli Air Monaco,,0
 1107,YP,Air Premia,,0
 44,YQ,TAR Aerolíneas,,0
-670,YR,Grand Canyon Airlines, Inc.dba Scenic Airlines,,0
+670,YR,Grand Canyon Airlines,,0
 355,YS,Flightlink,,0
 659,YT,Yeti Airlines Domestic Pvt. Ltd.,http://res.yetiairlines.com/webcheckin/,24
 1028,YU,EuroAtlantic Airways S.A.,,0
@@ -1076,7 +1076,7 @@ airline_id,airline_code,airline_name,check_in_link,check_in_time
 851,Z7,Amaszonas,,0
 708,Z8,Amaszonas,https://checkin.si.amadeus.net/static/PRD/Z8/#/checkindirect?IFormOfIdentification=PNR&IGroupTravel=off&IIdentification={PNR}&ISurname={LAST}&ln=en,24
 1011,Z9,MYAirline,,0
-922,ZA,Skywings Asia Airlines Co., Ltd.,,0
+922,ZA,Skywings Asia Airlines,,0
 226,ZB,Air Albania,,0
 827,ZC,Korongo Airlines,,0
 867,ZE,Eastar Jet,,0
