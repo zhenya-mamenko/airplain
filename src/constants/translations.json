@@ -455,7 +455,9 @@
       "flights": "Flights",
       "international_flights": "International flights",
       "long_haul_flights": "Long-haul flights",
-      "title": "Stats"
+      "title": "Stats",
+      "top10": "%{type} Top 10",
+      "unknown": "Unknown"
     }
   },
   "ru": {
@@ -914,7 +916,9 @@
       "flights": "Полёты",
       "international_flights": "Международные рейсы",
       "long_haul_flights": "Дальние рейсы",
-      "title": "Статистика"
+      "title": "Статистика",
+      "top10": "%{type} Топ 10",
+      "unknown": "Не определён"
     }
   }
 }

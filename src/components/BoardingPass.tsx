@@ -62,7 +62,7 @@ const BarCode = ({ format, options, ...rest }: BarCodeProps) => {
       recyclingKey={`${new Date().valueOf()}`}
       source={{ uri: img.uri }}
       {...rest}
-      style={{ height: img.height, width: img.width, ...rest.style }}
+      style={{ height: img.height, width: img.width, ...(rest.style as any) }}
     />
   );
 };
@@ -176,7 +176,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
           style={{
             width: data.width / scale,
             height: data.height / scale,
-            ...rest.style,
+            ...(rest.style as any),
           }}
         />
       );

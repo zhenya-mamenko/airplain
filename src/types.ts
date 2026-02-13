@@ -240,13 +240,17 @@ export interface PKPassData {
 export interface StatsData {
   [key: string]: {
     aircrafts: number;
+    aircraftsData: string;
     airlines: number;
+    airlinesData: string;
     airports: number;
+    airportsData: string;
     avgDelay: number;
     avgDistance: number;
     avgDuration: number;
     countries: number;
     countryCodes: string;
+    countriesData: string;
     distance: number;
     domesticFlights: number;
     duration: number;

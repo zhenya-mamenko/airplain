@@ -1,17 +1,22 @@
+import { Image as _Image } from 'expo-image';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, ScrollView, TextStyle } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Text, View } from 'react-native-picasso';
+import { Text, View, createPicassoComponent } from 'react-native-picasso';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
+import { ViewStyle } from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 
 import YearSelector from '@/components/YearSelector';
 import flags from '@/constants/flags.json';
+import { airlineLogoUri, getAirlineData, getAirportData } from '@/helpers/airdata';
 import emitter from '@/helpers/emitter';
 import t, { useLocale } from '@/helpers/localization';
 import { getStats } from '@/helpers/sqlite';
 import { useThemeColor } from '@/hooks/useColors';
 import type { StatsData } from '@/types';
+
+const Image = createPicassoComponent(_Image);
 
 interface CardProps {
   caption: string;
@@ -163,12 +168,54 @@ export default function Stats() {
   const domesticFlights = stats?.[year]?.domesticFlights;
   const internationalFlights = stats?.[year]?.internationalFlights;
   const longHaulFlights = stats?.[year]?.longHaulFlights;
+  const airportsData =
+    stats?.[year]?.airportsData?.split('|').map((item) => {
+      const parts = item.split(':');
+      return { airport: parts[0], count: parseInt(parts[1]) };
+    }) || [];
+  airportsData.sort((a, b) => b.count - a.count);
+  const countriesData =
+    stats?.[year]?.countriesData?.split('|').map((item) => {
+      const parts = item.split(':');
+      return {
+        country: parts[0],
+        flag: flags.find((x) => x.country_code === parts[0])?.flag,
+        count: parseInt(parts[1]),
+      };
+    }) || [];
+  countriesData.sort((a, b) => b.count - a.count);
+  const airlinesData =
+    stats?.[year]?.airlinesData?.split('|').map((item) => {
+      const parts = item.split(':');
+      const airline = getAirlineData(parts[0]);
+      return {
+        airline: airline?.airlineName ?? parts[0],
+        logo: airlineLogoUri(airline?.airlineCode ?? parts[0]),
+        count: parseInt(parts[1]),
+      };
+    }) || [];
+  airlinesData.sort((a, b) => b.count - a.count);
+  const aircraftsData =
+    stats?.[year]?.aircraftsData?.split('|').map((item) => {
+      const parts = item.split(':');
+      return {
+        aircraft: parts[0],
+        count: parseInt(parts[1]),
+      };
+    }) || [];
+  aircraftsData.sort((a, b) => b.count - a.count);
+
   const value = {
     countryCodes,
     domesticFlights,
     internationalFlights,
     longHaulFlights,
+    airportsData,
+    countriesData,
+    airlinesData,
+    aircraftsData,
   };
+
   const [displayValue, setDisplayValue] = useState(value);
   const opacity = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(
@@ -221,6 +268,7 @@ export default function Stats() {
   const shadowColor = useThemeColor('textColors.secondaryContainer');
   const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
   const colorPrimary = useThemeColor('colors.primary');
+  const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
 
   const loaderView = (
     <View className="bg-surfaceVariant flex-1 alignitems-center justifycontent-center">
@@ -230,6 +278,46 @@ export default function Stats() {
 
   const flightsStyle: TextStyle = {
     width: 30,
+    fontSize: 12,
+    color: valueColor,
+    fontWeight: 'bold',
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  };
+
+  const rowStyle: ViewStyle = {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  };
+
+  const captionStyle: TextStyle = {
+    width: '12%',
+    fontSize: 14,
+    color: valueColor,
+    textAlign: 'left',
+    fontWeight: 'bold',
+    fontVariant: ['small-caps'],
+  };
+
+  const captionTextStyle: TextStyle = {
+    width: '78%',
+    fontSize: 14,
+    color: valueColor,
+    textAlign: 'left',
+    fontVariant: ['small-caps'],
+  };
+
+  const captionTextStyleLong: TextStyle = {
+    width: '90%',
+    fontSize: 14,
+    color: valueColor,
+    textAlign: 'left',
+    fontVariant: ['small-caps'],
+  };
+
+  const captionCountStyle: TextStyle = {
+    width: '10%',
     fontSize: 12,
     color: valueColor,
     fontWeight: 'bold',
@@ -332,8 +420,9 @@ export default function Stats() {
                   </View>
                 </View>
               </View>
+
               <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
-                <View className="flex-row radiustr-md radiustl-md px-md py-md bb-1 bordercolor-outlineVariant bg-secondaryContainer">
+                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
                   <Text className="size-mdl color-surface ml-xs flex-1">{t('stats.average_flight')}</Text>
                 </View>
                 <View className="flex-row px-md pt-md">
@@ -362,6 +451,100 @@ export default function Stats() {
                     value={stats?.[year]?.avgDistance ? `${stats?.[year]?.avgDistance.toLocaleString(locale)}` : 0}
                     year={year}
                   />
+                </View>
+              </View>
+
+              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
+                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
+                  <Text className="size-mdl color-surface ml-xs flex-1">
+                    {t('stats.top10', { type: t('stats.countries') })}
+                  </Text>
+                </View>
+                <View className="flex-column px-md pt-md">
+                  {displayValue.countriesData.slice(0, 10).map((item, index) => (
+                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
+                      <Text numberOfLines={1} style={captionStyle}>
+                        {item.flag}
+                      </Text>
+                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyle}>
+                        {t(`achievements.${item.country}`).toLocaleLowerCase()}
+                      </Text>
+                      <Text numberOfLines={1} style={captionCountStyle}>
+                        {item.count}
+                      </Text>
+                    </Animated.View>
+                  ))}
+                </View>
+              </View>
+
+              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
+                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
+                  <Text className="size-mdl color-surface ml-xs flex-1">
+                    {t('stats.top10', { type: t('stats.airlines') })}
+                  </Text>
+                </View>
+                <View className="flex-column px-md pt-md">
+                  {displayValue.airlinesData.slice(0, 10).map((item, index) => (
+                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
+                      <View style={{ width: '12%' }}>
+                        <Image
+                          className="radius-xs b-1 bordercolor-secondaryContainer"
+                          recyclingKey={item.airline}
+                          source={item.logo}
+                          style={{ width: 16, height: 16, backgroundColor: colorPrimaryContainer }}
+                        />
+                      </View>
+                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyle}>
+                        {item.airline.toLocaleLowerCase()}
+                      </Text>
+                      <Text numberOfLines={1} style={captionCountStyle}>
+                        {item.count}
+                      </Text>
+                    </Animated.View>
+                  ))}
+                </View>
+              </View>
+
+              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
+                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
+                  <Text className="size-mdl color-surface ml-xs flex-1">
+                    {t('stats.top10', { type: t('stats.airports') })}
+                  </Text>
+                </View>
+                <View className="flex-column px-md pt-md">
+                  {displayValue.airportsData.slice(0, 10).map((item, index) => (
+                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
+                      <Text numberOfLines={1} style={captionStyle}>
+                        {item.airport.toLocaleLowerCase()}
+                      </Text>
+                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyle}>
+                        {getAirportData(item.airport, locale)?.airport_name.toLocaleLowerCase()}
+                      </Text>
+                      <Text numberOfLines={1} style={captionCountStyle}>
+                        {item.count}
+                      </Text>
+                    </Animated.View>
+                  ))}
+                </View>
+              </View>
+
+              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
+                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
+                  <Text className="size-mdl color-surface ml-xs flex-1">
+                    {t('stats.top10', { type: t('stats.aircrafts') })}
+                  </Text>
+                </View>
+                <View className="flex-column px-md pt-md">
+                  {displayValue.aircraftsData.slice(0, 10).map((item, index) => (
+                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
+                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyleLong}>
+                        {item.aircraft.toLocaleLowerCase() || t('stats.unknown').toLocaleLowerCase()}
+                      </Text>
+                      <Text numberOfLines={1} style={captionCountStyle}>
+                        {item.count}
+                      </Text>
+                    </Animated.View>
+                  ))}
                 </View>
               </View>
             </View>
