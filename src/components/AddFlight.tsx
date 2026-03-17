@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useReducer, useRef, useState } from 'react';
-import { KeyboardAvoidingView, Pressable, ScrollView, ToastAndroid } from 'react-native';
+import { Alert, KeyboardAvoidingView, Pressable, ScrollView, ToastAndroid } from 'react-native';
 import { Text, TextInput, ThemeProvider, View } from 'react-native-picasso';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,7 +15,7 @@ import { BCBPData } from '@/helpers/boardingpass';
 import { haversine, showConfirmation } from '@/helpers/common';
 import { refreshFlights } from '@/helpers/common';
 import { fromLocaltoLocalISOString, fromUTCtoLocalISOString } from '@/helpers/datetime';
-import { getFlightData } from '@/helpers/flights';
+import { getFlightData, getLastFlightDataError } from '@/helpers/flights';
 import t from '@/helpers/localization';
 import { useLocale } from '@/helpers/localization';
 import { insertFlight, insertPassengerFromBCBP, isFlightExists } from '@/helpers/sqlite';
@@ -173,11 +173,43 @@ export default function AddFlight(props: { today?: Date }) {
           refreshFlights(true, false);
           router.back();
         }
+      } else if (getLastFlightDataError() === 'unauthorized') {
+        setProcessing(false);
+        Alert.alert(t('add.flight_auth_error_title'), t('add.flight_auth_error_description'), [
+          {
+            text: t('buttons.close'),
+            style: 'cancel',
+          },
+          {
+            text: t('buttons.add_manually'),
+            style: 'default',
+            onPress: () => {
+              addFlightManually();
+              dispatch({
+                type: 'add',
+                value: {
+                  airline: state.search.airline,
+                  airlineName: getAirlineData(state.search.airline)?.airlineName ?? '',
+                  flightNumber: state.search.flightNumber,
+                  departureDate: state.search.departureDate,
+                },
+              });
+            },
+          },
+          {
+            text: t('buttons.to_settings'),
+            style: 'default',
+            onPress: () => router.push('/(tabs)/settings'),
+          },
+        ]);
       } else {
+        const isOffline = getLastFlightDataError() === 'offline';
         const value = {
           closeButton: t('buttons.close'),
           confirmButton: t('buttons.add_manually'),
-          description: t('add.flight_not_found_description'),
+          description: isOffline
+            ? t('add.flight_not_found_description_offline')
+            : t('add.flight_not_found_description'),
           title: t('add.flight_not_found_title'),
           showOnlyCloseButton: false,
           onConfirm: () => {

@@ -143,7 +143,11 @@ const Settings = React.memo(() => {
   };
 
   const testFlightsApiConnection = async () => {
-    const isApiWorking = await testApiConnection();
+    const isApiWorking = await testApiConnection({
+      apiName: state['CURRENT_API'],
+      aerodataboxApiKey: state['AEDBX_API_KEY'],
+      aeroapiApiKey: state['AEROAPI_API_KEY'],
+    });
     if (isApiWorking) {
       showConfirmation({
         title: t('settings.test_api_connection_success_title'),
@@ -180,7 +184,7 @@ const Settings = React.memo(() => {
     updateSettings();
   };
 
-  const _apiList = {
+  const apiList = {
     aerodatabox: 'AeroDataBox API',
     aeroapi: 'FlightAware AeroAPI',
   };
@@ -341,60 +345,49 @@ const Settings = React.memo(() => {
         <View className="flex-row my-sm">
           <Value caption={t('settings.aerodatabox')} value={state['AEDBX_API_KEY']} />
         </View>
-        {/* <View
-          className='flex-row mb-sm'
-        >
+        <View className="flex-row mb-sm">
+          <Value caption={t('settings.aeroapi')} value={state['AEROAPI_API_KEY']} />
+        </View>
+        <View className="flex-row mb-sm">
           <Value
-            caption={ t('settings.aeroapi') }
-            value={ state['AEROAPI_API_KEY'] }
+            caption={t('settings.current_api')}
+            value={apiList[state['CURRENT_API'] as keyof typeof apiList] ?? apiList.aerodatabox}
           />
-        </View> 
-        <View
-          className='flex-row mb-sm'
-        >
-          <Value
-            caption={ t('settings.current_api') }
-            value={ apiList[state['CURRENT_API'] as keyof typeof apiList] }
-          />
-        </View> */}
+        </View>
       </View>
       <View className="flex-column">
         <View className="flex-row my-sm">
           <Input
             caption={t('settings.aerodatabox')}
             field="AEDBX_API_KEY"
+            onChange={(value: string) => dispatch({ field: 'AEDBX_API_KEY', value })}
             value={state['AEDBX_API_KEY']}
             width="100%"
           />
         </View>
-        {/* <View
-          className='flex-row mb-sm'
-        >
+        <View className="flex-row mb-sm">
           <Input
-            caption={ t('settings.aeroapi') }
-            field='AEROAPI_API_KEY'
-            value={ state['AEROAPI_API_KEY'] }
-            width='100%'
+            caption={t('settings.aeroapi')}
+            field="AEROAPI_API_KEY"
+            onChange={(value: string) => dispatch({ field: 'AEROAPI_API_KEY', value })}
+            value={state['AEROAPI_API_KEY']}
+            width="100%"
           />
         </View>
-        <View
-          className='flex-row mb-sm'
-        >
-          <View
-            style={{ width: '100%'}}
-            className='pr-md'
-          >
+        <View className="flex-row mb-sm">
+          <View style={{ width: '100%' }} className="pr-md">
             <Select
-              caption={ t('settings.current_api') }
+              caption={t('settings.current_api')}
               data={[
                 { id: 'aerodatabox', value: 'AeroDataBox API' },
-                // { id: 'aeroapi', value: 'FlightAware AeroAPI' },
+                { id: 'aeroapi', value: 'FlightAware AeroAPI' },
               ]}
-              field='CURRENT_API'
-              value={ state['CURRENT_API'] }
+              field="CURRENT_API"
+              onChange={(value: string) => dispatch({ field: 'CURRENT_API', value })}
+              value={state['CURRENT_API']}
             />
           </View>
-        </View> */}
+        </View>
         <Button
           className="px-lg mt-md mb-sm"
           title={t('buttons.test_connection')}

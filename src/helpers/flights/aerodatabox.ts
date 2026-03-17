@@ -1,6 +1,14 @@
 import { fetch } from '@/helpers/common';
 import type { Flight, FlightStatus } from '@/types';
 
+type FlightDataErrorType = 'unauthorized' | 'request_failed' | null;
+
+let lastFlightDataError: FlightDataErrorType = null;
+
+export function getLastFlightDataError(): FlightDataErrorType {
+  return lastFlightDataError;
+}
+
 const adbFlightStatuses: { [key: string]: FlightStatus } = {
   Approaching: 'en_route',
   Arrived: 'arrived',
@@ -26,7 +34,7 @@ export async function checkApi(apiUrl: string, apiKey: string): Promise<boolean>
   try {
     response = await fetch(url, { headers, timeout: 3000 });
   } catch (error) {
-    console.debug(`Error fetching flight data from aerodatabox API: ${error}`);
+    console.debug(`Error checking aerodatabox API connection: ${error}`);
     return false;
   }
   return !!response && response.ok && response.status === 200;
@@ -39,6 +47,7 @@ export async function getFlightData(
   apiUrl: string,
   apiKey: string,
 ): Promise<Flight | null> {
+  lastFlightDataError = null;
   const url = `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`;
   const headers = {
     'x-magicapi-key': apiKey,
@@ -48,9 +57,15 @@ export async function getFlightData(
     response = await fetch(url, { headers, timeout: 3000 });
   } catch (error) {
     console.debug(`Error fetching flight data from aerodatabox API: ${error}`);
+    lastFlightDataError = 'request_failed';
     return null;
   }
   if (!response || !response.ok || response.status !== 200) {
+    if (response && (response.status === 401 || response.status === 403)) {
+      lastFlightDataError = 'unauthorized';
+    } else {
+      lastFlightDataError = 'request_failed';
+    }
     console.debug(`Error response from aerodatabox API:\n${url}\nResponse: ${JSON.stringify(response, null, 2)}`);
     try {
       if (response && response.json) {
