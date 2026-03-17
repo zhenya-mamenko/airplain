@@ -124,64 +124,70 @@ export interface InputProps {
   field: string;
   keyboardType?: KeyboardTypeOptions;
   lines?: number;
+  onChange?: (value: string) => void;
   value: string;
   width?: string;
 }
 
-export const Input = React.memo(({ caption, field, keyboardType, lines = 1, value, width = '100%' }: InputProps) => {
-  const dispatch = useContext(DataCardContext);
-  const [text, setText] = useState(value);
+export const Input = React.memo(
+  ({ caption, field, keyboardType, lines = 1, onChange, value, width = '100%' }: InputProps) => {
+    const dispatch = useContext(DataCardContext);
+    const [text, setText] = useState(value);
 
-  const handleChange = (value: string) => {
-    dispatch({ field, value });
-    setText(value);
-  };
+    const handleChange = (value: string) => {
+      dispatch({ field, value });
+      onChange?.(value);
+      setText(value);
+    };
 
-  return (
-    <View
-      className="flex-column"
-      // @ts-ignore
-      style={width ? { width } : {}}
-    >
-      {caption.length !== 0 && (
-        <Text
-          className="size-md color-primaryContainer mb-sm"
-          ellipsizeMode="tail"
-          numberOfLines={1}
-          style={{ fontVariant: ['small-caps'] }}
-        >
-          {caption.toLocaleLowerCase()}
-        </Text>
-      )}
-      <TextInput
-        className={`color-surface bg-background b-1 bordercolor-outline radius-sm size-md px-smm py-xs ${width === '100%' ? '' : 'mr-md'}`}
-        key={field}
-        keyboardType={keyboardType}
-        numberOfLines={lines}
-        multiline={lines !== 1}
-        style={{ textAlignVertical: 'top' }}
-        submitBehavior="newline"
-        value={text}
-        onChangeText={(v: string) => handleChange(v)}
-      />
-    </View>
-  );
-});
+    return (
+      <View
+        className="flex-column"
+        // @ts-ignore
+        style={width ? { width } : {}}
+      >
+        {caption.length !== 0 && (
+          <Text
+            className="size-md color-primaryContainer mb-sm"
+            ellipsizeMode="tail"
+            numberOfLines={1}
+            style={{ fontVariant: ['small-caps'] }}
+          >
+            {caption.toLocaleLowerCase()}
+          </Text>
+        )}
+        <TextInput
+          className={`color-surface bg-background b-1 bordercolor-outline radius-sm size-md px-smm py-xs ${width === '100%' ? '' : 'mr-md'}`}
+          key={field}
+          keyboardType={keyboardType}
+          numberOfLines={lines}
+          multiline={lines !== 1}
+          style={{ textAlignVertical: 'top' }}
+          submitBehavior="newline"
+          value={text}
+          onChangeText={(v: string) => handleChange(v)}
+        />
+      </View>
+    );
+  },
+);
 
 export interface SelectProps {
   caption: string;
   field: string;
+  onChange?: (value: string) => void;
   value: string;
   data: Array<{ id: string; value: string }>;
   width?: string;
 }
 
-export const Select = React.memo(({ caption, field, value, data, width }: SelectProps) => {
+export const Select = React.memo(({ caption, field, onChange, value, data, width }: SelectProps) => {
   const dispatch = useContext(DataCardContext);
   const [id, setId] = useState(value);
 
   const handleChange = (item: { id: string; value: string }) => {
     dispatch({ field, value: item.id });
+    onChange?.(item.id);
     setId(item.id);
   };
 
@@ -226,12 +232,13 @@ export const Select = React.memo(({ caption, field, value, data, width }: Select
 export interface SwitchProps {
   caption: string;
   field: string;
+  onChange?: (value: boolean) => void;
   value: boolean;
   valuesCaptions?: { true: string; false: string };
   width?: string;
 }
 
-export const Switch = React.memo(({ caption, field, value, valuesCaptions, width = '100%' }: SwitchProps) => {
+export const Switch = React.memo(({ caption, field, onChange, value, valuesCaptions, width = '100%' }: SwitchProps) => {
   const dispatch = useContext(DataCardContext);
   const [isEnabled, setIsEnabled] = useState(value);
   const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
@@ -240,6 +247,7 @@ export const Switch = React.memo(({ caption, field, value, valuesCaptions, width
 
   const handleChange = (value: boolean) => {
     dispatch({ field, value });
+    onChange?.(value);
     setIsEnabled(value);
   };
 

@@ -5,13 +5,26 @@ import * as aerodatabox from '@/helpers/flights/aerodatabox';
 import * as aeroapi from '@/helpers/flights/flightaware';
 import type { Flight } from '@/types';
 
+export type FlightDataErrorType = 'unauthorized' | 'offline' | 'request_failed' | null;
+
+let lastFlightDataError: FlightDataErrorType = null;
+
+export function getLastFlightDataError(): FlightDataErrorType {
+  return lastFlightDataError;
+}
+
 interface ApiData {
   key: string | undefined;
   url: string | undefined;
   module: any;
 }
 
-const apiList: { [key: string]: Function } = {
+interface ApiOverrides {
+  aerodataboxApiKey?: string;
+  aeroapiApiKey?: string;
+}
+
+const apiList: { [key: string]: () => ApiData } = {
   aerodatabox: (): ApiData => ({
     key: settings.AEDBX_API_KEY,
     url: AEDBX_API_URL,
@@ -24,8 +37,18 @@ const apiList: { [key: string]: Function } = {
   }),
 };
 
-function getApi(name: string = settings.CURRENT_API): ApiData | null {
-  const api = apiList[name]();
+function getApi(name: string = settings.CURRENT_API, overrides?: ApiOverrides): ApiData | null {
+  const apiFactory = apiList[name] ?? apiList.aerodatabox;
+  if (!apiFactory) {
+    return null;
+  }
+  const api = apiFactory();
+  if (name === 'aerodatabox' && overrides?.aerodataboxApiKey !== undefined) {
+    api.key = overrides.aerodataboxApiKey;
+  }
+  if (name === 'aeroapi' && overrides?.aeroapiApiKey !== undefined) {
+    api.key = overrides.aeroapiApiKey;
+  }
   if (!api?.key || !api?.url) {
     return null;
   }
@@ -33,24 +56,43 @@ function getApi(name: string = settings.CURRENT_API): ApiData | null {
 }
 
 export const getFlightData = async (airline: string, flightNumber: string, date: string): Promise<Flight | null> => {
+  lastFlightDataError = null;
   console.debug(`Fetching flight data from API: ${airline} ${flightNumber} ${date}`);
   const state = await NetInfo.fetch();
-  if (!state.isConnected) {
+  if (!state.isConnected || state.isInternetReachable === false) {
+    lastFlightDataError = 'offline';
     return null;
   }
   const api = getApi();
   if (!api || !api.key || !api.url || !api.module) {
+    lastFlightDataError = 'request_failed';
     return null;
   }
-  return await api.module.getFlightData(airline, flightNumber, date, api.url, api.key);
+  const result = await api.module.getFlightData(airline, flightNumber, date, api.url, api.key);
+  if (result) {
+    return result;
+  }
+  if (typeof api.module.getLastFlightDataError === 'function') {
+    lastFlightDataError = api.module.getLastFlightDataError();
+  } else {
+    lastFlightDataError = 'request_failed';
+  }
+  return null;
 };
 
-export const testApiConnection = async (): Promise<boolean> => {
+export const testApiConnection = async (options?: {
+  apiName?: string;
+  aerodataboxApiKey?: string;
+  aeroapiApiKey?: string;
+}): Promise<boolean> => {
   const state = await NetInfo.fetch();
-  if (!state.isConnected) {
+  if (!state.isConnected || state.isInternetReachable === false) {
     return false;
   }
-  const api = getApi();
+  const api = getApi(options?.apiName ?? settings.CURRENT_API, {
+    aerodataboxApiKey: options?.aerodataboxApiKey,
+    aeroapiApiKey: options?.aeroapiApiKey,
+  });
   if (!api || !api.key || !api.url || !api.module) {
     return false;
   }

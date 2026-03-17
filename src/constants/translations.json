@@ -286,8 +286,11 @@
       "flight_already_added_title": "Flight in list",
       "flight_already_added_description": "This flight is already in your list.",
       "flight_already_added_description_bcbp": "Do you want update it with boarding pass data?",
-      "flight_not_found_title": "FLight not found",
-      "flight_not_found_description": "Possible reasons:\n\n• The flight is multi-leg.\n• This is a charter flight.\n• The flight is not available on selected date."
+      "flight_auth_error_title": "Authorization error",
+      "flight_auth_error_description": "Could not authorize request to Flights API. Please check API key in Settings.",
+      "flight_not_found_title": "Flight not found",
+      "flight_not_found_description": "Possible reasons:\n\n• The flight is multi-leg.\n• This is a charter flight.\n• The flight is not available on selected date.",
+      "flight_not_found_description_offline": "No network connection. Check internet access and try again."
     },
     "buttons": {
       "add_manually": "Add manually",
@@ -300,6 +303,7 @@
       "no": "No",
       "save": "Save",
       "test_connection": "Test connection",
+      "to_settings": "Go to settings",
       "update": "Update",
       "yes": "Yes"
     },
@@ -747,8 +751,11 @@
       "flight_already_added_title": "Рейс в списке",
       "flight_already_added_description": "Этот рейс уже добавлен в ваш список.",
       "flight_already_added_description_bcbp": "Хотите обновить его данными из посадочного?",
+      "flight_auth_error_title": "Ошибка авторизации",
+      "flight_auth_error_description": "Не удалось авторизовать запрос к API рейсов. Проверьте API-ключ в настройках.",
       "flight_not_found_title": "Рейс не найден",
-      "flight_not_found_description": "Возможные причины:\n\n• У рейса несколько сегментов.\n• Это чартерный рейс.\n• Рейс отсутствует на выбранную дату."
+      "flight_not_found_description": "Возможные причины:\n\n• У рейса несколько сегментов.\n• Это чартерный рейс.\n• Рейс отсутствует на выбранную дату.",
+      "flight_not_found_description_offline": "Нет подключения к сети. Проверьте интернет и попробуйте снова."
     },
     "buttons": {
       "add_manually": "Добавить вручную",
@@ -761,6 +768,7 @@
       "no": "Нет",
       "save": "Сохранить",
       "test_connection": "Проверить подключение",
+      "to_settings": "В настройки",
       "update": "Обновить",
       "yes": "Да"
     },
