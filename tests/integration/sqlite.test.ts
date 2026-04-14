@@ -269,7 +269,7 @@ describe('SQLite Integration Tests', () => {
         ...mockFlight,
         actualStartDatetime: '2024-08-29 08:50:00+01:00',
         actualEndDatetime: '2024-08-29 12:15:00+02:00',
-        aircraftType: 'B738',
+        aircraftType: 'QQQQ',
         aircraftRegNumber: 'N12345',
         departureTerminal: '1',
         departureGate: 'A12',
@@ -283,7 +283,7 @@ describe('SQLite Integration Tests', () => {
       expect(result).toBe(true);
 
       const flights = await repository.getFlights([], 10, 0, 'DESC');
-      expect(flights[0].aircraftType).toBe('B738');
+      expect(flights[0].aircraftType).toBe('QQQQ');
       expect(flights[0].aircraftRegNumber).toBe('N12345');
       expect(flights[0].notes).toBe('Test flight notes');
       expect(flights[0].departureTerminal).toBe('1');
@@ -294,7 +294,7 @@ describe('SQLite Integration Tests', () => {
         '100',
       );
       expect(sqlResult).toBeDefined();
-      expect(sqlResult.aircraft_type).toBe('B738');
+      expect(sqlResult.aircraft_type).toBe('QQQQ');
       expect(sqlResult.aircraft_reg_number).toBe('N12345');
       expect(sqlResult.notes).toBe('Test flight notes');
       expect(sqlResult.departure_terminal).toBe('1');

@@ -1,4 +1,1 @@
-Feature: Added FlightAware API.
-
-Bugfix: The app now checks API authorization status when searching for a flight and shows an appropriate message.
-Bugfix: Fixed several typos.
+Update: Added ICAO aircraft types.
