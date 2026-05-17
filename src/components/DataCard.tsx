@@ -1,7 +1,13 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 import React, { Ref, createContext, forwardRef, useContext, useState } from 'react';
-import { KeyboardAvoidingView, KeyboardTypeOptions, Pressable, Switch as _Switch } from 'react-native';
+import {
+  InputModeOptions,
+  KeyboardAvoidingView,
+  KeyboardTypeOptions,
+  Pressable,
+  Switch as _Switch,
+} from 'react-native';
 import { Text, TextInput, View } from 'react-native-picasso';
 
 import { Select as _Select } from '@/components/Select';
@@ -122,6 +128,7 @@ export const Value = React.memo(({ caption, value, lines = 1, width = '100%', se
 export interface InputProps {
   caption: string;
   field: string;
+  inputMode?: InputModeOptions | undefined;
   keyboardType?: KeyboardTypeOptions;
   lines?: number;
   onChange?: (value: string) => void;
@@ -130,11 +137,17 @@ export interface InputProps {
 }
 
 export const Input = React.memo(
-  ({ caption, field, keyboardType, lines = 1, onChange, value, width = '100%' }: InputProps) => {
+  ({ caption, field, inputMode, keyboardType, lines = 1, onChange, value, width = '100%' }: InputProps) => {
     const dispatch = useContext(DataCardContext);
     const [text, setText] = useState(value);
 
     const handleChange = (value: string) => {
+      if (inputMode === 'numeric') {
+        value = value.replace(/[^0-9]/g, '').replace(/^0+/g, '');
+        if (value.length === 0 || isNaN(Number(value))) {
+          return;
+        }
+      }
       dispatch({ field, value });
       onChange?.(value);
       setText(value);
@@ -158,6 +171,7 @@ export const Input = React.memo(
         )}
         <TextInput
           className={`color-surface bg-background b-1 bordercolor-outline radius-sm size-md px-smm py-xs ${width === '100%' ? '' : 'mr-md'}`}
+          inputMode={inputMode}
           key={field}
           keyboardType={keyboardType}
           numberOfLines={lines}

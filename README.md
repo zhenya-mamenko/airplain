@@ -27,7 +27,7 @@ Past flights are used for statistics and achievement awards, which can be viewed
 
 ### Statistics
 
-Flight data allows you to view interesting statistics for all time or broken down by years: total number of flights, time in the air, distance, etc., as well as information about your average flight.
+Flight data allows you to view interesting statistics for all time or broken down by years: total number of flights, time in the air, distance, etc., as well as information about your average flight. Information about your Top's 10 also available.
 
 <img src="https://github.com/user-attachments/assets/7f4fd98a-55b2-445e-914b-4d99ddf09617" style="width: 250px; align: left;" />
 
@@ -73,10 +73,6 @@ The application has minimal requirements. Your device must meet the following cr
 ## Data Privacy
 
 All data entered into the application is stored **locally on the device**. No data is transmitted to external servers or third parties. This ensures complete user privacy and data security.
-
-## What's Next
-
-FlightAware API will also be added.
 
 ## Releases
 

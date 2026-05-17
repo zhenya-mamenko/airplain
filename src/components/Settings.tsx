@@ -298,7 +298,8 @@ const Settings = React.memo(() => {
           <Input
             caption={t('settings.flights_limit')}
             field="FLIGHTS_LIMIT"
-            keyboardType="numeric"
+            inputMode="numeric"
+            keyboardType="number-pad"
             value={state['FLIGHTS_LIMIT'].toString()}
             width="50%"
           />
