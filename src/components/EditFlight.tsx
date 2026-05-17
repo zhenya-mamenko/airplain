@@ -145,16 +145,20 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
   const bcbpDispatch = async (action: any) => {
     const { type, value } = action;
     if (type === 'bcbp') {
-      const leg = value.data.data?.legs?.[0];
-      const result: Partial<Flight> = {
-        bcbp: value,
-        bcbpPkpass: value.pkpass,
-        seatNumber: leg?.seatNumber?.replace(/^0+/, '') ?? '',
-        pnr: leg?.operatingCarrierPNR ?? '',
-        passengerName: value.data.data?.passengerName ?? '',
-      };
-      await dataCardOnSave(result);
-      boardingpassMarkAsSaved.current();
+      const departureAirport = props.data.departureAirport;
+      const arrivalAirport = props.data.arrivalAirport;
+      for (const leg of value.data.data?.legs ?? []) {
+        if (leg.departureAirport !== departureAirport || leg.arrivalAirport !== arrivalAirport) continue;
+        const result: Partial<Flight> = {
+          bcbp: value,
+          bcbpPkpass: value.pkpass,
+          seatNumber: leg?.seatNumber?.replace(/^0+/, '') ?? '',
+          pnr: leg?.operatingCarrierPNR ?? '',
+          passengerName: value.data.data?.passengerName ?? '',
+        };
+        await dataCardOnSave(result);
+        boardingpassMarkAsSaved.current();
+      }
     }
   };
 
@@ -628,15 +632,6 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
           />
         </View>
       )}
-      <View className="flex-row mb-sm">
-        <Value
-          caption={t('measurements.distance')}
-          selectable={!dragEnabled}
-          value={`${state.distance.toLocaleString(locale)}${t('measurements.km')}`}
-          width="66%"
-        />
-        <Value caption={t('measurements.flight_time')} selectable={!dragEnabled} value={durationString} width="34%" />
-      </View>
     </>
   );
 
@@ -657,6 +652,15 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
         {flightValues}
         <View className="flex-row mb-sm">
           <Value
+            caption={t('measurements.distance')}
+            selectable={!dragEnabled}
+            value={`${state.distance.toLocaleString(locale)}${t('measurements.km')}`}
+            width="66%"
+          />
+          <Value caption={t('measurements.flight_time')} selectable={!dragEnabled} value={durationString} width="34%" />
+        </View>
+        <View className="flex-row mb-sm">
+          <Value
             caption={t('flights.status')}
             selectable={!dragEnabled}
             value={flightStatuses[state.status] ?? flightStatuses['unknown']}
@@ -666,6 +670,17 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
       </View>
       <View className="flex-column">
         {flightValues}
+        <View className="flex-row mb-sm">
+          <Input
+            field="distance"
+            caption={t('measurements.distance')}
+            inputMode="numeric"
+            keyboardType="number-pad"
+            value={`${state['distance'] ?? 0}`}
+            width="66%"
+          />
+          <Value caption={t('measurements.flight_time')} selectable={!dragEnabled} value={durationString} width="34%" />
+        </View>
         <View className="flex-row mb-sm">
           <View style={{ width: '100%' }} className="pr-md">
             <Select
