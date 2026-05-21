@@ -14,7 +14,7 @@ export const parseWeather = (data: any, color: string, iconSize: number = 20): W
   const icons: Array<React.JSX.Element> = [];
   const iconsProps = {
     color,
-    style: { width: iconSize, height: iconSize, marginLeft: 4 },
+    style: { width: iconSize, height: iconSize, marginLeft: 4, marginTop: (20 - iconSize) / 2 },
   };
 
   const weatherIcon = ((data.is_day == 0 ? weatherIcons.night : weatherIcons.day) as any)[`${code}`];

@@ -20,12 +20,19 @@ import Animated, {
 
 import FlightsFilterModal from '@/components/FlightsFilterModal';
 import { GlobalContext, GlobalContextProvider } from '@/components/GlobalContext';
+import { settings } from '@/constants/settings';
 import { prepareAchievements } from '@/helpers/achievements';
 import { loadAirlines } from '@/helpers/airdata';
 import '@/helpers/backgroundtasks';
+import {
+  maybePromptBatteryOptimizationExemption,
+  syncBackgroundFlights,
+  syncBackgroundTaskConfig,
+} from '@/helpers/backgroundtasks';
 import emitter from '@/helpers/emitter';
 import t from '@/helpers/localization';
-import { closeDatabase, openDatabase } from '@/helpers/sqlite';
+import { syncScheduledFlightReminders } from '@/helpers/notifications';
+import { getActualFlights, openDatabase } from '@/helpers/sqlite';
 import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
@@ -123,6 +130,11 @@ function RootLayout() {
         const isDbOpened = await openDatabase();
         if (isDbOpened) {
           await loadAirlines();
+          const actualFlights = await getActualFlights(settings.FLIGHTS_LIMIT);
+          await syncBackgroundTaskConfig();
+          await maybePromptBatteryOptimizationExemption();
+          await syncBackgroundFlights(actualFlights);
+          await Promise.allSettled(actualFlights.map((flight) => syncScheduledFlightReminders(flight)));
           await refreshAchievementsCallback.current();
           await sleep(1000);
           setAppIsReady(isDbOpened);
@@ -134,10 +146,6 @@ function RootLayout() {
     }
 
     if (bgImage) prepare();
-
-    return () => {
-      closeDatabase();
-    };
   }, [bgImage]);
 
   const planeAnimatedStyle = useAnimatedStyle(() => {

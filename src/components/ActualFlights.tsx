@@ -10,6 +10,7 @@ import FlightCard from '@/components/FlightCard';
 import LandedFlightCard from '@/components/LandedFlightCard';
 import { settings as _settings } from '@/constants/settings';
 import { fetchActualFlights } from '@/helpers/airdata';
+import { syncBackgroundFlights } from '@/helpers/backgroundtasks';
 import {
   flightToDepartingFlightData,
   flightToFlightData,
@@ -54,6 +55,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
       try {
         if (settings.ONLY_MANUAL_REFRESH === 'false' || refreshAnimation || forceRefresh) {
           const flights = await fetchActualFlights(props.now ?? new Date(), forceRefresh);
+          await syncBackgroundFlights(flights);
           if (flights.length !== 0) {
             if (settings.ONLY_MANUAL_REFRESH === 'false') {
               startBackgroundTask();

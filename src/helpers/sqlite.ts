@@ -5,6 +5,7 @@ import airports from '@/constants/airports.json';
 import { DBNAME, SQLDIR } from '@/constants/settings';
 import { type BCBPData } from '@/helpers/boardingpass';
 import { camelCase, readFileToString, snakeCase } from '@/helpers/common';
+import { cancelScheduledFlightReminders, syncScheduledFlightReminders } from '@/helpers/notifications';
 import type { AchievementData, AirlineData, Flight, PKPassData, StatsData } from '@/types';
 
 export interface Condition {
@@ -100,6 +101,8 @@ export interface SQLiteRepository {
 }
 
 let defaultRepository: SQLiteRepository | undefined;
+let openingRepositoryPromise: Promise<boolean> | undefined;
+let openedDatabaseName: string | undefined;
 
 export function createDefaultAssets(): ResolvedDatabaseAssets {
   const preparedAirports = airports.map((airport) =>
@@ -578,41 +581,73 @@ async function getRepositoryOrThrow(errorMessage: string): Promise<SQLiteReposit
 
 export function setDatabaseRepository(repository?: SQLiteRepository) {
   defaultRepository = repository;
+  if (!repository) {
+    openedDatabaseName = undefined;
+  }
 }
 
 export async function openDatabase(dbName: string = DBNAME): Promise<boolean> {
-  if (defaultRepository) {
-    await defaultRepository.close();
-    defaultRepository = undefined;
+  if (defaultRepository && openedDatabaseName === dbName) {
+    return true;
   }
-  let database: SQLiteDatabase | undefined;
+
+  if (openingRepositoryPromise) {
+    const opened = await openingRepositoryPromise;
+    if (opened && defaultRepository && openedDatabaseName === dbName) {
+      return true;
+    }
+  }
+
+  const openPromise = (async (): Promise<boolean> => {
+    if (defaultRepository) {
+      await defaultRepository.close();
+      defaultRepository = undefined;
+      openedDatabaseName = undefined;
+    }
+
+    let database: SQLiteDatabase | undefined;
+    try {
+      database = await openDatabaseAsync(dbName);
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+    if (!database) {
+      console.error("Database can't be opened");
+      return false;
+    }
+    try {
+      const repository = await createSQLiteRepository(database);
+      defaultRepository = repository;
+      openedDatabaseName = dbName;
+    } catch (e) {
+      console.error(e);
+      await database.closeAsync();
+      return false;
+    }
+    return true;
+  })();
+
+  openingRepositoryPromise = openPromise;
   try {
-    database = await openDatabaseAsync(dbName);
-  } catch (e) {
-    console.error(e);
-    return false;
+    return await openPromise;
+  } finally {
+    if (openingRepositoryPromise === openPromise) {
+      openingRepositoryPromise = undefined;
+    }
   }
-  if (!database) {
-    console.error("Database can't be opened");
-    return false;
-  }
-  try {
-    const repository = await createSQLiteRepository(database);
-    defaultRepository = repository;
-  } catch (e) {
-    console.error(e);
-    await database.closeAsync();
-    return false;
-  }
-  return true;
 }
 
 export async function closeDatabase() {
+  if (openingRepositoryPromise) {
+    await openingRepositoryPromise;
+  }
   if (!defaultRepository) {
     return;
   }
   await defaultRepository.close();
   defaultRepository = undefined;
+  openedDatabaseName = undefined;
 }
 
 export async function fillDataFromArray(table: string, records: Array<any>) {
@@ -654,12 +689,42 @@ export async function getFlight(flightId: number): Promise<Flight | undefined> {
 
 export async function insertFlight(flight: Flight): Promise<boolean> {
   const repository = await getRepositoryOrThrow("Can't insert flight: database not opened");
-  return repository.insertFlight(flight);
+  const inserted = await repository.insertFlight(flight);
+  if (!inserted) {
+    return false;
+  }
+
+  try {
+    const flightId = await repository.isFlightExists(
+      flight.airline,
+      flight.flightNumber,
+      flight.startDatetime.substring(0, 10),
+    );
+    if (flightId) {
+      flight.flightId = flightId;
+      await syncScheduledFlightReminders(flight);
+    }
+  } catch (error) {
+    console.warn('Failed to sync scheduled flight reminders after insert', error);
+  }
+
+  return true;
 }
 
 export async function updateFlight(flight: Flight): Promise<boolean> {
   const repository = await getRepositoryOrThrow("Can't insert flight: database not opened");
-  return repository.updateFlight(flight);
+  const updated = await repository.updateFlight(flight);
+  if (!updated) {
+    return false;
+  }
+
+  try {
+    await syncScheduledFlightReminders(flight);
+  } catch (error) {
+    console.warn('Failed to sync scheduled flight reminders after update', error);
+  }
+
+  return true;
 }
 
 export async function insertPassengerFromBCBP(
@@ -675,11 +740,36 @@ export async function insertPassengerFromBCBP(
 export async function archiveFlight(flightId: number, state: number = 1) {
   const repository = await getRepositoryOrThrow("Can't archive flight: database not opened");
   await repository.archiveFlight(flightId, state);
+
+  try {
+    if (state === 1) {
+      await cancelScheduledFlightReminders(flightId);
+      return;
+    }
+
+    const flight = await repository.getFlight(flightId);
+    if (flight) {
+      await syncScheduledFlightReminders(flight);
+    }
+  } catch (error) {
+    console.warn('Failed to sync scheduled flight reminders after archive change', error);
+  }
 }
 
 export async function deleteFlight(flightId: number): Promise<boolean> {
   const repository = await getRepositoryOrThrow("Can't delete flight: database not opened");
-  return repository.deleteFlight(flightId);
+  const deleted = await repository.deleteFlight(flightId);
+  if (!deleted) {
+    return false;
+  }
+
+  try {
+    await cancelScheduledFlightReminders(flightId);
+  } catch (error) {
+    console.warn('Failed to cancel scheduled flight reminders after delete', error);
+  }
+
+  return true;
 }
 
 export async function getStats(): Promise<StatsData> {

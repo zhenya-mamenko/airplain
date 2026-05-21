@@ -8,6 +8,12 @@ jest.mock('expo-file-system/legacy', () => ({
   readAsStringAsync: jest.fn((file: any) => file),
 }));
 
+jest.mock('@/helpers/notifications', () => ({
+  __esModule: true,
+  cancelScheduledFlightReminders: jest.fn(),
+  syncScheduledFlightReminders: jest.fn(),
+}));
+
 describe('SQLite Integration Tests', () => {
   let database: any;
   let repository: db.SQLiteRepository;
@@ -1555,6 +1561,14 @@ describe('SQLite Module-Level Functions', () => {
       await db.openDatabase(':memory:');
       const result = await db.openDatabase(':memory:');
       expect(result).toBe(true);
+    });
+
+    it('should reuse the same in-flight open request', async () => {
+      const [first, second] = await Promise.all([db.openDatabase(':memory:'), db.openDatabase(':memory:')]);
+
+      expect(first).toBe(true);
+      expect(second).toBe(true);
+      expect(await db.getAirlines()).not.toHaveLength(0);
     });
 
     it('should handle database initialization errors', async () => {

@@ -1,4 +1,7 @@
-Update: When adding a multi-leg boarding pass to an existing flight, the correct leg is now selected automatically.
-Update: Flight distance can be edited.
+Fix: Incorrect positioning of forecast icons.
+
+Refactoring: Multiple changes to the native background task to properly handle push notifications.
+
+Improvement: Added test coverage for the native modules.
 
 Chore: Updated dependencies.

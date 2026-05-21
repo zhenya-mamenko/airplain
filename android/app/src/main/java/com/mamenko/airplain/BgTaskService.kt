@@ -10,8 +10,9 @@ import android.util.Log
 class BgTaskService : HeadlessJsTaskService() {
     override fun getTaskConfig(intent: Intent?): HeadlessJsTaskConfig? {
         Log.d("AirPlain", "getTaskConfig")
-        val extras = intent?.extras
-        val data = if (extras != null) Arguments.fromBundle(extras) else Arguments.createMap()
+        val bundle = Bundle(intent?.extras ?: Bundle())
+        bundle.putString("executionMode", "headless")
+        val data = Arguments.fromBundle(bundle)
         return HeadlessJsTaskConfig(
             "flightsCheckTask",
             data,

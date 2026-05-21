@@ -5,8 +5,11 @@ on:
   push:
     branches: [main]
     paths:
+      - android/**
+      - package.json
       - src/**
       - tests/**
+      - .github/workflows/test.yml
 
   workflow_call:
 
@@ -17,10 +20,11 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: lts/*
+          node-version: 24.x
+          cache: npm
       - name: Install dependencies
         run: |
           npm ci
@@ -33,3 +37,18 @@ jobs:
       - name: Run Jest tests
         run: |
           npm run test
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'microsoft'
+          java-version: '21.0.2'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+      - name: Prebuild
+        run: |
+          mv android/ android_temp/
+          npx expo prebuild --platform android
+          \cp -frT android_temp/ android/
+      - name: Run Android unit tests
+        run: |
+          npm run test:android
