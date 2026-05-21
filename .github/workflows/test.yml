@@ -37,8 +37,13 @@ jobs:
       - name: Run Jest tests
         run: |
           npm run test
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'microsoft'
+          java-version: '21.0.2'
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
       - name: Prebuild
         run: |
           mv android/ android_temp/
