@@ -36,6 +36,10 @@ jobs:
       - name: Run Jest tests
         run: |
           npm run test
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
       - name: Run Android unit tests
         run: |
           npm run test:android
