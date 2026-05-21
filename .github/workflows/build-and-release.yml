@@ -6,6 +6,12 @@ on:
       - 'v*'
 
   workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create release'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   tests:
@@ -43,6 +49,7 @@ jobs:
           cd android
           ./gradlew app:assembleRelease --no-daemon
       - name: Sign APK
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.create_release }}
         run: |
           echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > release.keystore
           $ANDROID_SDK_ROOT/build-tools/36.0.0/apksigner sign \
@@ -53,6 +60,7 @@ jobs:
             --out airplain.apk \
             android/app/build/outputs/apk/release/app-release-unsigned.apk
       - name: Release
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.create_release }}
         uses: softprops/action-gh-release@v2
         with:
           files: airplain.apk
