@@ -35,6 +35,9 @@ jobs:
           npx expo prebuild --platform android
           \cp -frT android_temp/ android/
           sed -i 's/signingConfig signingConfigs.debug/signingConfig null/g' android/app/build.gradle
+      - name: Generate Android resources
+        run: |
+          npm run generate:android-resources
       - name: Build APK
         run: |
           cd android
