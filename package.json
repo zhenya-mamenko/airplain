@@ -7,6 +7,7 @@
     "android": "expo run:android",
     "build": "cd android && gradlew app:assembleRelease",
     "test": "jest",
+    "test:android": "node -e \"const { spawnSync } = require('child_process'); const isWin = process.platform === 'win32'; const cmd = isWin ? 'gradlew.bat' : './gradlew'; const result = spawnSync(cmd, ['app:testDebugUnitTest'], { cwd: 'android', stdio: 'inherit', shell: isWin }); process.exit(result.status ?? 1);\"",
     "check-updates": "expo install --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",

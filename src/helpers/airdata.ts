@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
 import { getCalendars } from 'expo-localization';
+import { NativeModules } from 'react-native';
 
 import airports from '@/constants/airports.json';
 import { deleteSetting, getSetting, setSetting, settings } from '@/constants/settings';
@@ -9,13 +10,33 @@ import emitter from '@/helpers/emitter';
 import { getFlightData } from '@/helpers/flights';
 import t from '@/helpers/localization';
 import * as Notifications from '@/helpers/notifications';
+import { hasScheduledFlightReminder } from '@/helpers/notifications';
 import { archiveFlight, getActualFlights, getAirlines, updateFlight } from '@/helpers/sqlite';
 import type { AirlineData, AirportData, Flight } from '@/types';
 
-export const flightsCheckTask = async () => {
+const { AirPlainBgModule } = NativeModules;
+
+interface NativeBackgroundFlightSnapshot {
+  actualEndDatetime?: string;
+  actualStartDatetime?: string;
+  arrivalTerminal?: string;
+  baggageBelt?: string;
+  departureCheckInDesk?: string;
+  departureGate?: string;
+  departureTerminal?: string;
+  endDatetime: string;
+  flightId?: number;
+  status: string;
+}
+
+interface FlightsCheckTaskOptions {
+  executionMode?: 'headless' | 'interactive';
+}
+
+export const flightsCheckTask = async (options: FlightsCheckTaskOptions = {}) => {
   const flights = await getActualFlights(1);
   if (flights.length !== 0) {
-    await updateFlightsState(flights, new Date(), false);
+    await updateFlightsState(flights, new Date(), false, options);
   } else {
     stopBackgroundTask();
   }
@@ -72,13 +93,85 @@ export const airlineLogoUri = (airline: string, plainUri: boolean = false) => {
   return plainUri ? uri : { uri };
 };
 
+const getNativeBackgroundFlightsSnapshot = async (): Promise<NativeBackgroundFlightSnapshot[]> => {
+  try {
+    if (!AirPlainBgModule?.getBackgroundFlightsSnapshot) {
+      return [];
+    }
+    const snapshot = await AirPlainBgModule.getBackgroundFlightsSnapshot();
+    if (!snapshot) {
+      return [];
+    }
+    return JSON.parse(snapshot);
+  } catch (error) {
+    console.debug('Failed to read native background flights snapshot:', error);
+    return [];
+  }
+};
+
+const mergeNativeBackgroundSnapshot = async (flights: Flight[]): Promise<Flight[]> => {
+  const snapshotFlights = await getNativeBackgroundFlightsSnapshot();
+  if (snapshotFlights.length === 0) {
+    return flights;
+  }
+
+  const snapshotById = new Map(
+    snapshotFlights.filter((flight) => !!flight.flightId).map((flight) => [flight.flightId as number, flight]),
+  );
+  const mergedFlights: Flight[] = [];
+
+  for (const flight of flights) {
+    const snapshot = flight.flightId ? snapshotById.get(flight.flightId) : undefined;
+    if (!snapshot) {
+      mergedFlights.push(flight);
+      continue;
+    }
+
+    const mergedFlight = { ...flight };
+    let hasChanges = false;
+    const mergeableFields: Array<keyof NativeBackgroundFlightSnapshot> = [
+      'actualEndDatetime',
+      'actualStartDatetime',
+      'arrivalTerminal',
+      'baggageBelt',
+      'departureCheckInDesk',
+      'departureGate',
+      'departureTerminal',
+      'status',
+    ];
+
+    for (const field of mergeableFields) {
+      const nextValue = snapshot[field];
+      if (nextValue !== undefined && nextValue !== mergedFlight[field as keyof Flight]) {
+        (mergedFlight as any)[field] = nextValue;
+        hasChanges = true;
+      }
+    }
+
+    if (hasChanges) {
+      await updateFlight(mergedFlight);
+    }
+
+    mergedFlights.push(mergedFlight);
+  }
+
+  return mergedFlights;
+};
+
 export const fetchActualFlights = async (date: Date, forceRefresh: boolean = false): Promise<Flight[]> => {
   let flights = await getActualFlights(settings.FLIGHTS_LIMIT);
+  flights = await mergeNativeBackgroundSnapshot(flights);
   flights = await updateFlightsState(flights, date, forceRefresh);
   return flights;
 };
 
-async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: boolean = false): Promise<Flight[]> {
+async function updateFlightsState(
+  flights: Flight[],
+  date: Date,
+  forceRefresh: boolean = false,
+  options: FlightsCheckTaskOptions = {},
+): Promise<Flight[]> {
+  const shouldSendNotifications = options.executionMode !== 'headless';
   const timeSpan = (hours: number): string => {
     if (hours >= 23 && hours < 24) return '24h';
     if (hours >= 1.9 && hours <= 3 && hours === Math.floor(hours)) return '3h';
@@ -119,77 +212,93 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
                 isFlightUpdated = true;
               }
             } else {
-              messages.push(
-                t('notifications.changed_status', {
-                  status: t(`flights.statuses.${flightData.status}`),
-                }),
-              );
+              if (shouldSendNotifications) {
+                messages.push(
+                  t('notifications.changed_status', {
+                    status: t(`flights.statuses.${flightData.status}`),
+                  }),
+                );
+              }
               flight.status = flightData.status;
               isFlightUpdated = true;
             }
           }
 
           if (!!flightData.actualStartDatetime && flight.actualStartDatetime !== flightData.actualStartDatetime) {
-            messages.push(
-              t('notifications.changed_start_datetime', {
-                time: flightData.actualStartDatetime.substring(11, 16),
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_start_datetime', {
+                  time: flightData.actualStartDatetime.substring(11, 16),
+                }),
+              );
+            }
             flight.actualStartDatetime = flightData.actualStartDatetime;
             isFlightUpdated = true;
           }
           if (!!flightData.departureTerminal && flight.departureTerminal !== flightData.departureTerminal) {
-            messages.push(
-              t('notifications.changed_departure_terminal', {
-                terminal: flightData.departureTerminal,
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_departure_terminal', {
+                  terminal: flightData.departureTerminal,
+                }),
+              );
+            }
             flight.departureTerminal = flightData.departureTerminal;
             isFlightUpdated = true;
           }
           if (!!flightData.departureCheckInDesk && flight.departureCheckInDesk !== flightData.departureCheckInDesk) {
-            messages.push(
-              t('notifications.changed_departure_check_in_desk', {
-                desk: flightData.departureCheckInDesk,
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_departure_check_in_desk', {
+                  desk: flightData.departureCheckInDesk,
+                }),
+              );
+            }
             flight.departureCheckInDesk = flightData.departureCheckInDesk;
             isFlightUpdated = true;
           }
           if (!!flightData.departureGate && flight.departureGate !== flightData.departureGate) {
-            messages.push(
-              t('notifications.changed_departure_gate', {
-                gate: flightData.departureGate,
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_departure_gate', {
+                  gate: flightData.departureGate,
+                }),
+              );
+            }
             flight.departureGate = flightData.departureGate;
             isFlightUpdated = true;
           }
 
           if (!!flightData.actualEndDatetime && flight.actualEndDatetime !== flightData.actualEndDatetime) {
-            messages.push(
-              t('notifications.changed_end_datetime', {
-                time: flightData.actualEndDatetime.substring(11, 16),
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_end_datetime', {
+                  time: flightData.actualEndDatetime.substring(11, 16),
+                }),
+              );
+            }
             flight.actualEndDatetime = flightData.actualEndDatetime;
             isFlightUpdated = true;
           }
           if (!!flightData.arrivalTerminal && flight.arrivalTerminal !== flightData.arrivalTerminal) {
-            messages.push(
-              t('notifications.changed_arrival_terminal', {
-                terminal: flightData.arrivalTerminal,
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_arrival_terminal', {
+                  terminal: flightData.arrivalTerminal,
+                }),
+              );
+            }
             flight.arrivalTerminal = flightData.arrivalTerminal;
             isFlightUpdated = true;
           }
           if (!!flightData.baggageBelt && flight.baggageBelt !== flightData.baggageBelt) {
-            messages.push(
-              t('notifications.changed_baggage_belt', {
-                belt: flightData.baggageBelt,
-              }),
-            );
+            if (shouldSendNotifications) {
+              messages.push(
+                t('notifications.changed_baggage_belt', {
+                  belt: flightData.baggageBelt,
+                }),
+              );
+            }
             flight.baggageBelt = flightData.baggageBelt;
             isFlightUpdated = true;
           }
@@ -253,12 +362,18 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
       flight.info.stateTime = -arrivalMinutes;
     }
 
-    if (hours <= 3 && hours > 2.9 && !flightNotificationsState.beforeFlight3h) {
+    if (
+      hours <= 3 &&
+      hours > 2.9 &&
+      !flightNotificationsState.beforeFlight3h &&
+      !hasScheduledFlightReminder(flight.flightId, 'beforeFlight3h')
+    ) {
       await Notifications.showFlightNotification(
         `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
         t('notifications.before_flight_3h'),
         { url: `/flights/actual?flightId=${flight.flightId}` },
       );
+      await Notifications.cancelScheduledFlightReminder(flight.flightId, 'beforeFlight3h');
       flightNotificationsState.beforeFlight3h = true;
     }
     if (flight.checkInTime && flight.checkInTime !== 0) {
@@ -274,12 +389,16 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
             `${flight.airline}${flight.flightNumber}`,
           );
         }
-        if (!flightNotificationsState.onlineCheckInOpen) {
+        if (
+          !flightNotificationsState.onlineCheckInOpen &&
+          !hasScheduledFlightReminder(flight.flightId, 'onlineCheckInOpen')
+        ) {
           await Notifications.showFlightNotification(
             `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
             t('notifications.online_check_in_open'),
             { url: `/flights/actual?flightId=${flight.flightId}` },
           );
+          await Notifications.cancelScheduledFlightReminder(flight.flightId, 'onlineCheckInOpen');
           flightNotificationsState.onlineCheckInOpen = true;
         }
       }
@@ -296,13 +415,15 @@ async function updateFlightsState(flights: Flight[], date: Date, forceRefresh: b
         startDatetime.toISOString().substring(0, 10),
       );
       if (!!flightData && !!flightData.baggageBelt && flight.baggageBelt !== flightData.baggageBelt) {
-        Notifications.showFlightNotification(
-          `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
-          t('notifications.changed_baggage_belt', {
-            belt: flightData.baggageBelt,
-          }),
-          { url: `/flights/actual?flightId=${flight.flightId}` },
-        );
+        if (shouldSendNotifications) {
+          Notifications.showFlightNotification(
+            `${t('flights.flight')} ${flight.airline} ${flight.flightNumber}`,
+            t('notifications.changed_baggage_belt', {
+              belt: flightData.baggageBelt,
+            }),
+            { url: `/flights/actual?flightId=${flight.flightId}` },
+          );
+        }
         flightNotificationsState.baggageBelt = true;
         flight.baggageBelt = flightData.baggageBelt;
         isFlightUpdated = true;

@@ -76,8 +76,17 @@ jest.mock('@/helpers/flights', () => ({
 
 const mockShowFlightNotification = jest.fn<Promise<void>, [string, string, any?]>();
 const mockShowUrgentNotification = jest.fn<Promise<void>, [string, string, any?]>();
+const mockCancelScheduledFlightReminder = jest.fn<
+  Promise<void>,
+  [number | undefined, 'beforeFlight3h' | 'onlineCheckInOpen']
+>();
+const mockHasScheduledFlightReminder = jest.fn<boolean, [number | undefined, 'beforeFlight3h' | 'onlineCheckInOpen']>();
 
 jest.mock('@/helpers/notifications', () => ({
+  cancelScheduledFlightReminder: (flightId: number | undefined, reminderKey: 'beforeFlight3h' | 'onlineCheckInOpen') =>
+    mockCancelScheduledFlightReminder(flightId, reminderKey),
+  hasScheduledFlightReminder: (flightId: number | undefined, reminderKey: 'beforeFlight3h' | 'onlineCheckInOpen') =>
+    mockHasScheduledFlightReminder(flightId, reminderKey),
   showFlightNotification: (title: string, body: string, data?: any) => mockShowFlightNotification(title, body, data),
   showUrgentNotification: (title: string, body: string, data?: any) => mockShowUrgentNotification(title, body, data),
 }));
@@ -201,6 +210,8 @@ describe('updateFlightsState', () => {
     mockGetFlightData.mockResolvedValue(null);
     mockShowFlightNotification.mockResolvedValue(undefined);
     mockShowUrgentNotification.mockResolvedValue(undefined);
+    mockCancelScheduledFlightReminder.mockResolvedValue(undefined);
+    mockHasScheduledFlightReminder.mockReturnValue(false);
   });
 
   const createMockFlight = (overrides: Partial<Flight> = {}): Flight => ({
@@ -249,6 +260,7 @@ describe('updateFlightsState', () => {
     await fetchActualFlights(new Date());
 
     expect(mockShowFlightNotification).toHaveBeenCalled();
+    expect(mockCancelScheduledFlightReminder).toHaveBeenCalledWith(1, 'beforeFlight3h');
     expect(mockSetSetting).toHaveBeenCalledWith('flight-notifications-1', expect.stringContaining('beforeFlight3h'));
   });
 
@@ -268,6 +280,52 @@ describe('updateFlightsState', () => {
     await fetchActualFlights(new Date());
 
     expect(mockMakeCheckInLink).toHaveBeenCalled();
+    expect(mockShowFlightNotification).toHaveBeenCalled();
+    expect(mockCancelScheduledFlightReminder).toHaveBeenCalledWith(1, 'onlineCheckInOpen');
+  });
+
+  test('updateFlightsState - suppresses before flight JS notification when scheduled reminder still exists', async () => {
+    const startTime = DateTime.now().plus({ hours: 2.95 }).toISO();
+    const endTime = DateTime.now().plus({ hours: 10 }).toISO();
+    mockHasScheduledFlightReminder.mockImplementation((_, reminderKey) => reminderKey === 'beforeFlight3h');
+
+    mockGetActualFlights.mockResolvedValue([
+      createMockFlight({
+        startDatetime: startTime!,
+        endDatetime: endTime!,
+        checkInTime: 0,
+      }),
+    ]);
+
+    await fetchActualFlights(new Date());
+
+    expect(mockShowFlightNotification).not.toHaveBeenCalled();
+    expect(mockCancelScheduledFlightReminder).not.toHaveBeenCalled();
+  });
+
+  test('updateFlightsState - suppresses online check-in JS notification when scheduled reminder still exists', async () => {
+    const startTime = DateTime.now().plus({ hours: 23 }).toISO();
+    const endTime = DateTime.now().plus({ hours: 31 }).toISO();
+    mockHasScheduledFlightReminder.mockImplementation((_, reminderKey) => reminderKey === 'onlineCheckInOpen');
+
+    mockGetActualFlights.mockResolvedValue([
+      createMockFlight({
+        startDatetime: startTime!,
+        endDatetime: endTime!,
+        checkInTime: 24,
+        checkInLink: 'https://example.com/checkin',
+      }),
+    ]);
+
+    await fetchActualFlights(new Date());
+
+    expect(mockMakeCheckInLink).toHaveBeenCalled();
+    expect(mockShowFlightNotification).not.toHaveBeenCalledWith(
+      'flights.flight BA 123',
+      'notifications.online_check_in_open',
+      expect.anything(),
+    );
+    expect(mockCancelScheduledFlightReminder).not.toHaveBeenCalled();
   });
 
   test('updateFlightsState - flight status changes to en_route', async () => {

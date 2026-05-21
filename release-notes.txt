@@ -1,3 +1,7 @@
-Fix: Wrong position of forecast's icons
+Fix: Incorrect positioning of forecast icons.
+
+Refactoring: Multiple changes to the native background task to properly handle push notifications.
+
+Improvement: Added test coverage for the native modules.
 
 Chore: Updated dependencies.

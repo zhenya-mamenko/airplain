@@ -14,6 +14,16 @@ import android.provider.Settings
 
 class AirPlainBgModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
+    private fun createPendingIntent(context: Context): PendingIntent {
+        val intent = BgReceiver.createRunIntent(context)
+        return PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
     override fun getName(): String {
         return "AirPlainBgModule"
     }
@@ -22,11 +32,11 @@ class AirPlainBgModule(reactContext: ReactApplicationContext) : ReactContextBase
     fun startBackgroundTask() {
         val context = reactApplicationContext
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, BgReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = createPendingIntent(context)
         
         try {
             Log.d("AirPlain", "startBackgroundTask")
+            BgReceiver.setBackgroundTaskEnabled(context, true)
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + 60000,
@@ -43,9 +53,9 @@ class AirPlainBgModule(reactContext: ReactApplicationContext) : ReactContextBase
     fun stopBackgroundTask() {
         val context = reactApplicationContext
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, BgReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = createPendingIntent(context)
         Log.d("AirPlain", "stopBackgroundTask")
+        BgReceiver.setBackgroundTaskEnabled(context, false)
         alarmManager.cancel(pendingIntent)
     }
 
@@ -79,5 +89,22 @@ class AirPlainBgModule(reactContext: ReactApplicationContext) : ReactContextBase
                 Log.e("AirPlain", "Failed to request battery optimization exemption", e)
             }
         }
+    }
+
+    @ReactMethod
+    fun syncBackgroundConfig(configJson: String) {
+        BackgroundStateStore.setConfig(reactApplicationContext, configJson)
+        Log.d("AirPlain", "Background config synced")
+    }
+
+    @ReactMethod
+    fun syncBackgroundFlights(flightsJson: String) {
+        BackgroundStateStore.setFlights(reactApplicationContext, flightsJson)
+        Log.d("AirPlain", "Background flights synced")
+    }
+
+    @ReactMethod
+    fun getBackgroundFlightsSnapshot(promise: Promise) {
+        promise.resolve(BackgroundStateStore.getFlights(reactApplicationContext))
     }
 }

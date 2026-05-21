@@ -25,7 +25,9 @@
       "package": "com.mamenko.airplain",
       "permissions": [
         "BACKGROUND_FETCH",
+        "POST_NOTIFICATIONS",
         "RECEIVE_BOOT_COMPLETED",
+        "REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
         "SCHEDULE_EXACT_ALARM",
         "USE_EXACT_ALARM"
       ]

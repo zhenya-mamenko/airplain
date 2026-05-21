@@ -3,6 +3,7 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
 import { parse } from 'csv-parse/sync';
 import * as DocumentPicker from 'expo-document-picker';
+import * as Notifications from 'expo-notifications';
 import React, { useCallback, useReducer } from 'react';
 import { KeyboardAvoidingView, ListRenderItemInfo } from 'react-native';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -11,6 +12,7 @@ import { Text, View } from 'react-native-picasso';
 import Button from '@/components/Button';
 import { DataCard, Input, Select, Switch, Value } from '@/components/DataCard';
 import { getSetting, setSetting, settings } from '@/constants/settings';
+import { maybePromptBatteryOptimizationExemption, syncBackgroundTaskConfig } from '@/helpers/backgroundtasks';
 import { refreshFlights, showConfirmation, startBackgroundTask, stopBackgroundTask } from '@/helpers/common';
 import emitter from '@/helpers/emitter';
 import { testApiConnection } from '@/helpers/flights';
@@ -32,7 +34,7 @@ const Settings = React.memo(() => {
   };
   const [state, dispatch] = useReducer(reducer, settings);
 
-  const updateSettings = useCallback(() => {
+  const updateSettings = useCallback(async () => {
     settings.TEMPERATURE_UNITS = getSetting('TEMPERATURE_UNITS', 'c');
     settings.TEMPERATURE_TYPE = getSetting('TEMPERATURE_TYPE', 'feelslike');
     settings.WEATHER_API_KEY = getSetting('WEATHER_API_KEY', process.env.EXPO_PUBLIC_WEATHER_API_KEY);
@@ -43,9 +45,12 @@ const Settings = React.memo(() => {
     settings.FLIGHTS_LIMIT = parseInt(getSetting('FLIGHTS_LIMIT', '1000'));
     settings.ONLY_MANUAL_REFRESH = getSetting('ONLY_MANUAL_REFRESH', 'true');
     settings.FORCE_REQUEST_API_ON_MANUAL_REFRESH = getSetting('FORCE_REQUEST_API_ON_MANUAL_REFRESH', 'false');
+    await syncBackgroundTaskConfig();
 
     if (settings.ONLY_MANUAL_REFRESH === 'false') {
+      await Notifications.requestPermissionsAsync();
       startBackgroundTask();
+      await maybePromptBatteryOptimizationExemption({ force: true });
     } else {
       stopBackgroundTask();
     }
@@ -181,7 +186,7 @@ const Settings = React.memo(() => {
       dispatch({ field, value });
       setSetting(field, value);
     });
-    updateSettings();
+    await updateSettings();
   };
 
   const apiList = {
