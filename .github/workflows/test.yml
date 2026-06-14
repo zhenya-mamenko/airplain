@@ -48,7 +48,7 @@ jobs:
         run: |
           mv android/ android_temp/
           npx expo prebuild --platform android
-          \cp -frT android_temp/ android/
+          rsync -a android_temp/ android/
       - name: Diagnose Android unit test environment
         run: |
           java -version
