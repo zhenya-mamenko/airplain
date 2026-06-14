@@ -49,6 +49,20 @@ jobs:
           mv android/ android_temp/
           npx expo prebuild --platform android
           \cp -frT android_temp/ android/
+      - name: Diagnose Android unit test environment
+        run: |
+          java -version
+          node -v
+          npm -v
+          echo "--- android/app/build.gradle test configuration ---"
+          sed -n '120,210p' android/app/build.gradle
+          echo "--- android/app/src/test contents ---"
+          find android/app/src/test -type f | sort
+          cd android
+          echo "--- gradle version ---"
+          ./gradlew --version
+          echo "--- debugUnitTestCompileClasspath ---"
+          ./gradlew :app:dependencies --configuration debugUnitTestCompileClasspath --no-daemon
       - name: Run Android unit tests
         run: |
           npm run test:android
