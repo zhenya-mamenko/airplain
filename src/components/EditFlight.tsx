@@ -19,13 +19,14 @@ import { DataCard, DataCardContext, Input, Select, Value } from '@/components/Da
 import DatetimeInput from '@/components/DatetimeInput';
 import LoadBCBPOptions from '@/components/LoadBCBP';
 import flags from '@/constants/flags.json';
-import { getSetting, setSetting } from '@/constants/settings';
+import { getSetting, setSetting, settings } from '@/constants/settings';
 import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
+import { syncBackgroundFlights } from '@/helpers/backgroundtasks';
 import { refreshFlights, showConfirmation } from '@/helpers/common';
 import { durationToLocaleString } from '@/helpers/datetime';
 import { getFlightData } from '@/helpers/flights';
 import t, { useLocale } from '@/helpers/localization';
-import { updateFlight } from '@/helpers/sqlite';
+import { getActualFlights, updateFlight } from '@/helpers/sqlite';
 import { loadForecast, parseWeather } from '@/helpers/weather';
 import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
@@ -133,6 +134,15 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
 
   const [state, dispatch] = useReducer(reducer, props.data);
 
+  const syncBackgroundSnapshotFromDb = useCallback(async () => {
+    try {
+      const flights = await getActualFlights(settings.FLIGHTS_LIMIT);
+      await syncBackgroundFlights(flights);
+    } catch (error) {
+      console.debug('Failed to sync background snapshot after manual update:', error);
+    }
+  }, []);
+
   const departureDate = new Date(state.actualStartDatetime ?? state.startDatetime);
   const arrivalDate = new Date(state.actualEndDatetime ?? state.endDatetime);
   const durationString = durationToLocaleString(
@@ -171,6 +181,7 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
         result[field] = value;
       });
     await updateFlight({ ...state, ...result });
+    await syncBackgroundSnapshotFromDb();
     refreshFlights(true, false);
   };
 
@@ -204,12 +215,13 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
           dispatch({ field: 'recordType', value: 1 });
           result.recordType = 1;
           await updateFlight({ ...state, ...result });
+          await syncBackgroundSnapshotFromDb();
           refreshFlights(false);
         }
       },
     };
     showConfirmation(confirmationDialog);
-  }, [state, dispatch]);
+  }, [state, dispatch, syncBackgroundSnapshotFromDb]);
 
   useEffect(() => {
     navigation?.setOptions({

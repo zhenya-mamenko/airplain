@@ -19,6 +19,7 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -137,6 +138,16 @@ object NativeBackgroundProcessor {
             val shouldCheckScheduledChanges = bucket.isNotEmpty() && shouldPollBucket(pollState, flightId, bucket, minutes)
             val shouldCheckArrivalBaggage = arrivalMinutes != null && arrivalMinutes in 0..<30 && arrivalMinutes % 5 == 0 && optStringOrNull(flight, "baggageBelt") == null
 
+            if (bucket.isNotEmpty()) {
+                val flightState = pollState.optJSONObject(flightId.toString()) ?: JSONObject()
+                if (!flightState.has(bucket)) {
+                    // Seed the current bucket to avoid immediate polling right after snapshot sync.
+                    flightState.put(bucket, minutes)
+                    pollState.put(flightId.toString(), flightState)
+                    pollStateChanged = true
+                }
+            }
+
             if (!shouldCheckScheduledChanges && !shouldCheckArrivalBaggage) {
                 continue
             }
@@ -166,7 +177,7 @@ object NativeBackgroundProcessor {
                 }
             }
 
-            if (apiData.actualStartDatetime != null && !isSameInstant(optStringOrNull(flight, "actualStartDatetime"), apiData.actualStartDatetime)) {
+            if (apiData.actualStartDatetime != null && apiData.actualStartDatetime != "" && !isSameInstant(optStringOrNull(flight, "actualStartDatetime"), apiData.actualStartDatetime)) {
                 if (shouldCheckScheduledChanges) {
                     messages.add(
                         context.getString(
@@ -179,7 +190,7 @@ object NativeBackgroundProcessor {
                 flightUpdated = true
             }
 
-            if (apiData.departureTerminal != null && optStringOrNull(flight, "departureTerminal") != apiData.departureTerminal) {
+            if (apiData.departureTerminal != null && apiData.departureTerminal != "" && optStringOrNull(flight, "departureTerminal") != apiData.departureTerminal) {
                 if (shouldCheckScheduledChanges) {
                     messages.add(
                         context.getString(
@@ -192,7 +203,7 @@ object NativeBackgroundProcessor {
                 flightUpdated = true
             }
 
-            if (apiData.departureCheckInDesk != null && optStringOrNull(flight, "departureCheckInDesk") != apiData.departureCheckInDesk) {
+            if (apiData.departureCheckInDesk != null && apiData.departureCheckInDesk != "" && optStringOrNull(flight, "departureCheckInDesk") != apiData.departureCheckInDesk) {
                 if (shouldCheckScheduledChanges) {
                     messages.add(
                         context.getString(
@@ -205,7 +216,7 @@ object NativeBackgroundProcessor {
                 flightUpdated = true
             }
 
-            if (apiData.departureGate != null && optStringOrNull(flight, "departureGate") != apiData.departureGate) {
+            if (apiData.departureGate != null && apiData.departureGate != "" && optStringOrNull(flight, "departureGate") != apiData.departureGate) {
                 if (shouldCheckScheduledChanges) {
                     messages.add(
                         context.getString(
@@ -218,7 +229,7 @@ object NativeBackgroundProcessor {
                 flightUpdated = true
             }
 
-            if (apiData.actualEndDatetime != null && !isSameInstant(optStringOrNull(flight, "actualEndDatetime"), apiData.actualEndDatetime)) {
+            if (apiData.actualEndDatetime != null && apiData.actualEndDatetime != "" && !isSameInstant(optStringOrNull(flight, "actualEndDatetime"), apiData.actualEndDatetime)) {
                 if (shouldCheckScheduledChanges) {
                     messages.add(
                         context.getString(
@@ -231,7 +242,7 @@ object NativeBackgroundProcessor {
                 flightUpdated = true
             }
 
-            if (apiData.arrivalTerminal != null && optStringOrNull(flight, "arrivalTerminal") != apiData.arrivalTerminal) {
+            if (apiData.arrivalTerminal != null && apiData.arrivalTerminal != "" && optStringOrNull(flight, "arrivalTerminal") != apiData.arrivalTerminal) {
                 if (shouldCheckScheduledChanges) {
                     messages.add(
                         context.getString(
@@ -244,7 +255,7 @@ object NativeBackgroundProcessor {
                 flightUpdated = true
             }
 
-            if (shouldCheckArrivalBaggage && apiData.baggageBelt != null && optStringOrNull(flight, "baggageBelt") != apiData.baggageBelt) {
+            if (shouldCheckArrivalBaggage && apiData.baggageBelt != null && apiData.baggageBelt != "" && optStringOrNull(flight, "baggageBelt") != apiData.baggageBelt) {
                 messages.add(
                     context.getString(
                         R.string.notification_changed_baggage_belt,
@@ -253,7 +264,7 @@ object NativeBackgroundProcessor {
                 )
                 flight.put("baggageBelt", apiData.baggageBelt)
                 flightUpdated = true
-            } else if (shouldCheckScheduledChanges && apiData.baggageBelt != null && optStringOrNull(flight, "baggageBelt") != apiData.baggageBelt) {
+            } else if (shouldCheckScheduledChanges && apiData.baggageBelt != null && apiData.baggageBelt != "" && optStringOrNull(flight, "baggageBelt") != apiData.baggageBelt) {
                 messages.add(
                     context.getString(
                         R.string.notification_changed_baggage_belt,
@@ -298,7 +309,10 @@ object NativeBackgroundProcessor {
     }
 
     private fun shouldPollBucket(pollState: JSONObject, flightId: Int, bucket: String, minutes: Int): Boolean {
-        val flightState = pollState.optJSONObject(flightId.toString()) ?: return true
+        val flightState = pollState.optJSONObject(flightId.toString()) ?: return false
+        if (!flightState.has(bucket)) {
+            return false
+        }
         return flightState.optInt(bucket, Int.MIN_VALUE) != minutes
     }
 
@@ -339,7 +353,7 @@ object NativeBackgroundProcessor {
     }
 
     private fun fetchFlightData(config: JSONObject, flight: JSONObject): ApiFlightData {
-        val currentApi = config.optString("currentApi", "aerodatabox")
+        val currentApi = config.optString("currentApi", "aeroapi")
         return when (currentApi) {
             "aeroapi" -> fetchFromAeroApi(config, flight)
             else -> fetchFromAerodatabox(config, flight)
@@ -383,9 +397,13 @@ object NativeBackgroundProcessor {
         val url = "${apiUrl}/flights/${flight.optString("airline")}${flight.optString("flightNumber")}?ident_type=designator&start=${date}&end=${date}T23:59:59Z"
         return executeJsonRequest(url, "x-apikey", apiKey) { root ->
             val item = root.optJSONArray("flights")?.optJSONObject(0)
+            val departureTimezone = optStringOrNull(flight, "departureAirportTimezone")
+            val arrivalTimezone = optStringOrNull(flight, "arrivalAirportTimezone")
             ApiFlightData(
-                actualEndDatetime = optStringOrNull(item, "actual_in") ?: optStringOrNull(item, "estimated_in"),
-                actualStartDatetime = optStringOrNull(item, "actual_out") ?: optStringOrNull(item, "estimated_out"),
+                actualEndDatetime = (optStringOrNull(item, "actual_in") ?: optStringOrNull(item, "estimated_in"))
+                    ?.let { fromUtcToLocalIsoString(it, arrivalTimezone) },
+                actualStartDatetime = (optStringOrNull(item, "actual_out") ?: optStringOrNull(item, "estimated_out"))
+                    ?.let { fromUtcToLocalIsoString(it, departureTimezone) },
                 arrivalTerminal = optStringOrNull(item, "terminal_destination"),
                 baggageBelt = optStringOrNull(item, "baggage_claim"),
                 departureCheckInDesk = item?.optJSONObject("origin")?.let { optStringOrNull(it, "checkInDesk") },
@@ -435,6 +453,19 @@ object NativeBackgroundProcessor {
     private fun normalizeAeroApiStatus(status: String?): String {
         val normalized = (status ?: "unknown").lowercase(Locale.US).replace(Regex("[\\s_-]"), "")
         return aeroApiFlightStatuses[normalized] ?: "unknown"
+    }
+
+    internal fun fromUtcToLocalIsoString(utcIsoString: String, timezone: String?): String {
+        if (timezone.isNullOrBlank()) {
+            return utcIsoString
+        }
+        return try {
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ssXXX", Locale.US).apply {
+                timeZone = TimeZone.getTimeZone(timezone)
+            }.format(parseIsoDate(utcIsoString))
+        } catch (_: Exception) {
+            utcIsoString
+        }
     }
 
     private fun optStringOrNull(jsonObject: JSONObject?, key: String): String? {

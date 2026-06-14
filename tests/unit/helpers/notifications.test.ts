@@ -10,6 +10,8 @@ const mockNotificationStorage = new Map<string, string>();
 
 const mockScheduleNotificationAsync = jest.fn();
 const mockCancelScheduledNotificationAsync = jest.fn();
+const mockGetPermissionsAsync = jest.fn();
+const mockRequestPermissionsAsync = jest.fn();
 
 let notificationReceivedListener: ((notification: any) => void) | undefined;
 let notificationResponseReceivedListener: ((response: any) => void) | undefined;
@@ -34,6 +36,8 @@ jest.mock('expo-notifications', () => ({
     return { remove: jest.fn() };
   },
   cancelScheduledNotificationAsync: (id: string) => mockCancelScheduledNotificationAsync(id),
+  getPermissionsAsync: () => mockGetPermissionsAsync(),
+  requestPermissionsAsync: () => mockRequestPermissionsAsync(),
   scheduleNotificationAsync: (payload: any) => mockScheduleNotificationAsync(payload),
   setNotificationChannelAsync: jest.fn(),
   setNotificationHandler: jest.fn(),
@@ -77,6 +81,10 @@ describe('notifications helper', () => {
     mockNotificationStorage.clear();
     mockScheduleNotificationAsync.mockReset();
     mockCancelScheduledNotificationAsync.mockReset();
+    mockGetPermissionsAsync.mockReset();
+    mockRequestPermissionsAsync.mockReset();
+    mockGetPermissionsAsync.mockResolvedValue({ granted: true, canAskAgain: true });
+    mockRequestPermissionsAsync.mockResolvedValue({ granted: true });
     mockScheduleNotificationAsync
       .mockResolvedValueOnce('before-flight-id')
       .mockResolvedValueOnce('online-checkin-id')
