@@ -3,7 +3,7 @@
     "jsEngine": "hermes",
     "name": "AirPlain",
     "slug": "airplain",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "airplain",
@@ -66,7 +66,9 @@
           }
         }
       ],
-      "expo-web-browser"
+      "./plugins/withAndroidUnitTests",
+      "expo-web-browser",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

@@ -207,4 +207,53 @@ describe('datetime helper', () => {
   test('fromLocaltoUTCISOString with invalid date returns original string', () => {
     expect(DT.fromLocaltoUTCISOString('invalid-date')).toBe('invalid-date');
   });
+
+  test('parseAppDateTime parses ISO datetime', () => {
+    const result = DT.parseAppDateTime('2026-06-14T10:15:30Z');
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result?.toISOString()).toBe('2026-06-14T10:15:30.000Z');
+  });
+
+  test('parseAppDateTime parses datetime with space separator', () => {
+    const result = DT.parseAppDateTime('2026-06-14 10:15:30');
+
+    expect(result).toBeInstanceOf(Date);
+    expect(Number.isNaN(result?.getTime() ?? NaN)).toBe(false);
+  });
+
+  test('parseAppDateTime parses project format from aerodatabox (T without timezone)', () => {
+    const result = DT.parseAppDateTime('2024-01-01T09:00:00');
+
+    expect(result).toBeInstanceOf(Date);
+    expect(Number.isNaN(result?.getTime() ?? NaN)).toBe(false);
+  });
+
+  test('parseAppDateTime parses datetime with timezone offset', () => {
+    const result = DT.parseAppDateTime('2026-06-14 10:15:30+03:00');
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result?.toISOString()).toBe('2026-06-14T07:15:30.000Z');
+  });
+
+  test('parseAppDateTime parses project format from fromUTCtoLocalISOString (space + offset)', () => {
+    const localIso = DT.fromUTCtoLocalISOString('2026-06-14T10:15:30Z', 'Europe/Paris');
+    const result = DT.parseAppDateTime(localIso);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(result?.toISOString()).toBe('2026-06-14T10:15:30.000Z');
+  });
+
+  test('parseAppDateTime parses project format from fromLocalUTCtoUTCISOString (space no offset)', () => {
+    const utcLikeLocal = DT.fromLocalUTCtoUTCISOString('2026-06-14T10:15:30Z', 'Europe/Paris');
+    const result = DT.parseAppDateTime(utcLikeLocal);
+
+    expect(result).toBeInstanceOf(Date);
+    expect(Number.isNaN(result?.getTime() ?? NaN)).toBe(false);
+  });
+
+  test('parseAppDateTime returns null for invalid value', () => {
+    expect(DT.parseAppDateTime('not-a-date')).toBeNull();
+    expect(DT.parseAppDateTime(undefined)).toBeNull();
+  });
 });

@@ -57,3 +57,9 @@ release.keystore*
 !android/app/src/main/java/com/mamenko/
 !android/app/src/main/java/com/mamenko/airplain/
 !android/app/src/main/java/com/mamenko/airplain/**
+!android/app/src/test/
+!android/app/src/test/java/
+!android/app/src/test/java/com/
+!android/app/src/test/java/com/mamenko/
+!android/app/src/test/java/com/mamenko/airplain/
+!android/app/src/test/java/com/mamenko/airplain/**

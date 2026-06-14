@@ -114,3 +114,32 @@ export function fromLocaltoUTCISOString(localISOString: string): string {
   }
   return result.setZone('utc').toFormat('y-MM-dd HH:mm:ss');
 }
+
+export function parseAppDateTime(value: string | undefined): Date | null {
+  if (!value) {
+    return null;
+  }
+
+  const normalizedValue = value.includes('T') ? value : value.replace(' ', 'T');
+  const nativeDate = new Date(value);
+  if (!Number.isNaN(nativeDate.getTime())) {
+    return nativeDate;
+  }
+
+  const normalizedNativeDate = new Date(normalizedValue);
+  if (!Number.isNaN(normalizedNativeDate.getTime())) {
+    return normalizedNativeDate;
+  }
+
+  const parsedCandidates = [
+    DateTime.fromISO(value, { setZone: true }),
+    DateTime.fromISO(normalizedValue, { setZone: true }),
+    DateTime.fromFormat(value, 'y-MM-dd HH:mm:ssZZ'),
+    DateTime.fromFormat(value, 'y-MM-dd HH:mm:ss'),
+    DateTime.fromFormat(normalizedValue, "y-MM-dd'T'HH:mm:ssZZ"),
+    DateTime.fromFormat(normalizedValue, "y-MM-dd'T'HH:mm:ss"),
+  ];
+  const parsed = parsedCandidates.find((candidate) => candidate.isValid);
+
+  return parsed ? parsed.toJSDate() : null;
+}

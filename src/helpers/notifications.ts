@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 
 import { deleteSetting, getSetting, setSetting } from '@/constants/settings';
+import { parseAppDateTime } from '@/helpers/datetime';
 import t from '@/helpers/localization';
 import type { Flight } from '@/types';
 
@@ -13,30 +14,48 @@ Notifications.setNotificationHandler({
   }),
 });
 
-Notifications.setNotificationChannelAsync('common', {
-  importance: Notifications.AndroidImportance.DEFAULT,
-  lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-  name: t('notifications.channels.common'),
-  sound: 'default',
-});
+const initializeNotificationChannels = async (): Promise<void> => {
+  await Promise.allSettled([
+    Notifications.setNotificationChannelAsync('common', {
+      importance: Notifications.AndroidImportance.DEFAULT,
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      name: t('notifications.channels.common'),
+      sound: 'default',
+    }),
+    Notifications.setNotificationChannelAsync('flight', {
+      importance: Notifications.AndroidImportance.MAX,
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      name: t('notifications.channels.flight'),
+      sound: 'default',
+    }),
+    Notifications.setNotificationChannelAsync('urgent', {
+      enableLights: true,
+      enableVibrate: true,
+      importance: Notifications.AndroidImportance.MAX,
+      lightColor: '#FF0000',
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      name: t('notifications.channels.urgent'),
+      sound: 'default',
+      vibrationPattern: [0, 250, 250, 250],
+    }),
+  ]);
+};
 
-Notifications.setNotificationChannelAsync('flight', {
-  importance: Notifications.AndroidImportance.MAX,
-  lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-  name: t('notifications.channels.flight'),
-  sound: 'default',
-});
+const notificationsInitialization = initializeNotificationChannels();
 
-Notifications.setNotificationChannelAsync('urgent', {
-  enableLights: true,
-  enableVibrate: true,
-  importance: Notifications.AndroidImportance.MAX,
-  lightColor: '#FF0000',
-  lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-  name: t('notifications.channels.urgent'),
-  sound: 'default',
-  vibrationPattern: [0, 250, 250, 250],
-});
+const ensureNotificationsPermission = async (): Promise<boolean> => {
+  const permissions = await Notifications.getPermissionsAsync();
+  if (permissions.granted) {
+    return true;
+  }
+
+  if (!permissions.canAskAgain) {
+    return false;
+  }
+
+  const requestedPermissions = await Notifications.requestPermissionsAsync();
+  return requestedPermissions.granted;
+};
 
 type ScheduledFlightReminderKey = 'beforeFlight3h' | 'onlineCheckInOpen';
 
@@ -163,6 +182,7 @@ const scheduleReminder = async (
   date: Date,
   data: ScheduledFlightReminderNotificationData,
 ) => {
+  await notificationsInitialization;
   return Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -236,8 +256,18 @@ export const syncScheduledFlightReminders = async (flight: Flight): Promise<void
     return;
   }
 
+  await notificationsInitialization;
+
   const now = new Date();
   reconcileDeliveredScheduledFlightReminders(flight.flightId, now);
+
+  const hasNotificationsPermission = await ensureNotificationsPermission();
+  if (!hasNotificationsPermission) {
+    console.debug(
+      `syncScheduledFlightReminders skipped for flight ${flight.flightId}: notifications permission denied`,
+    );
+    return;
+  }
 
   await cancelScheduledFlightReminders(flight.flightId);
 
@@ -246,7 +276,14 @@ export const syncScheduledFlightReminders = async (flight: Flight): Promise<void
   }
 
   const reminders: ScheduledFlightRemindersState = {};
-  const startDatetime = new Date(flight.actualStartDatetime ?? flight.startDatetime);
+  const startDatetimeRaw = flight.actualStartDatetime ?? flight.startDatetime;
+  const startDatetime = parseAppDateTime(startDatetimeRaw);
+  if (!startDatetime) {
+    console.warn(
+      `syncScheduledFlightReminders skipped for flight ${flight.flightId}: invalid start datetime ${String(startDatetimeRaw)}`,
+    );
+    return;
+  }
   const title = getFlightNotificationTitle(flight);
 
   const beforeFlight3hDate = new Date(startDatetime.getTime() - 3 * 60 * 60 * 1000);
@@ -263,7 +300,7 @@ export const syncScheduledFlightReminders = async (flight: Flight): Promise<void
     };
   }
 
-  if (flight.checkInTime && flight.checkInTime > 3) {
+  if (flight.checkInTime && flight.checkInTime > 1 && !flight.seatNumber) {
     const onlineCheckInDate = new Date(startDatetime.getTime() - flight.checkInTime * 60 * 60 * 1000);
     if (onlineCheckInDate > now) {
       const notificationId = await scheduleReminder(title, t('notifications.online_check_in_open'), onlineCheckInDate, {
@@ -283,6 +320,13 @@ export const syncScheduledFlightReminders = async (flight: Flight): Promise<void
 };
 
 export const showCommonNotification = async (title: string, body: string, data?: any) => {
+  await notificationsInitialization;
+  const hasNotificationsPermission = await ensureNotificationsPermission();
+  if (!hasNotificationsPermission) {
+    console.debug(`showCommonNotification ${title} skipped: notifications permission denied`);
+    return;
+  }
+
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -297,6 +341,13 @@ export const showCommonNotification = async (title: string, body: string, data?:
 };
 
 export const showFlightNotification = async (title: string, body: string, data?: any) => {
+  await notificationsInitialization;
+  const hasNotificationsPermission = await ensureNotificationsPermission();
+  if (!hasNotificationsPermission) {
+    console.debug(`showFlightNotification ${title} skipped: notifications permission denied`);
+    return;
+  }
+
   await Notifications.scheduleNotificationAsync({
     content: {
       body,
@@ -311,6 +362,13 @@ export const showFlightNotification = async (title: string, body: string, data?:
 };
 
 export const showUrgentNotification = async (title: string, body: string, data?: any) => {
+  await notificationsInitialization;
+  const hasNotificationsPermission = await ensureNotificationsPermission();
+  if (!hasNotificationsPermission) {
+    console.debug(`showUrgentNotification ${title} skipped: notifications permission denied`);
+    return;
+  }
+
   await Notifications.scheduleNotificationAsync({
     content: {
       body,

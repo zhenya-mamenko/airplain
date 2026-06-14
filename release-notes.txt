@@ -1,7 +1,5 @@
-Fix: Incorrect positioning of forecast icons.
+Bugfix: Flight data updated by invalid cached value from native code.
 
-Refactoring: Multiple changes to the native background task to properly handle push notifications.
-
-Improvement: Added test coverage for the native modules.
+Bugfix: Wrong date format in scheduled notifications.
 
 Chore: Updated dependencies.

@@ -142,7 +142,7 @@ const mergeNativeBackgroundSnapshot = async (flights: Flight[]): Promise<Flight[
 
     for (const field of mergeableFields) {
       const nextValue = snapshot[field];
-      if (nextValue !== undefined && nextValue !== mergedFlight[field as keyof Flight]) {
+      if (!!nextValue && nextValue !== mergedFlight[field as keyof Flight]) {
         (mergedFlight as any)[field] = nextValue;
         hasChanges = true;
       }
@@ -376,7 +376,7 @@ async function updateFlightsState(
       await Notifications.cancelScheduledFlightReminder(flight.flightId, 'beforeFlight3h');
       flightNotificationsState.beforeFlight3h = true;
     }
-    if (flight.checkInTime && flight.checkInTime !== 0) {
+    if (flight.checkInTime && !flight.seatNumber) {
       flight.info.onlineCheckInOpen = false;
       if (hours < flight.checkInTime && hours > 1) {
         flight.info.onlineCheckInOpen = true;
