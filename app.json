@@ -66,6 +66,7 @@
           }
         }
       ],
+      "./plugins/withAndroidUnitTests",
       "expo-web-browser",
       "expo-font"
     ],
