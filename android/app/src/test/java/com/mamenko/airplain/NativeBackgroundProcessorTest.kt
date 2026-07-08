@@ -22,7 +22,7 @@ import java.util.Locale
 import kotlin.math.ceil
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = Application::class, sdk = [36])
+@Config(application = Application::class, sdk = [35])
 class NativeBackgroundProcessorTest {
     private lateinit var context: Context
 
