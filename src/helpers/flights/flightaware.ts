@@ -39,11 +39,8 @@ function toLocalIsoOrUndefined(datetime: string | undefined, timezone: string | 
   return fromUTCtoLocalISOString(datetime, timezone);
 }
 
-export async function checkApi(apiUrl: string, apiKey: string): Promise<boolean> {
+export async function checkApi(apiUrl: string, headers: any): Promise<boolean> {
   const url = `${apiUrl}/account/usage`;
-  const headers = {
-    'x-apikey': apiKey,
-  };
   let response = null;
   try {
     response = await fetch(url, { headers, timeout: 3000 });
@@ -59,13 +56,11 @@ export async function getFlightData(
   flightNumber: string,
   flightDate: string,
   apiUrl: string,
-  apiKey: string,
+  headers: any,
 ): Promise<Flight | null> {
   lastFlightDataError = null;
   const url = `${apiUrl}/flights/${airline}${flightNumber}?ident_type=designator&start=${flightDate}&end=${flightDate}T23:59:59Z`;
-  const headers = {
-    'x-apikey': apiKey,
-  };
+
   let response = null;
   try {
     response = await fetch(url, { headers, timeout: 3000 });

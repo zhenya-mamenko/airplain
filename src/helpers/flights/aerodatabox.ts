@@ -25,11 +25,9 @@ const adbFlightStatuses: { [key: string]: FlightStatus } = {
   Unknown: 'unknown',
 };
 
-export async function checkApi(apiUrl: string, apiKey: string): Promise<boolean> {
+export async function checkApi(apiUrl: string, headers: any): Promise<boolean> {
   const url = `${apiUrl}/airports/Iata/KJA/time/local`;
-  const headers = {
-    'x-magicapi-key': apiKey,
-  };
+
   let response = null;
   try {
     response = await fetch(url, { headers, timeout: 3000 });
@@ -37,6 +35,7 @@ export async function checkApi(apiUrl: string, apiKey: string): Promise<boolean>
     console.debug(`Error checking aerodatabox API connection: ${error}`);
     return false;
   }
+  console.debug(`Aerodatabox API connection check response: ${JSON.stringify(response, null, 2)}`);
   return !!response && response.ok && response.status === 200;
 }
 
@@ -45,13 +44,10 @@ export async function getFlightData(
   flightNumber: string,
   flightDate: string,
   apiUrl: string,
-  apiKey: string,
+  headers: any,
 ): Promise<Flight | null> {
   lastFlightDataError = null;
   const url = `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`;
-  const headers = {
-    'x-magicapi-key': apiKey,
-  };
   let response = null;
   try {
     response = await fetch(url, { headers, timeout: 3000 });

@@ -1,6 +1,6 @@
 import NetInfo from '@react-native-community/netinfo';
 
-import { AEDBX_API_URL, AEROAPI_API_URL, settings } from '@/constants/settings';
+import { AEDBX_API_URL, AEDBX_RAPID_API_URL, AEROAPI_API_URL, settings } from '@/constants/settings';
 import * as aerodatabox from '@/helpers/flights/aerodatabox';
 import * as aeroapi from '@/helpers/flights/flightaware';
 import type { Flight } from '@/types';
@@ -14,26 +14,39 @@ export function getLastFlightDataError(): FlightDataErrorType {
 }
 
 interface ApiData {
-  key: string | undefined;
   url: string | undefined;
   module: any;
+  headers: { [key: string]: string };
 }
 
 interface ApiOverrides {
   aerodataboxApiKey?: string;
   aeroapiApiKey?: string;
+  aerodataboxRapidApiKey?: string;
 }
 
 const apiList: { [key: string]: () => ApiData } = {
   aerodatabox: (): ApiData => ({
-    key: settings.AEDBX_API_KEY,
     url: AEDBX_API_URL,
     module: aerodatabox,
+    headers: {
+      'x-magicapi-key': settings.AEDBX_API_KEY,
+    },
   }),
   aeroapi: (): ApiData => ({
-    key: settings.AEROAPI_API_KEY,
     url: AEROAPI_API_URL,
     module: aeroapi,
+    headers: {
+      'x-apikey': settings.AEROAPI_API_KEY,
+    },
+  }),
+  aerodatabox_rapid: (): ApiData => ({
+    url: AEDBX_RAPID_API_URL,
+    module: aerodatabox,
+    headers: {
+      'x-rapidapi-key': settings.AEDBX_RAPID_API_KEY,
+      'x-rapidapi-host': AEDBX_RAPID_API_URL!.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+    },
   }),
 };
 
@@ -44,12 +57,14 @@ function getApi(name: string = settings.CURRENT_API, overrides?: ApiOverrides): 
   }
   const api = apiFactory();
   if (name === 'aerodatabox' && overrides?.aerodataboxApiKey !== undefined) {
-    api.key = overrides.aerodataboxApiKey;
+    api.headers['x-magicapi-key'] = overrides.aerodataboxApiKey;
+  } else if (name === 'aeroapi' && overrides?.aeroapiApiKey !== undefined) {
+    api.headers['x-apikey'] = overrides.aeroapiApiKey;
+  } else if (name === 'aerodatabox_rapid' && overrides?.aerodataboxRapidApiKey !== undefined) {
+    api.headers['x-rapidapi-key'] = overrides.aerodataboxRapidApiKey;
   }
-  if (name === 'aeroapi' && overrides?.aeroapiApiKey !== undefined) {
-    api.key = overrides.aeroapiApiKey;
-  }
-  if (!api?.key || !api?.url) {
+
+  if (!api?.url) {
     return null;
   }
   return api;
@@ -64,11 +79,11 @@ export const getFlightData = async (airline: string, flightNumber: string, date:
     return null;
   }
   const api = getApi();
-  if (!api || !api.key || !api.url || !api.module) {
+  if (!api || !api.url || !api.module) {
     lastFlightDataError = 'request_failed';
     return null;
   }
-  const result = await api.module.getFlightData(airline, flightNumber, date, api.url, api.key);
+  const result = await api.module.getFlightData(airline, flightNumber, date, api.url, api.headers);
   if (result) {
     return result;
   }
@@ -84,17 +99,24 @@ export const testApiConnection = async (options?: {
   apiName?: string;
   aerodataboxApiKey?: string;
   aeroapiApiKey?: string;
+  aerodataboxRapidApiKey?: string;
 }): Promise<boolean> => {
+  console.debug(`Testing network`);
   const state = await NetInfo.fetch();
   if (!state.isConnected || state.isInternetReachable === false) {
     return false;
   }
+  console.debug(`Network state: ${JSON.stringify(state)}`);
   const api = getApi(options?.apiName ?? settings.CURRENT_API, {
     aerodataboxApiKey: options?.aerodataboxApiKey,
     aeroapiApiKey: options?.aeroapiApiKey,
+    aerodataboxRapidApiKey: options?.aerodataboxRapidApiKey,
   });
-  if (!api || !api.key || !api.url || !api.module) {
+
+  if (!api || !api.url || !api.module) {
     return false;
   }
-  return await api.module.checkApi(api.url, api.key);
+
+  console.debug(`Testing API connection: ${api.url}`);
+  return await api.module.checkApi(api.url, api.headers);
 };

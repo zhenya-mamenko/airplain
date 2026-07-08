@@ -414,6 +414,7 @@
     "settings": {
       "aeroapi": "FlightAware AeroAPI Key",
       "aerodatabox": "AeroDataBox API Key",
+      "aerodatabox_rapid": "AeroDataBox RapidAPI Key",
       "current_api": "Current API",
       "export": "Export",
       "export_finished_title": "Export was finished",
@@ -882,6 +883,7 @@
     "settings": {
       "aeroapi": "Ключ FlightAware AeroAPI",
       "aerodatabox": "Ключ AeroDataBox API",
+      "aerodatabox_rapid": "Ключ AeroDataBox RapidAPI",
       "current_api": "Текущий API",
       "export": "Экспорт",
       "export_finished_title": "Экспорт завершён",

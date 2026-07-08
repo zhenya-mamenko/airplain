@@ -15,6 +15,7 @@ const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 describe('FlightAware AeroAPI', () => {
   const apiUrl = 'https://example.com/aeroapi';
   const apiKey = 'test-aeroapi-key';
+  const apiHeaders = { 'x-apikey': apiKey };
   const airline = 'AA';
   const flightNumber = '123';
   const flightDate = '2024-01-01';
@@ -26,7 +27,7 @@ describe('FlightAware AeroAPI', () => {
   test('checkApi returns true when account endpoint is available', async () => {
     mockFetch.mockResolvedValue({ ok: true, status: 200 } as any);
 
-    const ok = await checkApi(apiUrl, apiKey);
+    const ok = await checkApi(apiUrl, apiHeaders);
 
     expect(ok).toBe(true);
     expect(mockFetch).toHaveBeenCalledWith(`${apiUrl}/account/usage`, {
@@ -38,7 +39,7 @@ describe('FlightAware AeroAPI', () => {
   test('checkApi returns false on fetch error', async () => {
     mockFetch.mockRejectedValue(new Error('Network error'));
 
-    const ok = await checkApi(apiUrl, apiKey);
+    const ok = await checkApi(apiUrl, apiHeaders);
 
     expect(ok).toBe(false);
   });
@@ -110,7 +111,7 @@ describe('FlightAware AeroAPI', () => {
       status: 'en_route',
     };
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight).toEqual(expected);
     expect(mockFetch).toHaveBeenCalledWith(
@@ -126,7 +127,7 @@ describe('FlightAware AeroAPI', () => {
       json: jest.fn().mockResolvedValue({ error: 'Unauthorized' }),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight).toBeNull();
   });
@@ -134,7 +135,7 @@ describe('FlightAware AeroAPI', () => {
   test('getFlightData returns null when fetch throws', async () => {
     mockFetch.mockRejectedValue(new Error('Timeout'));
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight).toBeNull();
   });
@@ -158,7 +159,7 @@ describe('FlightAware AeroAPI', () => {
       }),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight?.status).toBe('unknown');
   });
@@ -182,7 +183,7 @@ describe('FlightAware AeroAPI', () => {
       }),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight?.info.state).toBe('gateclosed');
   });
@@ -207,7 +208,7 @@ describe('FlightAware AeroAPI', () => {
       }),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight?.extra).toEqual({
       carrier: 'MQ',
@@ -223,7 +224,7 @@ describe('FlightAware AeroAPI', () => {
       json: jest.fn().mockResolvedValue({ flights: [] }),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight).toBeNull();
   });
@@ -247,7 +248,7 @@ describe('FlightAware AeroAPI', () => {
       }),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
 
     expect(flight).toBeNull();
   });
