@@ -1,7 +1,14 @@
 import { router } from 'expo-router';
 import { Alert, Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
-import { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import {
+  cancelAnimation,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { flightsCheckTask, setFlightArchiveState } from '@/helpers/airdata';
@@ -42,10 +49,10 @@ export const makeCardGestures = (
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.4;
   const translateX = useSharedValue(0);
-  const border = useSharedValue(`${colorPrimary}00`);
+  const borderProgress = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
-    borderColor: border.value,
+    borderColor: interpolateColor(borderProgress.value, [0, 1], [`${colorPrimary}00`, `${colorPrimary}FF`]),
   }));
 
   const showConfirmation = (flightId: number) => {
@@ -57,22 +64,21 @@ export const makeCardGestures = (
           text: t('buttons.cancel'),
           style: 'cancel',
           onPress: () => {
-            border.value = withTiming(`${colorPrimary}00`, { duration: 100 });
+            borderProgress.value = withTiming(0, { duration: 100 });
           },
         },
         {
           text: t('buttons.delete'),
           style: 'destructive',
           onPress: () => {
-            border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
-              scheduleOnRN(doDelete, flightId);
-            });
+            borderProgress.value = withTiming(0, { duration: 100 });
+            scheduleOnRN(doDelete, flightId);
           },
         },
       ],
       {
         cancelable: true,
-        onDismiss: () => (border.value = withTiming(`${colorPrimary}00`, { duration: 100 })),
+        onDismiss: () => (borderProgress.value = withTiming(0, { duration: 100 })),
       },
     );
   };
@@ -86,9 +92,8 @@ export const makeCardGestures = (
     })
     .onEnd((event) => {
       if (event.translationX > SWIPE_THRESHOLD) {
-        translateX.value = withTiming(SCREEN_WIDTH, { duration: 300 }, () => {
-          scheduleOnRN(changeArchivedState, flightId, 1);
-        });
+        translateX.value = withTiming(SCREEN_WIDTH, { duration: 300 });
+        scheduleOnRN(changeArchivedState, flightId, 1);
       } else {
         translateX.value = withSpring(0);
       }
@@ -103,9 +108,8 @@ export const makeCardGestures = (
     })
     .onEnd((event) => {
       if (event.translationX < -SWIPE_THRESHOLD) {
-        translateX.value = withTiming(-SCREEN_WIDTH, { duration: 300 }, () => {
-          scheduleOnRN(changeArchivedState, flightId, 0);
-        });
+        translateX.value = withTiming(-SCREEN_WIDTH, { duration: 300 });
+        scheduleOnRN(changeArchivedState, flightId, 0);
       } else {
         translateX.value = withSpring(0);
       }
@@ -116,24 +120,25 @@ export const makeCardGestures = (
     .numberOfTaps(1)
     .requireExternalGestureToFail(refs ?? [])
     .onEnd((e, success) => {
-      border.value = withTiming(`${colorPrimary}FF`, { duration: 100 }, () => {
-        border.value = withTiming(`${colorPrimary}00`, { duration: 100 }, () => {
-          if (success) {
-            scheduleOnRN(doEdit, flightId);
-          }
-        });
-      });
+      if (!success) {
+        return;
+      }
+
+      cancelAnimation(borderProgress);
+      borderProgress.value = 1;
+      borderProgress.value = withTiming(0, { duration: 200 });
+      scheduleOnRN(doEdit, flightId);
     });
 
   const longpress = Gesture.LongPress()
     .onStart((_) => {
-      border.value = withTiming(`${colorPrimary}FF`, { duration: 200 });
+      borderProgress.value = withTiming(1, { duration: 200 });
     })
     .onEnd((e, success) => {
       if (success) {
         scheduleOnRN(showConfirmation, flightId);
       } else {
-        border.value = `${colorPrimary}00`;
+        borderProgress.value = 0;
       }
     });
 

@@ -1,4 +1,8 @@
-require('react-native-reanimated').setUpTests();
+jest.mock('react-native-reanimated', () => {
+  const Reanimated = require('react-native-reanimated/mock');
+  Reanimated.default.call = () => {};
+  return Reanimated;
+});
 
 jest.mock('expo-sqlite', () => {
   const { openDatabaseAsync } = require('./helpers/sqlite-adapter');

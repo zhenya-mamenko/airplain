@@ -11,6 +11,7 @@ const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 describe('Aerodatabox API', () => {
   const apiUrl = 'https://example.com/api';
   const apiKey = 'test-api-key';
+  const apiHeaders = { 'x-magicapi-key': apiKey };
   const airline = 'AA';
   const flightNumber = '123';
   const flightDate = '2024-01-01';
@@ -88,7 +89,7 @@ describe('Aerodatabox API', () => {
       status: 'arrived',
     };
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toEqual(expectedFlight);
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -99,7 +100,7 @@ describe('Aerodatabox API', () => {
   test('getFlightData return null when the API call fails', async () => {
     mockFetch.mockRejectedValue(new Error('API Error'));
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -113,7 +114,7 @@ describe('Aerodatabox API', () => {
       status: 404,
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -128,7 +129,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue([]),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
       `${apiUrl}/flights/Number/${airline}${flightNumber}/${flightDate}?dateLocalRole=Departure&withAircraftImage=false&withLocation=false`,
@@ -172,7 +173,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.status).toBe('en_route');
   });
 
@@ -212,7 +213,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.status).toBe('unknown');
   });
 
@@ -252,7 +253,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.isArchived).toBe(true);
   });
 
@@ -292,7 +293,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.isArchived).toBe(false);
   });
 
@@ -331,7 +332,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.isArchived).toBe(false);
   });
 
@@ -370,7 +371,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.isArchived).toBe(true);
   });
 
@@ -410,7 +411,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.extra).toEqual({
       carrier: 'DL',
       carrierName: 'Delta Airlines',
@@ -456,7 +457,7 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
       expect(flight?.info.state).toBe(status);
     }
   });
@@ -499,7 +500,7 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
       expect(flight?.info.state).toBe('');
     }
   });
@@ -511,14 +512,14 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue([]),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toBeNull();
   });
 
   test('getFlightData return null when response is null', async () => {
     mockFetch.mockResolvedValue(null as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toBeNull();
   });
 
@@ -530,7 +531,7 @@ describe('Aerodatabox API', () => {
     };
     mockFetch.mockResolvedValue(mockResponse as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight).toBeNull();
     expect(mockResponse.json).toHaveBeenCalled();
   });
@@ -568,7 +569,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.aircraftRegNumber).toBe('');
     expect(flight?.aircraftType).toBe('');
     expect(flight?.distance).toBe(0);
@@ -632,7 +633,7 @@ describe('Aerodatabox API', () => {
         json: jest.fn().mockResolvedValue(mockFlightData),
       } as any);
 
-      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+      const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
       expect(flight?.status).toBe(expectedStatus);
     }
   });
@@ -671,7 +672,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.extra).toEqual({
       carrier: 'DL',
       carrierName: 'Delta Airlines',
@@ -713,7 +714,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.info.state).toBe('checkin');
   });
 
@@ -751,7 +752,7 @@ describe('Aerodatabox API', () => {
       json: jest.fn().mockResolvedValue(mockFlightData),
     } as any);
 
-    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiKey);
+    const flight = await getFlightData(airline, flightNumber, flightDate, apiUrl, apiHeaders);
     expect(flight?.info.state).toBe('gateclosed');
   });
 });

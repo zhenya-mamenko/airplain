@@ -152,6 +152,7 @@ const Settings = React.memo(() => {
       apiName: state['CURRENT_API'],
       aerodataboxApiKey: state['AEDBX_API_KEY'],
       aeroapiApiKey: state['AEROAPI_API_KEY'],
+      aerodataboxRapidApiKey: state['AEDBX_RAPID_API_KEY'],
     });
     if (isApiWorking) {
       showConfirmation({
@@ -189,8 +190,9 @@ const Settings = React.memo(() => {
     await updateSettings();
   };
 
-  const apiList = {
+  const apiList: { [key: string]: string } = {
     aerodatabox: 'AeroDataBox API',
+    aerodatabox_rapid: 'AeroDataBox RapidAPI',
     aeroapi: 'FlightAware AeroAPI',
   };
 
@@ -349,10 +351,13 @@ const Settings = React.memo(() => {
     >
       <View className="flex-column">
         <View className="flex-row my-sm">
-          <Value caption={t('settings.aerodatabox')} value={state['AEDBX_API_KEY']} />
+          <Value caption={t('settings.aerodatabox')} selectable={false} value={state['AEDBX_API_KEY']} />
+        </View>
+        <View className="flex-row my-sm">
+          <Value caption={t('settings.aerodatabox_rapid')} selectable={false} value={state['AEDBX_RAPID_API_KEY']} />
         </View>
         <View className="flex-row mb-sm">
-          <Value caption={t('settings.aeroapi')} value={state['AEROAPI_API_KEY']} />
+          <Value caption={t('settings.aeroapi')} selectable={false} value={state['AEROAPI_API_KEY']} />
         </View>
         <View className="flex-row mb-sm">
           <Value
@@ -373,6 +378,15 @@ const Settings = React.memo(() => {
         </View>
         <View className="flex-row mb-sm">
           <Input
+            caption={t('settings.aerodatabox_rapid')}
+            field="AEDBX_RAPID_API_KEY"
+            onChange={(value: string) => dispatch({ field: 'AEDBX_RAPID_API_KEY', value })}
+            value={state['AEDBX_RAPID_API_KEY']}
+            width="100%"
+          />
+        </View>
+        <View className="flex-row mb-sm">
+          <Input
             caption={t('settings.aeroapi')}
             field="AEROAPI_API_KEY"
             onChange={(value: string) => dispatch({ field: 'AEROAPI_API_KEY', value })}
@@ -384,10 +398,7 @@ const Settings = React.memo(() => {
           <View style={{ width: '100%' }} className="pr-md">
             <Select
               caption={t('settings.current_api')}
-              data={[
-                { id: 'aerodatabox', value: 'AeroDataBox API' },
-                { id: 'aeroapi', value: 'FlightAware AeroAPI' },
-              ]}
+              data={Object.keys(apiList).map((x) => ({ id: x, value: apiList[x] }))}
               field="CURRENT_API"
               onChange={(value: string) => dispatch({ field: 'CURRENT_API', value })}
               value={state['CURRENT_API']}

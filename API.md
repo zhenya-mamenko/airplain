@@ -10,6 +10,19 @@ No payment card is required.
 
 ## AeroDataBox API
 
+**New Rapid API integration**
+
+1. Register on Rapid API at [https://rapidapi.com/auth/login](https://rapidapi.com/auth/login).
+
+2. [Subscribe](https://rapidapi.com/aedbx-aedbx/api/aerodatabox/pricing) to the Basic plan. No payment card is required.
+
+3. Go to [playground](https://rapidapi.com/aedbx-aedbx/api/aerodatabox/playground) to obtain a key.
+
+![image](https://github.com/user-attachments/assets/51572fc8-285a-44c5-b592-078539a9764c)
+
+
+**API.market integration**
+
 1. Register on API.market at [https://api.market/auth/login](https://api.market/auth/login) to obtain a key.
 
 ![image](https://github.com/user-attachments/assets/e6384f60-96f4-4b2c-8743-9cef0629a71f)
@@ -18,7 +31,7 @@ No payment card is required.
 
 ![image](https://github.com/user-attachments/assets/1d5656c8-bf74-44ce-b7ba-ef273000111c)
 
-**Unfortunately, on February 12, 2026, the Free plan was removed from API.market.** You now need to buy the Pro plan (6,000 units) or choose FlightAware API.
+**Unfortunately, on February 12, 2026, the Free plan was removed from API.market.** You now need to buy the Pro plan (6,000 units). Isuggest to use Rapid API integration or choose FlightAware API.
 
 ## FlightAware API
 

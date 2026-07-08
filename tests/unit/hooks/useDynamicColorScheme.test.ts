@@ -12,6 +12,10 @@ jest.mock('react-native', () => ({
       return { remove: jest.fn() };
     },
   },
+  Platform: {
+    OS: 'ios',
+    select: (values: Record<string, unknown>) => values.ios ?? values.default,
+  },
 }));
 
 describe('useDynamicColorScheme', () => {

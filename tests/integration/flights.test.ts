@@ -75,7 +75,7 @@ describe('Flights API facade', () => {
       '123',
       '2024-01-01',
       'https://aedbx.example/api',
-      'aedbx-key',
+      { 'x-magicapi-key': 'aedbx-key' },
     );
     expect(mockedAeroapiGetFlightData).not.toHaveBeenCalled();
   });
@@ -89,7 +89,9 @@ describe('Flights API facade', () => {
     const result = await testApiConnection();
 
     expect(result).toBe(true);
-    expect(mockedAerodataboxCheckApi).toHaveBeenCalledWith('https://aedbx.example/api', 'aedbx-key');
+    expect(mockedAerodataboxCheckApi).toHaveBeenCalledWith('https://aedbx.example/api', {
+      'x-magicapi-key': 'aedbx-key',
+    });
     expect(mockedAeroapiCheckApi).not.toHaveBeenCalled();
   });
 
@@ -134,7 +136,9 @@ describe('Flights API facade', () => {
     });
 
     expect(result).toBe(true);
-    expect(mockedAeroapiCheckApi).toHaveBeenCalledWith('https://aeroapi.example/api', 'unsaved-runtime-key');
+    expect(mockedAeroapiCheckApi).toHaveBeenCalledWith('https://aeroapi.example/api', {
+      'x-apikey': 'unsaved-runtime-key',
+    });
     expect(mockedAerodataboxCheckApi).not.toHaveBeenCalled();
   });
 

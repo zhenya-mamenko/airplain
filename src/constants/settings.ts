@@ -18,6 +18,7 @@ export const APP_VERSION = nativeApplicationVersion ?? '0.0.1';
 export const WEATHER_API_URL = process.env.EXPO_PUBLIC_WEATHER_API_URL;
 export const AEDBX_API_URL = process.env.EXPO_PUBLIC_AEDBX_API_URL;
 export const AEROAPI_API_URL = process.env.EXPO_PUBLIC_AEROAPI_API_URL;
+export const AEDBX_RAPID_API_URL = process.env.EXPO_PUBLIC_AEDBX_RAPID_API_URL;
 
 export const DBNAME = 'airplain.db';
 export const SQLDIR = '@/assets/sql';
@@ -30,6 +31,7 @@ export const settings = {
 
   AEDBX_API_KEY: getSetting('AEDBX_API_KEY', process.env.EXPO_PUBLIC_AEDBX_API_KEY),
   AEROAPI_API_KEY: getSetting('AEROAPI_API_KEY', process.env.EXPO_PUBLIC_AEROAPI_API_KEY),
+  AEDBX_RAPID_API_KEY: getSetting('AEDBX_RAPID_API_KEY', process.env.EXPO_PUBLIC_AEDBX_RAPID_API_KEY),
   CURRENT_API: getSetting('CURRENT_API', 'aerodatabox'),
 
   REFRESH_INTERVAL: parseInt(getSetting('REFRESH_INTERVAL', '1')),

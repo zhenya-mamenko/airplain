@@ -40,10 +40,7 @@ export interface AchievementData {
 }
 
 export type BCBPFormat =
-  | 'PKBarcodeFormatAztec'
-  | 'PKBarcodeFormatDataMatrix'
-  | 'PKBarcodeFormatPDF417'
-  | 'PKBarcodeFormatQR';
+  'PKBarcodeFormatAztec' | 'PKBarcodeFormatDataMatrix' | 'PKBarcodeFormatPDF417' | 'PKBarcodeFormatQR';
 
 export interface ConfirmationDialogSettings {
   closeButton: string;

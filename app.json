@@ -1,19 +1,12 @@
 {
   "expo": {
-    "jsEngine": "hermes",
     "name": "AirPlain",
     "slug": "airplain",
-    "version": "0.3.4",
+    "version": "0.4.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "airplain",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./src/assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#33b3df"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -57,9 +50,9 @@
         {
           "android": {
             "minSdkVersion": 24,
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
-            "buildToolsVersion": "35.0.0",
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "buildToolsVersion": "36.0.0",
             "enablePngCrunchInReleaseBuilds": false,
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true
@@ -68,7 +61,15 @@
       ],
       "./plugins/withAndroidUnitTests",
       "expo-web-browser",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./src/assets/images/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#33b3df"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

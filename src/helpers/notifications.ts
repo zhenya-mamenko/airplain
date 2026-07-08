@@ -20,13 +20,11 @@ const initializeNotificationChannels = async (): Promise<void> => {
       importance: Notifications.AndroidImportance.DEFAULT,
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       name: t('notifications.channels.common'),
-      sound: 'default',
     }),
     Notifications.setNotificationChannelAsync('flight', {
       importance: Notifications.AndroidImportance.MAX,
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       name: t('notifications.channels.flight'),
-      sound: 'default',
     }),
     Notifications.setNotificationChannelAsync('urgent', {
       enableLights: true,
@@ -35,7 +33,6 @@ const initializeNotificationChannels = async (): Promise<void> => {
       lightColor: '#FF0000',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       name: t('notifications.channels.urgent'),
-      sound: 'default',
       vibrationPattern: [0, 250, 250, 250],
     }),
   ]);

@@ -1,5 +1,3 @@
-Bugfix: Flight data updated by invalid cached value from native code.
-
-Bugfix: Wrong date format in scheduled notifications.
+Feature: Added Rapid API for AeroDataBox, so it can be used for free.
 
 Chore: Updated dependencies.
