@@ -10,6 +10,10 @@ No payment card is required.
 
 ## AeroDataBox API
 
+**New Rapid API integration**
+
+**API.market integration**
+
 1. Register on API.market at [https://api.market/auth/login](https://api.market/auth/login) to obtain a key.
 
 ![image](https://github.com/user-attachments/assets/e6384f60-96f4-4b2c-8743-9cef0629a71f)

@@ -21,6 +21,10 @@ jest.mock('react-native', () => ({
       getBackgroundFlightsSnapshot: () => mockGetBackgroundFlightsSnapshot(),
     },
   },
+  Platform: {
+    OS: 'ios',
+    select: (values: Record<string, unknown>) => values.ios ?? values.default,
+  },
 }));
 
 jest.mock('@/helpers/sqlite', () => ({

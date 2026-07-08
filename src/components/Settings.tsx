@@ -190,7 +190,7 @@ const Settings = React.memo(() => {
     await updateSettings();
   };
 
-  const apiList = {
+  const apiList: { [key: string]: string } = {
     aerodatabox: 'AeroDataBox API',
     aerodatabox_rapid: 'AeroDataBox RapidAPI',
     aeroapi: 'FlightAware AeroAPI',

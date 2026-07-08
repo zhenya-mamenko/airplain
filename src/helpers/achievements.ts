@@ -38,9 +38,7 @@ const applyViewBoxTransform = (path: SkPath, left: number, top: number, size: nu
   const matrix = Skia.Matrix();
   matrix.translate(left, top);
   matrix.scale(scale, scale);
-  const newPath = path.copy();
-  newPath.transform(matrix);
-  return newPath;
+  return Skia.PathBuilder.MakeFromPath(path).transform(matrix).detach();
 };
 
 const rotatePath = (path: SkPath, left: number, top: number, size: number, radians: number) => {
@@ -49,9 +47,7 @@ const rotatePath = (path: SkPath, left: number, top: number, size: number, radia
   matrix.translate(cx, cy);
   matrix.rotate(radians);
   matrix.translate(-cx, -cy);
-  const newPath = path.copy();
-  newPath.transform(matrix);
-  return newPath;
+  return Skia.PathBuilder.MakeFromPath(path).transform(matrix).detach();
 };
 
 const convexHull = (points: Array<PPoint>) => {
