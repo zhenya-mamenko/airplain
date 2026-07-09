@@ -1,3 +1,5 @@
-Feature: Added Rapid API for AeroDataBox, so it can be used for free.
+Bugfix: Past flights tab selected by default, should be Actual flights.
 
-Chore: Updated dependencies.
+Feature: New image/camera picker and crop tool.
+
+Chore: Some code updated according to new libraries.

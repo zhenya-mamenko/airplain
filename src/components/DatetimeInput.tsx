@@ -1,4 +1,4 @@
-import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { DateTimePickerAndroid, DateTimePickerChangeEvent } from '@react-native-community/datetimepicker';
 import { DateTime } from 'luxon';
 
 import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
@@ -53,7 +53,7 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
 
     useEffect(() => {
       const v = props.value ?? '';
-      const dateValue = new Date(v.slice(0, -6));
+      const dateValue = new Date(v.length > 6 ? v.slice(0, -6) : v);
       if (!isNaN(dateValue.valueOf())) {
         setValue(v);
         setDateValue(dateValue);
@@ -82,22 +82,20 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
       return { open };
     });
 
-    const setDate = (event: DateTimePickerEvent, date?: Date) => {
-      if (event.type === 'set' && !!date) {
-        const textDate = DateTime.fromJSDate(date, { zone: 'local' })
-          .setZone(timezone, { keepLocalTime: true })
-          .toFormat('y-MM-dd HH:mm:ssZZ');
-        setValue(textDate);
-        setDateValue(new Date(textDate.slice(0, -6)));
-        if (onChange) onChange(textDate);
-      }
+    const setDate = (event: DateTimePickerChangeEvent, date: Date) => {
+      const textDate = DateTime.fromJSDate(date, { zone: 'local' })
+        .setZone(timezone, { keepLocalTime: true })
+        .toFormat('y-MM-dd HH:mm:ssZZ');
+      setValue(textDate);
+      setDateValue(new Date(textDate.slice(0, -6)));
+      if (onChange) onChange(textDate);
     };
 
     const params = {
       mode: props.mode,
       display: props.display,
       value: dateValue,
-      onChange: setDate,
+      onValueChange: setDate,
     };
 
     return <Button className={className} textClass={textClass} title={text} uppercase={false} onPress={open} />;

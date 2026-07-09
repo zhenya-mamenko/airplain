@@ -1,6 +1,7 @@
 import { SkImage, SkPath, Skia } from '@shopify/react-native-skia';
 
 import { File, Paths } from 'expo-file-system';
+import { ColorSchemeName } from 'react-native';
 
 import { getSetting, setSetting } from '@/constants/settings';
 import {
@@ -140,7 +141,7 @@ export const loadAchievements = async (
 export const prepareAchievements = async (
   stampsColors: { light: {}; dark: {} },
   bgImage: SkImage | null,
-  themeName: 'light' | 'dark',
+  themeName: ColorSchemeName,
   screenWidth: number,
   screenHeight: number,
 ): Promise<{ image: SkImage | null; data: ContextData[] }> => {
@@ -249,7 +250,7 @@ export const prepareAchievements = async (
     }
 
     const maxSvgSize = 0.22 * (width - 32);
-    const colors = Object.entries(stampsColors[themeName])
+    const colors = Object.entries(stampsColors[themeName as 'light' | 'dark'])
       .slice(1)
       .map((e) => e[0]);
     const stamps: Array<Stamp> = [];

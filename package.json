@@ -1,7 +1,7 @@
 {
   "name": "airplain",
   "main": "./index.js",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scripts": {
     "start": "expo start",
     "android": "npm run generate:android-resources && expo run:android",
@@ -81,7 +81,6 @@
     "expo-font": "~57.0.0",
     "expo-image": "~57.0.0",
     "expo-image-manipulator": "~57.0.2",
-    "expo-image-picker": "~57.0.2",
     "expo-linking": "~57.0.2",
     "expo-localization": "~57.0.0",
     "expo-network": "~57.0.0",
@@ -101,6 +100,7 @@
     "react-native": "^0.86.0",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.32.0",
+    "react-native-image-crop-picker": "^0.51.1",
     "react-native-picasso": "^1.1.12",
     "react-native-reanimated": "^4.5.0",
     "react-native-reorderable-list": "^0.17.0",
