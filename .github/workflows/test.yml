@@ -52,6 +52,29 @@ jobs:
           mv android/ android_temp/
           npx expo prebuild --platform android
           \cp -frT android_temp/ android/
+      - name: Prepare Android unit test manifests
+        run: |
+          mkdir -p android/app/src/test android/app/src/testDebug
+          cat > android/app/src/test/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools">
+
+              <uses-permission
+                  android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                  android:maxSdkVersion="32"
+                  tools:replace="android:maxSdkVersion" />
+          </manifest>
+          EOF
+          cat > android/app/src/testDebug/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools">
+
+              <uses-permission
+                  android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                  android:maxSdkVersion="32"
+                  tools:replace="android:maxSdkVersion" />
+          </manifest>
+          EOF
       - name: Run Android unit tests
         run: |
           npm run test:android
