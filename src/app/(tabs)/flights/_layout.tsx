@@ -8,6 +8,10 @@ import t from '@/helpers/localization';
 import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
+export const unstable_settings = {
+  initialRouteName: 'actual',
+};
+
 const FlightsWrapper = () => {
   const pathname = usePathname();
   const activeTab = pathname.endsWith('/past') ? 'past' : 'actual';

@@ -1,25 +1,21 @@
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 
-import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import * as DocumentPicker from 'expo-document-picker';
-import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
-import { Modal, StyleSheet, ToastAndroid, useWindowDimensions } from 'react-native';
+import { ToastAndroid } from 'react-native';
+import ImagePicker, { Options } from 'react-native-image-crop-picker';
 import { View } from 'react-native-picasso';
 
 import Button from '@/components/Button';
 import { createPKPass, decodeBCBP, loadPKPass, scanBarcode as scan } from '@/helpers/boardingpass';
 import t from '@/helpers/localization';
 import { useThemeColor } from '@/hooks/useColors';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import { BCBPFormat } from '@/types';
 
 const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boolean }) => {
   const { today = new Date(), dispatch, showToast = true } = props;
-  const [permission, requestPermission] = useCameraPermissions();
   const colorPrimary = useThemeColor('textColors.primary');
-  const [cameraModal, setCameraModal] = useState(false);
-
-  const { width, height } = useWindowDimensions();
+  const isLightTheme = (useDynamicColorScheme() || 'light') === 'light';
 
   const setFlightDataFromBCBP = (leg: any) => {
     dispatch({
@@ -57,54 +53,13 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
     });
   };
 
-  const scanImage = () => {
-    const pickerOptions: ImagePicker.ImagePickerOptions = {
-      allowsEditing: true,
-      legacy: true,
-      exif: false,
-    };
-
-    ImagePicker.launchImageLibraryAsync(pickerOptions).then(async (result) => {
-      if (!result.canceled) {
-        const { bcbp, format } = await scan(result.assets[0].uri);
-        if (!!bcbp && !!format) {
-          const bcbpData = decodeBCBP(bcbp);
-          if (!!bcbpData && (bcbpData?.data?.legs?.length ?? 0) > 0) {
-            setFlightDataFromBCBP(bcbpData?.data?.legs?.[0]);
-            const pkpass = await createPKPass(bcbp, format);
-            if (pkpass) {
-              dispatch({
-                type: 'bcbp',
-                value: {
-                  data: bcbpData,
-                  format,
-                  pkpass,
-                },
-              });
-            }
-          }
-        }
-      }
-    });
-  };
-
-  const scanBarcode = async (result: BarcodeScanningResult) => {
-    const BCBPFormatMap: { [key: string]: BCBPFormat } = {
-      aztec: 'PKBarcodeFormatAztec',
-      datamatrix: 'PKBarcodeFormatDataMatrix',
-      pdf417: 'PKBarcodeFormatPDF417',
-      qr: 'PKBarcodeFormatQR',
-    };
-
-    const { data, type, raw } = result;
-    const bcbp = raw ?? data;
-    if (!!bcbp && !!type) {
+  const scanFromAsset = async (path: string) => {
+    const { bcbp, format } = await scan(path);
+    if (!!bcbp && !!format) {
       const bcbpData = decodeBCBP(bcbp);
       if (!!bcbpData && (bcbpData?.data?.legs?.length ?? 0) > 0) {
-        setCameraModal(false);
         setFlightDataFromBCBP(bcbpData?.data?.legs?.[0]);
-        const format = BCBPFormatMap[type];
-        const pkpass = await createPKPass(bcbp, format);
+        const pkpass = await createPKPass(bcbp, format as BCBPFormat);
         if (pkpass) {
           dispatch({
             type: 'bcbp',
@@ -119,35 +74,40 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
     }
   };
 
+  const pickerOptions: Options = {
+    cropping: true,
+    cropperNavigationBarLight: isLightTheme,
+    cropperStatusBarLight: isLightTheme,
+    cropperToolbarTitle: t('add.crop_image'),
+    freeStyleCropEnabled: true,
+    mediaType: 'photo',
+    showCropGuidelines: false,
+    showCropFrame: true,
+  };
+  const scanImage = async () => {
+    try {
+      const image = await ImagePicker.openPicker(pickerOptions);
+      await scanFromAsset(image.path);
+    } catch (error: any) {
+      if (error?.code !== 'E_PICKER_CANCELLED') {
+        console.warn(error);
+      }
+    }
+  };
+
+  const scanBarcode = async () => {
+    try {
+      const image = await ImagePicker.openCamera(pickerOptions);
+      await scanFromAsset(image.path);
+    } catch (error: any) {
+      if (error?.code !== 'E_PICKER_CANCELLED') {
+        console.warn(error);
+      }
+    }
+  };
+
   return (
     <>
-      <Modal
-        animationType="slide"
-        key={`Modal${cameraModal ? 'visible' : 'hidden'}`}
-        transparent={false}
-        visible={cameraModal}
-        onRequestClose={() => setCameraModal(false)}
-      >
-        <View className="flex-column alignitems-center justifycontent-center flex-1 bg-surfaceVariant">
-          <View
-            className="b-3 bordercolor-secondary radius-sm p-md"
-            style={{
-              height: width < height ? width * 0.8 : height * 0.8,
-              width: width < height ? width * 0.8 : height * 0.8,
-            }}
-          >
-            <CameraView
-              barcodeScannerSettings={{
-                barcodeTypes: ['aztec', 'datamatrix', 'qr', 'pdf417'],
-              }}
-              style={StyleSheet.absoluteFillObject}
-              onBarcodeScanned={scanBarcode}
-            />
-          </View>
-          <Button className="mt-lg" title={t('buttons.close')} onPress={() => setCameraModal(false)} />
-        </View>
-      </Modal>
-
       <View className="flex-column" style={{ width: '100%' }}>
         <Button
           className="bg-secondary px-lg justifycontent-start"
@@ -165,13 +125,7 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
           textClass="ml-lg"
           title={t('add.scan_barcode')}
           uppercase={false}
-          onPress={() => {
-            if (!permission?.granted) {
-              requestPermission();
-            } else {
-              setCameraModal(true);
-            }
-          }}
+          onPress={scanBarcode}
         />
       </View>
       <View className="mt-md flex-column" style={{ width: '100%' }}>

@@ -2,7 +2,7 @@
   "expo": {
     "name": "AirPlain",
     "slug": "airplain",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "airplain",

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package com.mamenko.airplain
 
 import android.app.Application

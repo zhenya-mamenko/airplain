@@ -4,7 +4,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Tabs, usePathname } from 'expo-router';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Pressable, StatusBar } from 'react-native';
+import { Pressable, StatusBar, StatusBarStyle } from 'react-native';
 import { Text, ThemeProvider, View } from 'react-native-picasso';
 
 import emitter from '@/helpers/emitter';
@@ -80,7 +80,7 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
   return (
     // @ts-ignore
     <ThemeProvider theme={theme}>
-      <StatusBar backgroundColor={colorBgPrimary} barStyle={`${themeName}-content`} />
+      <StatusBar backgroundColor={colorBgPrimary} barStyle={`${themeName}-content` as StatusBarStyle} />
       <Tabs
         screenOptions={{
           animation: 'none',
@@ -161,7 +161,7 @@ export default function TabLayout(props: { tabs?: TabData[] } = {}) {
                 </View>
               ),
               tabBarButtonTestID: `${tab.route}-tab-button`,
-              tabBarIcon: ({ color }) => <TabBarIcon name={tab.icon as any} color={color} />,
+              tabBarIcon: ({ color }) => <TabBarIcon name={tab.icon as any} color={color as string} />,
               title: t(tab.title),
             }}
           />
