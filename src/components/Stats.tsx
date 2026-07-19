@@ -1,7 +1,10 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import { Image as _Image } from 'expo-image';
+import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, ScrollView, TextStyle } from 'react-native';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -128,6 +131,172 @@ const Card: React.FC<CardProps> = (props) => {
   );
 };
 
+const rowStyle: ViewStyle = {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-end',
+};
+
+const captionStyle: TextStyle = {
+  width: '12%',
+  fontSize: 14,
+  textAlign: 'left',
+  fontWeight: 'bold',
+  fontVariant: ['small-caps'],
+};
+
+const captionTextStyle: TextStyle = {
+  width: '78%',
+  fontSize: 14,
+  textAlign: 'left',
+  fontVariant: ['small-caps'],
+};
+
+const captionTextStyleLong: TextStyle = {
+  width: '90%',
+  fontSize: 14,
+  textAlign: 'left',
+  fontVariant: ['small-caps'],
+};
+
+const captionCountStyle: TextStyle = {
+  width: '10%',
+  fontSize: 12,
+  fontWeight: 'bold',
+  textAlign: 'right',
+  fontVariant: ['tabular-nums'],
+};
+
+export interface StatsRowRendererProps {
+  animatedStyle: any;
+  captionStyle: TextStyle;
+  captionTextStyle: TextStyle;
+  captionTextStyleLong: TextStyle;
+  captionCountStyle: TextStyle;
+  rowStyle: ViewStyle;
+  colorPrimaryContainer?: string;
+  locale?: string;
+}
+
+export const statsRowRenderers = {
+  countries: (item: any, index: number, props: StatsRowRendererProps) => (
+    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+      <Text numberOfLines={1} style={props.captionStyle}>
+        {item.flag}
+      </Text>
+      <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyle}>
+        {t(`achievements.${item.country}`).toLocaleLowerCase()}
+      </Text>
+      <Text numberOfLines={1} style={props.captionCountStyle}>
+        {item.count}
+      </Text>
+    </Animated.View>
+  ),
+  airlines: (item: any, index: number, props: StatsRowRendererProps) => (
+    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+      <View style={{ width: '12%' }}>
+        <Image
+          className="radius-xs b-1 bordercolor-secondaryContainer"
+          recyclingKey={item.airline}
+          source={item.logo}
+          style={{ width: 16, height: 16, backgroundColor: props.colorPrimaryContainer }}
+        />
+      </View>
+      <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyle}>
+        {item.airline.toLocaleLowerCase()}
+      </Text>
+      <Text numberOfLines={1} style={props.captionCountStyle}>
+        {item.count}
+      </Text>
+    </Animated.View>
+  ),
+  airports: (item: any, index: number, props: StatsRowRendererProps) => (
+    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+      <Text numberOfLines={1} style={props.captionStyle}>
+        {item.airport.toLocaleLowerCase()}
+      </Text>
+      <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyle}>
+        {getAirportData(item.airport, props.locale)?.airport_name.toLocaleLowerCase()}
+      </Text>
+      <Text numberOfLines={1} style={props.captionCountStyle}>
+        {item.count}
+      </Text>
+    </Animated.View>
+  ),
+  aircrafts: (item: any, index: number, props: StatsRowRendererProps) => (
+    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+      <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyleLong}>
+        {item.aircraft.toLocaleLowerCase() || t('stats.unknown').toLocaleLowerCase()}
+      </Text>
+      <Text numberOfLines={1} style={props.captionCountStyle}>
+        {item.count}
+      </Text>
+    </Animated.View>
+  ),
+};
+
+interface Top10CardProps {
+  animatedStyle: unknown;
+  caption: string;
+  colorPrimaryContainer?: string;
+  data: Array<unknown>;
+  locale?: string;
+}
+const Top10Card: React.FC<Top10CardProps> = (props) => {
+  const { animatedStyle, caption, colorPrimaryContainer, data, locale } = props;
+  if (!data || data.length === 0) {
+    return null;
+  }
+  const color = useThemeColor('textColors.surface');
+  const colorBgPrimaryContainer = useThemeColor('colors.primaryContainer');
+  const valueColor = useThemeColor('textColors.surface');
+  captionStyle.color = valueColor;
+  captionTextStyle.color = valueColor;
+  captionTextStyleLong.color = valueColor;
+  captionCountStyle.color = valueColor;
+
+  const title = t('stats.top10', { type: t(`stats.${caption}`) });
+  const rendererProps: StatsRowRendererProps = {
+    animatedStyle,
+    captionStyle,
+    captionTextStyle,
+    captionTextStyleLong,
+    captionCountStyle,
+    rowStyle,
+    colorPrimaryContainer,
+    locale,
+  };
+  const renderRow = statsRowRenderers[caption as keyof typeof statsRowRenderers];
+
+  return (
+    <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
+      <View className="flex-row radiustr-md radiustl-md pl-md pr-sm py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
+        <Text className="size-mdl color-surface ml-xs flex-1">{title}</Text>
+        {data.length > 10 && (
+          <Pressable
+            android_ripple={{
+              color: colorBgPrimaryContainer,
+              radius: 14,
+            }}
+            testID="stats-top10-button"
+            onPress={() => {
+              router.push({
+                pathname: '/stats-list',
+                params: { value: JSON.stringify(data), caption, renderRowStr: renderRow.toString() },
+              });
+            }}
+          >
+            <MaterialCommunityIcons color={color} name="arrow-right" size={20} style={{ padding: 4 }} />
+          </Pressable>
+        )}
+      </View>
+      <View className="flex-column px-md pt-md">
+        {data.slice(0, 10).map((item, index) => renderRow(item, index, rendererProps))}
+      </View>
+    </View>
+  );
+};
+
 export default function Stats() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<StatsData>();
@@ -140,7 +309,7 @@ export default function Stats() {
       setLoading(true);
       const stats = await getStats();
       setStats(stats);
-      setTimeout(() => setLoading(false), 1000);
+      setTimeout(() => setLoading(false), 500);
     };
 
     const getStatsCallback = () => getStatsRef.current();
@@ -264,11 +433,11 @@ export default function Stats() {
   let avgDelay = stats?.[year]?.avgDelay ?? 0;
   avgDelay = avgDelay > 0 ? avgDelay : 0;
 
-  const valueColor = useThemeColor('textColors.surface');
   const shadowColor = useThemeColor('textColors.secondaryContainer');
   const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
   const colorPrimary = useThemeColor('colors.primary');
   const colorPrimaryContainer = useThemeColor('textColors.primaryContainer');
+  const valueColor = useThemeColor('textColors.surface');
 
   const loaderView = (
     <View className="bg-surfaceVariant flex-1 alignitems-center justifycontent-center">
@@ -278,46 +447,6 @@ export default function Stats() {
 
   const flightsStyle: TextStyle = {
     width: 30,
-    fontSize: 12,
-    color: valueColor,
-    fontWeight: 'bold',
-    textAlign: 'right',
-    fontVariant: ['tabular-nums'],
-  };
-
-  const rowStyle: ViewStyle = {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-  };
-
-  const captionStyle: TextStyle = {
-    width: '12%',
-    fontSize: 14,
-    color: valueColor,
-    textAlign: 'left',
-    fontWeight: 'bold',
-    fontVariant: ['small-caps'],
-  };
-
-  const captionTextStyle: TextStyle = {
-    width: '78%',
-    fontSize: 14,
-    color: valueColor,
-    textAlign: 'left',
-    fontVariant: ['small-caps'],
-  };
-
-  const captionTextStyleLong: TextStyle = {
-    width: '90%',
-    fontSize: 14,
-    color: valueColor,
-    textAlign: 'left',
-    fontVariant: ['small-caps'],
-  };
-
-  const captionCountStyle: TextStyle = {
-    width: '10%',
     fontSize: 12,
     color: valueColor,
     fontWeight: 'bold',
@@ -454,99 +583,18 @@ export default function Stats() {
                 </View>
               </View>
 
-              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
-                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
-                  <Text className="size-mdl color-surface ml-xs flex-1">
-                    {t('stats.top10', { type: t('stats.countries') })}
-                  </Text>
-                </View>
-                <View className="flex-column px-md pt-md">
-                  {displayValue.countriesData.slice(0, 10).map((item, index) => (
-                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
-                      <Text numberOfLines={1} style={captionStyle}>
-                        {item.flag}
-                      </Text>
-                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyle}>
-                        {t(`achievements.${item.country}`).toLocaleLowerCase()}
-                      </Text>
-                      <Text numberOfLines={1} style={captionCountStyle}>
-                        {item.count}
-                      </Text>
-                    </Animated.View>
-                  ))}
-                </View>
-              </View>
+              <Top10Card
+                animatedStyle={animatedStyle}
+                caption="countries"
+                colorPrimaryContainer={colorPrimaryContainer}
+                data={displayValue.countriesData}
+              />
 
-              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
-                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
-                  <Text className="size-mdl color-surface ml-xs flex-1">
-                    {t('stats.top10', { type: t('stats.airlines') })}
-                  </Text>
-                </View>
-                <View className="flex-column px-md pt-md">
-                  {displayValue.airlinesData.slice(0, 10).map((item, index) => (
-                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
-                      <View style={{ width: '12%' }}>
-                        <Image
-                          className="radius-xs b-1 bordercolor-secondaryContainer"
-                          recyclingKey={item.airline}
-                          source={item.logo}
-                          style={{ width: 16, height: 16, backgroundColor: colorPrimaryContainer }}
-                        />
-                      </View>
-                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyle}>
-                        {item.airline.toLocaleLowerCase()}
-                      </Text>
-                      <Text numberOfLines={1} style={captionCountStyle}>
-                        {item.count}
-                      </Text>
-                    </Animated.View>
-                  ))}
-                </View>
-              </View>
+              <Top10Card animatedStyle={animatedStyle} caption="airlines" data={displayValue.airlinesData} />
 
-              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
-                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
-                  <Text className="size-mdl color-surface ml-xs flex-1">
-                    {t('stats.top10', { type: t('stats.airports') })}
-                  </Text>
-                </View>
-                <View className="flex-column px-md pt-md">
-                  {displayValue.airportsData.slice(0, 10).map((item, index) => (
-                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
-                      <Text numberOfLines={1} style={captionStyle}>
-                        {item.airport.toLocaleLowerCase()}
-                      </Text>
-                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyle}>
-                        {getAirportData(item.airport, locale)?.airport_name.toLocaleLowerCase()}
-                      </Text>
-                      <Text numberOfLines={1} style={captionCountStyle}>
-                        {item.count}
-                      </Text>
-                    </Animated.View>
-                  ))}
-                </View>
-              </View>
+              <Top10Card animatedStyle={animatedStyle} caption="airports" data={displayValue.airportsData} />
 
-              <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-xs pb-md radius-md b-1 bordercolor-outline elevated">
-                <View className="flex-row radiustr-md radiustl-md px-md py-smm bb-1 bordercolor-outlineVariant bg-secondaryContainer">
-                  <Text className="size-mdl color-surface ml-xs flex-1">
-                    {t('stats.top10', { type: t('stats.aircrafts') })}
-                  </Text>
-                </View>
-                <View className="flex-column px-md pt-md">
-                  {displayValue.aircraftsData.slice(0, 10).map((item, index) => (
-                    <Animated.View key={index} style={[animatedStyle, rowStyle]}>
-                      <Text ellipsizeMode="tail" numberOfLines={1} style={captionTextStyleLong}>
-                        {item.aircraft.toLocaleLowerCase() || t('stats.unknown').toLocaleLowerCase()}
-                      </Text>
-                      <Text numberOfLines={1} style={captionCountStyle}>
-                        {item.count}
-                      </Text>
-                    </Animated.View>
-                  ))}
-                </View>
-              </View>
+              <Top10Card animatedStyle={animatedStyle} caption="aircrafts" data={displayValue.aircraftsData} />
             </View>
           </GestureDetector>
         </GestureHandlerRootView>

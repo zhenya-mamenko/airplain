@@ -2,7 +2,7 @@
   "expo": {
     "name": "AirPlain",
     "slug": "airplain",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "airplain",
@@ -69,7 +69,10 @@
           "resizeMode": "contain",
           "backgroundColor": "#33b3df"
         }
-      ]
+      ],
+      "expo-image",
+      "expo-sharing",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true

@@ -174,34 +174,45 @@ export default function AddFlight(props: { today?: Date }) {
           router.back();
         }
       } else if (getLastFlightDataError() === 'unauthorized') {
-        setProcessing(false);
-        Alert.alert(t('add.flight_auth_error_title'), t('add.flight_auth_error_description'), [
-          {
-            text: t('buttons.close'),
-            style: 'cancel',
-          },
-          {
-            text: t('buttons.add_manually'),
-            style: 'default',
-            onPress: () => {
-              addFlightManually();
-              dispatch({
-                type: 'add',
-                value: {
-                  airline: state.search.airline,
-                  airlineName: getAirlineData(state.search.airline)?.airlineName ?? '',
-                  flightNumber: state.search.flightNumber,
-                  departureDate: state.search.departureDate,
-                },
-              });
+        Alert.alert(
+          t('add.flight_auth_error_title'),
+          t('add.flight_auth_error_description'),
+          [
+            {
+              text: t('buttons.close'),
+              style: 'cancel',
+              onPress: () => setProcessing(false),
             },
-          },
+            {
+              text: t('buttons.add_manually'),
+              style: 'default',
+              onPress: () => {
+                addFlightManually();
+                dispatch({
+                  type: 'add',
+                  value: {
+                    airline: state.search.airline,
+                    airlineName: getAirlineData(state.search.airline)?.airlineName ?? '',
+                    flightNumber: state.search.flightNumber,
+                    departureDate: state.search.departureDate,
+                  },
+                });
+                setProcessing(false);
+              },
+            },
+            {
+              text: t('buttons.to_settings'),
+              style: 'default',
+              onPress: () => {
+                router.push('/(tabs)/settings');
+              },
+            },
+          ],
           {
-            text: t('buttons.to_settings'),
-            style: 'default',
-            onPress: () => router.push('/(tabs)/settings'),
+            onDismiss: () => setProcessing(false),
           },
-        ]);
+        );
+        return;
       } else {
         const isOffline = getLastFlightDataError() === 'offline';
         const value = {
@@ -327,7 +338,11 @@ export default function AddFlight(props: { today?: Date }) {
                         fontVariant: ['tabular-nums'],
                       }}
                       value={state.search.flightNumber}
-                      onBlur={() => refs.searchDate.current.open()}
+                      onBlur={() => {
+                        if (!processing) {
+                          refs.searchDate.current.open();
+                        }
+                      }}
                       onChangeText={(text: string) => {
                         dispatch({
                           type: 'search',
