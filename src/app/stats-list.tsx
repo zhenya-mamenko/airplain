@@ -11,7 +11,7 @@ import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import useTheme from '@/hooks/useTheme';
 
-const StatsTop10 = () => {
+const StatsList = () => {
   const { caption, value } = useLocalSearchParams<{
     caption: string;
     value: string;
@@ -98,7 +98,7 @@ const StatsTop10 = () => {
           <View className="bg-surfaceVariant flex-column flex-1">
             <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-md pb-md radius-md b-1 bordercolor-outline elevated">
               <View className="flex-column px-md pt-md">
-                {data.slice(0, 10).map((item, index) => renderRow(item, index, rendererProps))}
+                {data.map((item, index) => renderRow(item, index, rendererProps))}
               </View>
             </View>
           </View>
@@ -108,4 +108,4 @@ const StatsTop10 = () => {
   );
 };
 
-export default StatsTop10;
+export default StatsList;
