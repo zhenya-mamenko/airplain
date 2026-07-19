@@ -56,12 +56,21 @@ function getApi(name: string = settings.CURRENT_API, overrides?: ApiOverrides): 
     return null;
   }
   const api = apiFactory();
-  if (name === 'aerodatabox' && overrides?.aerodataboxApiKey !== undefined) {
-    api.headers['x-magicapi-key'] = overrides.aerodataboxApiKey;
-  } else if (name === 'aeroapi' && overrides?.aeroapiApiKey !== undefined) {
-    api.headers['x-apikey'] = overrides.aeroapiApiKey;
-  } else if (name === 'aerodatabox_rapid' && overrides?.aerodataboxRapidApiKey !== undefined) {
-    api.headers['x-rapidapi-key'] = overrides.aerodataboxRapidApiKey;
+  switch (name) {
+    case 'aerodatabox':
+      api.headers['x-magicapi-key'] =
+        overrides?.aerodataboxApiKey !== undefined ? overrides.aerodataboxApiKey : settings.AEDBX_API_KEY;
+      break;
+    case 'aeroapi':
+      api.headers['x-apikey'] =
+        overrides?.aeroapiApiKey !== undefined ? overrides.aeroapiApiKey : settings.AEROAPI_API_KEY;
+      break;
+    case 'aerodatabox_rapid':
+      api.headers['x-rapidapi-key'] =
+        overrides?.aerodataboxRapidApiKey !== undefined
+          ? overrides.aerodataboxRapidApiKey
+          : settings.AEDBX_RAPID_API_KEY;
+      break;
   }
 
   if (!api?.url) {

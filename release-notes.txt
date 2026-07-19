@@ -1,5 +1,7 @@
-Bugfix: Past flights tab selected by default, should be Actual flights.
+Bugfix: Wrong blur handling in "Add flight" when selected "Go to settings" option.
 
-Feature: New image/camera picker and crop tool.
+Improvement: Top 10 stats blocks don't apear when no stats data available.
 
-Chore: Some code updated according to new libraries.
+Improvement: Full stats for Top 10 blocks now available.
+
+Chore: Updated dependencies.
