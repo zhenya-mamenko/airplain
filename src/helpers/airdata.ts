@@ -6,6 +6,7 @@ import { NativeModules } from 'react-native';
 import airports from '@/constants/airports.json';
 import { deleteSetting, getSetting, setSetting, settings } from '@/constants/settings';
 import { makeCheckInLink, stopBackgroundTask } from '@/helpers/common';
+import { parseAppDateTime } from '@/helpers/datetime';
 import emitter from '@/helpers/emitter';
 import { getFlightData } from '@/helpers/flights';
 import t from '@/helpers/localization';
@@ -15,6 +16,16 @@ import { archiveFlight, getActualFlights, getAirlines, updateFlight } from '@/he
 import type { AirlineData, AirportData, Flight } from '@/types';
 
 const { AirPlainBgModule } = NativeModules;
+
+const isSameInstant = (currentValue: string | undefined, nextValue: string | undefined): boolean => {
+  if (currentValue === nextValue) {
+    return true;
+  }
+
+  const currentDate = parseAppDateTime(currentValue);
+  const nextDate = parseAppDateTime(nextValue);
+  return currentDate !== null && nextDate !== null && currentDate.getTime() === nextDate.getTime();
+};
 
 interface NativeBackgroundFlightSnapshot {
   actualEndDatetime?: string;
@@ -224,7 +235,10 @@ async function updateFlightsState(
             }
           }
 
-          if (!!flightData.actualStartDatetime && flight.actualStartDatetime !== flightData.actualStartDatetime) {
+          if (
+            !!flightData.actualStartDatetime &&
+            !isSameInstant(flight.actualStartDatetime, flightData.actualStartDatetime)
+          ) {
             if (shouldSendNotifications) {
               messages.push(
                 t('notifications.changed_start_datetime', {
@@ -269,7 +283,10 @@ async function updateFlightsState(
             isFlightUpdated = true;
           }
 
-          if (!!flightData.actualEndDatetime && flight.actualEndDatetime !== flightData.actualEndDatetime) {
+          if (
+            !!flightData.actualEndDatetime &&
+            !isSameInstant(flight.actualEndDatetime, flightData.actualEndDatetime)
+          ) {
             if (shouldSendNotifications) {
               messages.push(
                 t('notifications.changed_end_datetime', {

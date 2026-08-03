@@ -461,6 +461,33 @@ describe('updateFlightsState', () => {
     expect(mockShowFlightNotification).toHaveBeenCalled();
   });
 
+  test('updateFlightsState - does not notify when equal flight times use different offsets', async () => {
+    const baseDate = new Date('2026-05-19T10:15:00.000Z');
+    const startTime = '2026-05-19 13:45:00+02:00';
+    const endTime = '2026-05-19 21:45:00+02:00';
+
+    mockGetFlightData.mockResolvedValue({
+      actualStartDatetime: '2026-05-19T11:45:00.000Z',
+      actualEndDatetime: '2026-05-19T19:45:00.000Z',
+      distance: 1234,
+    } as any);
+    mockGetActualFlights.mockResolvedValue([
+      createMockFlight({
+        startDatetime: startTime,
+        endDatetime: endTime,
+        actualStartDatetime: startTime,
+        actualEndDatetime: endTime,
+        checkInTime: 0,
+        checkInLink: undefined,
+      }),
+    ]);
+
+    await fetchActualFlights(baseDate, true);
+
+    expect(mockUpdateFlight).not.toHaveBeenCalled();
+    expect(mockShowFlightNotification).not.toHaveBeenCalled();
+  });
+
   test('updateFlightsState - timeSpan 24h triggers status notification', async () => {
     const baseDate = new Date('2023-03-10T10:00:00.000Z');
     const startTime = new Date(baseDate.getTime() + 23 * 60 * 60 * 1000).toISOString();

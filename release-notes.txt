@@ -1,7 +1,5 @@
-Bugfix: Wrong blur handling in "Add flight" when selected "Go to settings" option.
+Bugfix: Fixed incorrect flight date comparison between API response and local database.
 
-Improvement: Top 10 stats blocks don't apear when no stats data available.
-
-Improvement: Full stats for Top 10 blocks now available.
+Bugfix: Fixed a race condition that could delete an existing notification before a replacement was created.
 
 Chore: Updated dependencies.

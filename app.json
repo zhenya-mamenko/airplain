@@ -19,6 +19,7 @@
       "permissions": [
         "BACKGROUND_FETCH",
         "POST_NOTIFICATIONS",
+        "POST_PROMOTED_NOTIFICATIONS",
         "RECEIVE_BOOT_COMPLETED",
         "REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
         "SCHEDULE_EXACT_ALARM",
@@ -49,7 +50,7 @@
         "expo-build-properties",
         {
           "android": {
-            "minSdkVersion": 24,
+            "minSdkVersion": 34,
             "compileSdkVersion": 36,
             "targetSdkVersion": 36,
             "buildToolsVersion": "36.0.0",
@@ -60,7 +61,6 @@
         }
       ],
       "./plugins/withAndroidUnitTests",
-      "expo-web-browser",
       "expo-font",
       [
         "expo-splash-screen",
@@ -71,8 +71,7 @@
         }
       ],
       "expo-image",
-      "expo-sharing",
-      "expo-status-bar"
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true
