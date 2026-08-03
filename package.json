@@ -1,7 +1,7 @@
 {
   "name": "airplain",
   "main": "./index.js",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "scripts": {
     "start": "expo start",
     "android": "npm run generate:android-resources && expo run:android",
