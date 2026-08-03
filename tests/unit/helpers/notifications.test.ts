@@ -187,6 +187,30 @@ describe('notifications helper', () => {
     expect(hasScheduledFlightReminder(7, 'beforeFlight3h')).toBe(true);
   });
 
+  test('syncScheduledFlightReminders preserves existing reminders when replacement scheduling fails', async () => {
+    mockNotificationStorage.set(
+      'flight-scheduled-notifications-7',
+      JSON.stringify({
+        beforeFlight3h: { notificationId: 'old-before', scheduledFor: '2099-04-10T09:00:00.000Z' },
+        onlineCheckInOpen: { notificationId: 'old-checkin', scheduledFor: '2099-04-09T12:00:00.000Z' },
+      }),
+    );
+    mockScheduleNotificationAsync.mockReset();
+    mockScheduleNotificationAsync
+      .mockResolvedValueOnce('new-before')
+      .mockRejectedValueOnce(new Error('scheduler unavailable'));
+
+    await expect(syncScheduledFlightReminders(createFlight({ checkInTime: 24 }))).rejects.toThrow(
+      'scheduler unavailable',
+    );
+
+    expect(mockCancelScheduledNotificationAsync).toHaveBeenCalledWith('new-before');
+    expect(mockCancelScheduledNotificationAsync).not.toHaveBeenCalledWith('old-before');
+    expect(mockCancelScheduledNotificationAsync).not.toHaveBeenCalledWith('old-checkin');
+    expect(hasScheduledFlightReminder(7, 'beforeFlight3h')).toBe(true);
+    expect(hasScheduledFlightReminder(7, 'onlineCheckInOpen')).toBe(true);
+  });
+
   test('syncScheduledFlightReminders marks expired reminders as delivered before rebuilding schedule', async () => {
     mockNotificationStorage.set(
       'flight-scheduled-notifications-7',

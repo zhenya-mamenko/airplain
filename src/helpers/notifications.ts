@@ -266,9 +266,8 @@ export const syncScheduledFlightReminders = async (flight: Flight): Promise<void
     return;
   }
 
-  await cancelScheduledFlightReminders(flight.flightId);
-
   if (flight.isArchived) {
+    await cancelScheduledFlightReminders(flight.flightId);
     return;
   }
 
@@ -283,37 +282,55 @@ export const syncScheduledFlightReminders = async (flight: Flight): Promise<void
   }
   const title = getFlightNotificationTitle(flight);
 
-  const beforeFlight3hDate = new Date(startDatetime.getTime() - 3 * 60 * 60 * 1000);
-  if (beforeFlight3hDate > now) {
-    const notificationId = await scheduleReminder(title, t('notifications.before_flight_3h'), beforeFlight3hDate, {
-      flightId: flight.flightId,
-      reminderKey: 'beforeFlight3h',
-      type: 'scheduledFlightReminder',
-      url: `/flights/actual?flightId=${flight.flightId}`,
-    });
-    reminders.beforeFlight3h = {
-      notificationId,
-      scheduledFor: beforeFlight3hDate.toISOString(),
-    };
-  }
-
-  if (flight.checkInTime && flight.checkInTime > 1 && !flight.seatNumber) {
-    const onlineCheckInDate = new Date(startDatetime.getTime() - flight.checkInTime * 60 * 60 * 1000);
-    if (onlineCheckInDate > now) {
-      const notificationId = await scheduleReminder(title, t('notifications.online_check_in_open'), onlineCheckInDate, {
+  try {
+    const beforeFlight3hDate = new Date(startDatetime.getTime() - 3 * 60 * 60 * 1000);
+    if (beforeFlight3hDate > now) {
+      const notificationId = await scheduleReminder(title, t('notifications.before_flight_3h'), beforeFlight3hDate, {
         flightId: flight.flightId,
-        reminderKey: 'onlineCheckInOpen',
+        reminderKey: 'beforeFlight3h',
         type: 'scheduledFlightReminder',
         url: `/flights/actual?flightId=${flight.flightId}`,
       });
-      reminders.onlineCheckInOpen = {
+      reminders.beforeFlight3h = {
         notificationId,
-        scheduledFor: onlineCheckInDate.toISOString(),
+        scheduledFor: beforeFlight3hDate.toISOString(),
       };
     }
-  }
 
-  setScheduledFlightReminders(flight.flightId, reminders);
+    if (flight.checkInTime && flight.checkInTime > 1 && !flight.seatNumber) {
+      const onlineCheckInDate = new Date(startDatetime.getTime() - flight.checkInTime * 60 * 60 * 1000);
+      if (onlineCheckInDate > now) {
+        const notificationId = await scheduleReminder(
+          title,
+          t('notifications.online_check_in_open'),
+          onlineCheckInDate,
+          {
+            flightId: flight.flightId,
+            reminderKey: 'onlineCheckInOpen',
+            type: 'scheduledFlightReminder',
+            url: `/flights/actual?flightId=${flight.flightId}`,
+          },
+        );
+        reminders.onlineCheckInOpen = {
+          notificationId,
+          scheduledFor: onlineCheckInDate.toISOString(),
+        };
+      }
+    }
+
+    await cancelScheduledFlightReminders(flight.flightId);
+    setScheduledFlightReminders(flight.flightId, reminders);
+  } catch (error) {
+    await Promise.all(
+      Object.values(reminders).map(async (reminder) => {
+        try {
+          await Notifications.cancelScheduledNotificationAsync(reminder.notificationId);
+        } catch {}
+      }),
+    );
+    console.warn(`Failed to schedule flight reminders for flight ${flight.flightId}`, error);
+    throw error;
+  }
 };
 
 export const showCommonNotification = async (title: string, body: string, data?: any) => {
