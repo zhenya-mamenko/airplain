@@ -234,6 +234,7 @@ const FlightCard = React.memo(
             <View className="flex-row justifycontent-start alignitems-center">
               <Image
                 className="radius-xs b-1 bordercolor-secondaryContainer"
+                placeholder={require('@/assets/images/favicon.png')}
                 recyclingKey={airline}
                 source={airlineLogoUri(airline)}
                 style={{

@@ -120,6 +120,7 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
             <View className="flex-row justifycontent-start radiustr-md radiustl-md alignitems-center p-md bb-1 bordercolor-outlineVariant bg-secondaryContainer">
               <Image
                 className="radius-md b-1 bordercolor-secondaryContainer"
+                placeholder={require('@/assets/images/favicon.png')}
                 recyclingKey={airline}
                 source={airlineLogoUri(airline)}
                 style={{ width: 64, height: 64, backgroundColor: '#FFFFFF' }}
