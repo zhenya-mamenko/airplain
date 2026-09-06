@@ -131,7 +131,7 @@ export const makeCardGestures = (
     });
 
   const longpress = Gesture.LongPress()
-    .onStart((_) => {
+    .onStart(() => {
       borderProgress.value = withTiming(1, { duration: 200 });
     })
     .onEnd((e, success) => {

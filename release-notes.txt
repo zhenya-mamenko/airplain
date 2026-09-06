@@ -1,7 +1,0 @@
-Bugfix: Fixed incorrect flight date comparison between API response and local database.
-
-Bugfix: Fixed a race condition that could delete an existing notification before a replacement was created.
-
-Chore: Updated minimum SDK version to 34 (Android 14) and architecture to arm64-v8a only.
-
-Chore: Updated dependencies.

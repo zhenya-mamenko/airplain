@@ -66,6 +66,7 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
   }, [lat, lon, network.isInternetReachable, colorPrimaryContainer]);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- the callback updates state only after asynchronous weather loading.
     loadWeatherCallback();
   }, [loadWeatherCallback]);
 

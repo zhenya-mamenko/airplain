@@ -1,7 +1,7 @@
 import { DateTimePickerAndroid, DateTimePickerChangeEvent } from '@react-native-community/datetimepicker';
 import { DateTime } from 'luxon';
 
-import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useImperativeHandle, useMemo, useState } from 'react';
 
 import Button from '@/components/Button';
 import { useLocale } from '@/helpers/localization';
@@ -23,11 +23,20 @@ interface IDatetimeInputRef {
   open: () => void;
 }
 
+const removeTimeZone = (dateString: string) => dateString.replace(/(\+|-)\d{2}:\d{2}$/gi, '');
+
 const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
   ({ className, dateFormatOptions, textClass, timeFormatOptions, onChange, timezone, ...props }: Props, currentRef) => {
-    const [value, setValue] = useState<string>('');
-    const [dateValue, setDateValue] = useState<Date>(new Date());
-    const [text, setText] = useState('');
+    const [overrideValue, setOverrideValue] = useState<string | null>(null);
+
+    const { value, dateValue } = useMemo(() => {
+      const v = overrideValue ?? props.value ?? '';
+      const parsed = new Date(removeTimeZone(v));
+      if (!isNaN(parsed.valueOf())) {
+        return { value: v, dateValue: parsed };
+      }
+      return { value: '', dateValue: new Date() };
+    }, [overrideValue, props.value]);
 
     const locale = useLocale();
     const dateOptions: Intl.DateTimeFormatOptions = useMemo(
@@ -36,9 +45,8 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
           month: 'long',
           day: 'numeric',
           year: 'numeric',
-          timeZone: timezone,
         },
-      [dateFormatOptions, timezone],
+      [dateFormatOptions],
     );
     const timeOptions: Intl.DateTimeFormatOptions = useMemo(
       () =>
@@ -46,48 +54,25 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
           hour: 'numeric',
           minute: 'numeric',
           dayPeriod: 'short',
-          timeZone: timezone,
         },
-      [timeFormatOptions, timezone],
+      [timeFormatOptions],
     );
 
-    useEffect(() => {
-      const v = props.value ?? '';
-      const dateValue = new Date(v.length > 6 ? v.slice(0, -6) : v);
-      if (!isNaN(dateValue.valueOf())) {
-        setValue(v);
-        setDateValue(dateValue);
-      } else {
-        setValue('');
-        setDateValue(new Date());
-      }
-    }, [props.value]);
-
-    useEffect(() => {
+    const text = useMemo(() => {
       if (!value) {
-        setText(props.mode === 'date' ? ' 📅 ' : ' 🕒 ');
-      } else {
-        const date = new Date(value);
-        const text =
-          props.mode === 'date'
-            ? date.toLocaleDateString(locale, dateOptions)
-            : date.toLocaleTimeString(locale, timeOptions);
-        setText(text);
+        return props.mode === 'date' ? ' 📅 ' : ' 🕒 ';
       }
+      const date = new Date(removeTimeZone(value));
+      return props.mode === 'date'
+        ? date.toLocaleDateString(locale, dateOptions)
+        : date.toLocaleTimeString(locale, timeOptions);
     }, [props.mode, value, locale, dateOptions, timeOptions]);
-
-    const open = () => DateTimePickerAndroid.open(params);
-
-    useImperativeHandle(currentRef, () => {
-      return { open };
-    });
 
     const setDate = (event: DateTimePickerChangeEvent, date: Date) => {
       const textDate = DateTime.fromJSDate(date, { zone: 'local' })
         .setZone(timezone, { keepLocalTime: true })
         .toFormat('y-MM-dd HH:mm:ssZZ');
-      setValue(textDate);
-      setDateValue(new Date(textDate.slice(0, -6)));
+      setOverrideValue(textDate);
       if (onChange) onChange(textDate);
     };
 
@@ -97,6 +82,12 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
       value: dateValue,
       onValueChange: setDate,
     };
+
+    const open = () => DateTimePickerAndroid.open(params);
+
+    useImperativeHandle(currentRef, () => {
+      return { open };
+    });
 
     return <Button className={className} textClass={textClass} title={text} uppercase={false} onPress={open} />;
   },

@@ -24,6 +24,8 @@ import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import useTheme from '@/hooks/useTheme';
 import type { Flight, FlightStatus, PKPassData } from '@/types';
 
+/* oxlint-disable react/refs -- These refs are invoked exclusively from React Native event handlers. */
+
 export default function AddFlight(props: { today?: Date }) {
   const today = fromUTCtoLocalISOString((props.today ?? new Date()).toISOString(), 'UTC');
   const themeName = useDynamicColorScheme() || 'light';

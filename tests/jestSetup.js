@@ -40,7 +40,7 @@ jest.mock('expo-file-system', () => {
       cache: '/mock/cache/',
       document: '/mock/document/',
     },
-    Directory: jest.fn().mockImplementation((_) => ({
+    Directory: jest.fn().mockImplementation(() => ({
       exists: true,
       create: jest.fn(),
       delete: jest.fn(() => Promise.resolve()),

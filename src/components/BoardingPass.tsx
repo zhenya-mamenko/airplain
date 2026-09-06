@@ -67,31 +67,15 @@ const BarCode = ({ format, options, ...rest }: BarCodeProps) => {
   );
 };
 
-const BoardingPass = (props: { pkpass: PKPassData }) => {
-  const { airline, barcode, boardingPass, colors, images } = props.pkpass;
+interface FieldProps extends React.ComponentProps<typeof View> {
+  colors: PKPassData['colors'];
+  label: string;
+  value: string;
+  labelProps?: React.ComponentProps<typeof Text>;
+  valueProps?: React.ComponentProps<typeof Text>;
+}
 
-  const brightness = useRef(0);
-  (async () => {
-    const level = await Brightness.getBrightnessAsync();
-    brightness.current = level;
-    await Brightness.setBrightnessAsync(1);
-  })();
-  useEffect(() => {
-    return () => {
-      if (brightness.current !== 0) {
-        Brightness.setBrightnessAsync(brightness.current);
-      }
-    };
-  }, []);
-
-  interface FieldProps extends React.ComponentProps<typeof View> {
-    label: string;
-    value: string;
-    labelProps?: React.ComponentProps<typeof Text>;
-    valueProps?: React.ComponentProps<typeof Text>;
-  }
-
-  const Field = ({ label, value, ...rest }: FieldProps) => {
+const Field = ({ colors, label, value, ...rest }: FieldProps) => {
     return (
       <View {...rest} className={rest.className ? rest.className + ' flex-1 flex-column' : 'flex-1 flex-column'}>
         <Text
@@ -116,13 +100,14 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
         </Text>
       </View>
     );
-  };
+};
 
-  interface FieldsProps extends React.ComponentProps<typeof View> {
-    fields: Array<{ label?: string; key: string; value: string }>;
-  }
+interface FieldsProps extends React.ComponentProps<typeof View> {
+  colors: PKPassData['colors'];
+  fields: Array<{ label?: string; key: string; value: string }>;
+}
 
-  const Fields = ({ fields, ...rest }: FieldsProps) => {
+const Fields = ({ colors, fields, ...rest }: FieldsProps) => {
     return (
       <>
         {fields.map((f, index) => {
@@ -137,6 +122,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
           }
           return (
             <Field
+              colors={colors}
               key={f.key}
               label={f.label ?? f.key}
               labelProps={labelProps}
@@ -148,41 +134,63 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
         })}
       </>
     );
-  };
+};
 
-  interface AssetImageProps extends React.ComponentProps<typeof Image> {
-    asset?: PKPassAsset;
-    maxHeight?: number; // icon: 29, logo: 50, footer: 15
-    maxWidth?: number; // icon: 29, logo: 160, footer: 286
+interface AssetImageProps extends React.ComponentProps<typeof Image> {
+  asset?: PKPassAsset;
+  maxHeight?: number; // icon: 29, logo: 50, footer: 15
+  maxWidth?: number; // icon: 29, logo: 160, footer: 286
+}
+
+const LoadedAssetImage = ({ asset, maxHeight, maxWidth, ...rest }: AssetImageProps & { asset: PKPassAsset }) => {
+  const data = useImage(asset.image);
+  if (!data) return null;
+
+  let scale = asset.ratio;
+  if (data.height > (maxHeight ?? 50) * scale) {
+    scale = data.height / (maxHeight ?? 50);
   }
-  const AssetImage = ({ asset, maxHeight, maxWidth, ...rest }: AssetImageProps) => {
-    let image = null;
-    if (asset && asset.image) {
-      const data = useImage(asset.image);
-      if (!data) {
-        return null;
+  if (data.width > (maxWidth ?? 160) * scale) {
+    scale = data.width / (maxWidth ?? 160);
+  }
+
+  return (
+    <Image
+      {...rest}
+      source={data}
+      style={{
+        width: data.width / scale,
+        height: data.height / scale,
+        ...(rest.style as any),
+      }}
+    />
+  );
+};
+
+const AssetImage = ({ asset, ...rest }: AssetImageProps) => {
+  if (!asset?.image) return null;
+  return <LoadedAssetImage asset={asset} {...rest} />;
+};
+
+const BoardingPass = (props: { pkpass: PKPassData }) => {
+  const { airline, barcode, boardingPass, colors, images } = props.pkpass;
+
+  const brightness = useRef(0);
+  useEffect(() => {
+    let isMounted = true;
+    void (async () => {
+      const level = await Brightness.getBrightnessAsync();
+      if (isMounted) brightness.current = level;
+      await Brightness.setBrightnessAsync(1);
+    })();
+
+    return () => {
+      isMounted = false;
+      if (brightness.current !== 0) {
+        void Brightness.setBrightnessAsync(brightness.current);
       }
-      let scale = asset.ratio;
-      if (data.height > (maxHeight ?? 50) * scale) {
-        scale = data.height / (maxHeight ?? 50);
-      }
-      if (data.width > (maxWidth ?? 160) * scale) {
-        scale = data.width / (maxWidth ?? 160);
-      }
-      image = (
-        <Image
-          {...rest}
-          source={data}
-          style={{
-            width: data.width / scale,
-            height: data.height / scale,
-            ...(rest.style as any),
-          }}
-        />
-      );
-    }
-    return image;
-  };
+    };
+  }, []);
 
   const maxImageWidth = useWindowDimensions().width * 0.8;
 
@@ -204,11 +212,12 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
             {airline}
           </Text>
         )}
-        {boardingPass.headerFields ? <Fields fields={boardingPass.headerFields} className="alignitems-end" /> : null}
+        {boardingPass.headerFields ? <Fields colors={colors} fields={boardingPass.headerFields} className="alignitems-end" /> : null}
       </View>
       {boardingPass.primaryFields && boardingPass.primaryFields.length == 2 ? (
         <View className="flex-row alignitems-end justifycontent-between mt-lg mb-md">
           <Field
+            colors={colors}
             label={boardingPass.primaryFields[0].label ?? boardingPass.primaryFields[0].key}
             labelProps={{ className: 'size-sm' }}
             style={{ width: '35%' }}
@@ -229,6 +238,7 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
             />
           </View>
           <Field
+            colors={colors}
             className="alignitems-end"
             label={boardingPass.primaryFields[1].label ?? boardingPass.primaryFields[1].key}
             labelProps={{ className: 'size-sm align-right' }}
@@ -243,12 +253,12 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
       ) : null}
       {boardingPass.auxiliaryFields && boardingPass.auxiliaryFields.length > 0 ? (
         <View className="flex-row alignitems-start justifycontent-between my-md" style={{ height: 48 }}>
-          <Fields fields={boardingPass.auxiliaryFields} />
+          <Fields colors={colors} fields={boardingPass.auxiliaryFields} />
         </View>
       ) : null}
       {boardingPass.secondaryFields && boardingPass.secondaryFields.length > 0 ? (
         <View className="flex-row alignitems-start justifycontent-between my-md">
-          <Fields fields={boardingPass.secondaryFields} />
+          <Fields colors={colors} fields={boardingPass.secondaryFields} />
         </View>
       ) : null}
       <AssetImage

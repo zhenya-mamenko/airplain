@@ -4,9 +4,12 @@ import palettes from '@/constants/palettes.json';
 import themes from '@/constants/themes.json';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
-export const useThemeColor = (colorName: string, themeName?: ColorSchemeName): string => {
-  const theme = themeName ?? useDynamicColorScheme() ?? 'light';
+type ThemeName = keyof typeof themes;
 
+const resolveTheme = (themeName: ColorSchemeName | undefined, dynamicTheme: ThemeName): ThemeName =>
+  themeName === 'light' || themeName === 'dark' ? themeName : dynamicTheme;
+
+const getThemeColor = (colorName: string, theme: ThemeName): string => {
   const parts = colorName.split('.');
   let color = themes[theme];
   while (parts.length > 0) {
@@ -19,9 +22,15 @@ export const useThemeColor = (colorName: string, themeName?: ColorSchemeName): s
   return color as unknown as string;
 };
 
+export const useThemeColor = (colorName: string, themeName?: ColorSchemeName): string => {
+  const dynamicTheme = useDynamicColorScheme();
+  return getThemeColor(colorName, resolveTheme(themeName, dynamicTheme));
+};
+
 export const useThemeColors = (colorNames: Array<string>, themeName?: ColorSchemeName): Array<string> => {
-  const theme = themeName ?? useDynamicColorScheme() ?? 'light';
-  return colorNames.map((colorName) => useThemeColor(colorName, theme));
+  const dynamicTheme = useDynamicColorScheme();
+  const theme = resolveTheme(themeName, dynamicTheme);
+  return colorNames.map((colorName) => getThemeColor(colorName, theme));
 };
 
 const preparedPalette = {} as Record<string, string>;

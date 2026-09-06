@@ -68,7 +68,6 @@ export default function App() {
 
 function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [animationStarted, setAnimationStarted] = useState(false);
 
   const { width, height } = useWindowDimensions();
   const bgImage = useImage(require('@/assets/images/profile-background.png'));
@@ -93,29 +92,27 @@ function RootLayout() {
   }, [bgImage, themeName, stampsColors, width, height, setAchievements]);
 
   useEffect(() => {
-    if (!animationStarted) {
-      planeYPosition.value = withRepeat(
-        withTiming(-30, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
-        -1,
-        true,
-      );
+    /* oxlint-disable react/immutability -- Reanimated shared values are intentionally updated to start the splash animation. */
+    planeYPosition.value = withRepeat(
+      withTiming(-30, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true,
+    );
 
-      planeShadowOpacity.value = withRepeat(
-        withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
-        -1,
-        true,
-      );
+    planeShadowOpacity.value = withRepeat(
+      withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true,
+    );
 
-      planeShadowScale.value = withRepeat(
-        withTiming(0.7, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
-        -1,
-        true,
-      );
+    planeShadowScale.value = withRepeat(
+      withTiming(0.7, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true,
+    );
 
-      planeShadowBlur.value = withRepeat(withTiming(5, { duration: 2000, easing: Easing.inOut(Easing.sin) }), -1, true);
-
-      setAnimationStarted(true);
-    }
+    planeShadowBlur.value = withRepeat(withTiming(5, { duration: 2000, easing: Easing.inOut(Easing.sin) }), -1, true);
+    /* oxlint-enable react/immutability */
   }, []);
 
   function sleep(ms: number) {

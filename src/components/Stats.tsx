@@ -91,6 +91,7 @@ const Card: React.FC<CardProps> = (props) => {
     if (content.length === 0) {
       createContent();
     } else if (value !== displayValue || year !== oldYear) {
+      // oxlint-disable-next-line react/immutability -- Reanimated shared values are updated by the animation API.
       opacity.value = withTiming(0, { duration: 400 }, (finished) => {
         if (finished) {
           scheduleOnRN(createContent);
@@ -137,7 +138,7 @@ const rowStyle: ViewStyle = {
   alignItems: 'flex-end',
 };
 
-const captionStyle: TextStyle = {
+const baseCaptionStyle: TextStyle = {
   width: '12%',
   fontSize: 14,
   textAlign: 'left',
@@ -145,21 +146,21 @@ const captionStyle: TextStyle = {
   fontVariant: ['small-caps'],
 };
 
-const captionTextStyle: TextStyle = {
+const baseCaptionTextStyle: TextStyle = {
   width: '78%',
   fontSize: 14,
   textAlign: 'left',
   fontVariant: ['small-caps'],
 };
 
-const captionTextStyleLong: TextStyle = {
+const baseCaptionTextStyleLong: TextStyle = {
   width: '90%',
   fontSize: 14,
   textAlign: 'left',
   fontVariant: ['small-caps'],
 };
 
-const captionCountStyle: TextStyle = {
+const baseCaptionCountStyle: TextStyle = {
   width: '10%',
   fontSize: 12,
   fontWeight: 'bold',
@@ -250,10 +251,10 @@ const Top10Card: React.FC<Top10CardProps> = (props) => {
   const color = useThemeColor('textColors.surface');
   const colorBgPrimaryContainer = useThemeColor('colors.primaryContainer');
   const valueColor = useThemeColor('textColors.surface');
-  captionStyle.color = valueColor;
-  captionTextStyle.color = valueColor;
-  captionTextStyleLong.color = valueColor;
-  captionCountStyle.color = valueColor;
+  const captionStyle = { ...baseCaptionStyle, color: valueColor };
+  const captionTextStyle = { ...baseCaptionTextStyle, color: valueColor };
+  const captionTextStyleLong = { ...baseCaptionTextStyleLong, color: valueColor };
+  const captionCountStyle = { ...baseCaptionCountStyle, color: valueColor };
 
   const title = t('stats.top10', { type: t(`stats.${caption}`) });
   const rendererProps: StatsRowRendererProps = {
@@ -282,7 +283,7 @@ const Top10Card: React.FC<Top10CardProps> = (props) => {
             onPress={() => {
               router.push({
                 pathname: '/stats-list',
-                params: { value: JSON.stringify(data), caption, renderRowStr: renderRow.toString() },
+                params: { value: JSON.stringify(data), caption },
               });
             }}
           >
@@ -396,6 +397,7 @@ export default function Stats() {
 
   useEffect(() => {
     if (JSON.stringify(value) !== JSON.stringify(displayValue)) {
+      // oxlint-disable-next-line react/immutability -- Reanimated shared values are updated by the animation API.
       opacity.value = withTiming(0, { duration: 400 }, (finished) => {
         if (finished) {
           scheduleOnRN(setDisplayValue, value);

@@ -1,8 +1,12 @@
-import { Redirect } from 'expo-router';
+import { router } from 'expo-router';
+import { useEffect } from 'react';
 
 const Index = () => {
-  // @ts-ignore
-  return <Redirect href="/flights" />;
+  useEffect(() => {
+    router.replace('/flights' as any);
+  }, []);
+
+  return null;
 };
 
 export default Index;

@@ -96,7 +96,7 @@ const StatsList = () => {
       <ThemeProvider theme={theme}>
         <ScrollView keyboardShouldPersistTaps="always" style={{ flex: 1, backgroundColor: colorSurfaceVariant }}>
           <View className="bg-surfaceVariant flex-column flex-1">
-            <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mt-md pb-md radius-md b-1 bordercolor-outline elevated">
+            <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm my-md pb-md radius-md b-1 bordercolor-outline elevated">
               <View className="flex-column px-md pt-md">
                 {data.map((item, index) => renderRow(item, index, rendererProps))}
               </View>

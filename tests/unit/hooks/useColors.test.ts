@@ -1,24 +1,26 @@
 import { renderHook } from '@testing-library/react-native';
 
 import { usePaletteColor, useThemeColor, useThemeColors } from '@/hooks/useColors';
+import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 
 import mockedPalettes from '../../__mocks__/palettes.json';
 import mockedThemes from '../../__mocks__/themes.json';
 
 jest.mock('@/hooks/useDynamicColorScheme', () => ({
   __esModule: true,
-  default: jest
-    .fn()
-    .mockReturnValueOnce('light')
-    .mockReturnValueOnce('dark')
-    .mockReturnValueOnce(undefined)
-    .mockReturnValueOnce('light')
-    .mockReturnValueOnce('dark')
-    .mockReturnValueOnce(undefined),
+  default: jest.fn(),
 }));
 
+const mockUseDynamicColorScheme = jest.mocked(useDynamicColorScheme);
+
 describe('useColors', () => {
+  beforeEach(() => {
+    mockUseDynamicColorScheme.mockReset();
+    mockUseDynamicColorScheme.mockReturnValue('light');
+  });
+
   test('useThemeColor', () => {
+    mockUseDynamicColorScheme.mockReturnValueOnce('light').mockReturnValueOnce('dark').mockReturnValueOnce('light');
     const { result, rerender } = renderHook(() => useThemeColor('colors.primary'));
 
     expect(result.current).toBe(mockedThemes.light.colors.primary);
@@ -43,6 +45,7 @@ describe('useColors', () => {
   });
 
   test('useThemeColors', () => {
+    mockUseDynamicColorScheme.mockReturnValueOnce('light').mockReturnValueOnce('dark').mockReturnValueOnce('light');
     const { result, rerender } = renderHook(() => useThemeColors(['colors.primary', 'colors.secondary']));
 
     expect(result.current).toEqual([mockedThemes.light.colors.primary, mockedThemes.light.colors.secondary]);
