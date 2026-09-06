@@ -22,7 +22,7 @@
  * />
  * ```
  */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { FlatList, Pressable, ViewabilityConfig } from 'react-native';
 
 interface Item {
@@ -69,13 +69,13 @@ interface ScrollableSelectorProps {
 }
 
 const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
-  const [selected, setSelected] = useState(props.selectedKey ?? props.data[0]?.key);
+  const selected = props.selectedKey ?? props.data[0]?.key;
   const selectedRef = useRef(selected);
   const viewabilityConfig = props.viewabilityConfig ?? {
     minimumViewTime: 200,
     itemVisiblePercentThreshold: 10,
   };
-  const keys = props.data.map((item) => item.key);
+  const keys = useMemo(() => props.data.map((item) => item.key), [props.data]);
   const flRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -84,11 +84,10 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
     if (flRef?.current && index >= 0) {
       flRef.current.scrollToIndex({ index, viewPosition });
     }
-  }, [flRef.current, selected]);
+  }, [keys, selected]);
 
   const changeSelected = useCallback(
     (key: string) => {
-      setSelected(key);
       selectedRef.current = key;
       if (props.onSelectionChange) props.onSelectionChange(key);
     },
@@ -96,8 +95,8 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
   );
 
   useEffect(() => {
-    if (props.selectedKey !== selected) changeSelected(props.selectedKey ?? props.data[0]?.key);
-  }, [props.selectedKey]);
+    selectedRef.current = selected;
+  }, [selected]);
 
   const viewableItemsChanged = useRef((_info: { changed: any[]; viewableItems: any[] }) => {});
   useEffect(() => {
@@ -128,11 +127,8 @@ const ScrollableSelector: React.FC<ScrollableSelectorProps> = (props) => {
   );
 
   const onViewableItemsChanged = (info: { changed: any[]; viewableItems: any[] }) => viewableItemsChanged.current(info);
+  // oxlint-disable-next-line react/refs -- FlatList requires a stable callback-pair array.
   const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }]).current;
-
-  useEffect(() => {
-    if (!!props.data[0]?.key && !selected) changeSelected(props.data[0]?.key);
-  }, [changeSelected]);
 
   return (
     <FlatList

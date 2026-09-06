@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Text, View, createPicassoComponent } from 'react-native-picasso';
 
 import t from '@/helpers/localization';
@@ -22,12 +21,6 @@ export default function YearSelector(props: {
     value: year === 'all' ? t('flights.all').toLocaleUpperCase() : year.toString(),
   }));
 
-  const [selected, setSelected] = useState(props.current ?? 'all');
-
-  useEffect(() => {
-    setSelected(props.current ?? 'all');
-  }, [props.current]);
-
   const renderItem = (item: YearData, isSelected: boolean) => {
     return (
       <View
@@ -44,7 +37,7 @@ export default function YearSelector(props: {
       <Selector
         className="radius-md"
         data={yearData}
-        selectedKey={selected}
+        selectedKey={props.current ?? 'all'}
         onRenderItem={renderItem}
         onSelectionChange={props.onYearChange}
       />

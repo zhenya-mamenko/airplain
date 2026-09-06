@@ -22,8 +22,8 @@ jobs:
     needs: tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: 'microsoft'
           java-version: '21.0.2'
@@ -32,7 +32,7 @@ jobs:
         with:
           cmdline-tools-version: 14742923
           packages: tools platform-tools platforms;android-36 build-tools;36.0.0 ndk;27.1.12297006
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.x
           cache: npm
@@ -62,9 +62,18 @@ jobs:
             --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --out airplain.apk \
             android/app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Generate release notes
+        run: |
+          version="$(tr -d '\r\n' < VERSION)"
+          awk -v version="$version" '
+            $0 == "## " version { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+            END { if (!found) exit 1 }
+          ' CHANGELOG.md > release-notes.txt
       - name: Release
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.create_release }}
-        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: airplain.apk
           token: ${{ secrets.RELEASE_TOKEN }}

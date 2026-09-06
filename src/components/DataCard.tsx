@@ -1,6 +1,6 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-import React, { Ref, createContext, forwardRef, useContext, useState } from 'react';
+import React, { Ref, createContext, forwardRef, useContext, useImperativeHandle, useState } from 'react';
 import {
   InputModeOptions,
   KeyboardAvoidingView,
@@ -35,11 +35,7 @@ export const DataCard = forwardRef(
     const [editing, setEditing] = useState(false);
     const [state, setState] = useState({});
 
-    if (markAsSaved && typeof markAsSaved !== 'function') {
-      markAsSaved.current = () => {
-        setEditing(false);
-      };
-    }
+    useImperativeHandle(markAsSaved, () => () => setEditing(false));
 
     const dispatch = ({ field, value }: { field: string; value: any }) => {
       setState((oldState) => ({ ...oldState, [field]: value }));

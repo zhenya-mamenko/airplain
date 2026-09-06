@@ -269,6 +269,7 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
     ) {
       loadWeather();
     } else {
+      // oxlint-disable-next-line react/set-state-in-effect -- clear stale weather when the forecast inputs become invalid.
       setDepartureAirportWeather(null);
     }
   }, [
@@ -304,6 +305,7 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
     ) {
       loadWeather();
     } else {
+      // oxlint-disable-next-line react/set-state-in-effect -- clear stale weather when the forecast inputs become invalid.
       setArrivalAirportWeather(null);
     }
   }, [arrivalAirportLat, arrivalAirportLon, network.isInternetReachable, colorPrimaryContainer, arrivalDate, today]);
@@ -602,14 +604,20 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
         <Value
           caption={t('add.airline')}
           value={
-            <View className="flex-row justifycontent-start alignitems-center mt-xs">
+            <View className="flex-row justifycontent-start alignitems-center mt-xs" style={{ width: '100%' }}>
               <Image
                 className="radius-xs b-1 bordercolor-secondaryContainer"
                 recyclingKey={state.airline}
                 source={airlineLogoUri(state.airline)}
                 style={{ width: 20, height: 20, backgroundColor: '#FFFFFF' }}
               />
-              <Text className="size-smm weight-bold ml-sm color-surface" selectable>
+              <Text
+                className="size-smm weight-bold ml-sm color-surface"
+                ellipsizeMode="tail"
+                numberOfLines={1}
+                selectable={!dragEnabled}
+                style={{ flex: 1, flexShrink: 1 }}
+              >
                 {state.airlineName}
               </Text>
             </View>
@@ -624,14 +632,21 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
             caption={t('flights.carrier')}
             selectable={!dragEnabled}
             value={
-              <View className="flex-row justifycontent-start alignitems-center mt-xs">
+              <View className="flex-row justifycontent-start alignitems-center mt-xs" style={{ width: '100%' }}>
                 <Image
                   className="radius-xs b-1 bordercolor-secondaryContainer"
                   recyclingKey={state.extra.carrier}
                   source={airlineLogoUri(state.extra.carrier)}
                   style={{ width: 20, height: 20, backgroundColor: '#FFFFFF' }}
                 />
-                <Text className="size-smm weight-bold ml-sm color-surface">{state.extra.carrierName}</Text>
+                <Text
+                  className="size-smm weight-bold ml-sm color-surface"
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                  style={{ flex: 1, flexShrink: 1 }}
+                >
+                  {state.extra.carrierName}
+                </Text>
               </View>
             }
             width="66%"
