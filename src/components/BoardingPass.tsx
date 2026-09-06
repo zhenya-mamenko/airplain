@@ -76,30 +76,30 @@ interface FieldProps extends React.ComponentProps<typeof View> {
 }
 
 const Field = ({ colors, label, value, ...rest }: FieldProps) => {
-    return (
-      <View {...rest} className={rest.className ? rest.className + ' flex-1 flex-column' : 'flex-1 flex-column'}>
-        <Text
-          {...rest.labelProps}
-          className={(rest.labelProps as any).className ? (rest.labelProps as any).className + ' size-sm' : 'size-sm'}
-          style={{
-            color: colors.labelColor,
-            ...(rest.labelProps as any).style,
-          }}
-        >
-          {label}
-        </Text>
-        <Text
-          {...rest.valueProps}
-          className={(rest.valueProps as any).className ? (rest.valueProps as any).className + ' size-md' : 'size-md'}
-          style={{
-            color: colors.foregroundColor,
-            ...(rest.valueProps as any).style,
-          }}
-        >
-          {value}
-        </Text>
-      </View>
-    );
+  return (
+    <View {...rest} className={rest.className ? rest.className + ' flex-1 flex-column' : 'flex-1 flex-column'}>
+      <Text
+        {...rest.labelProps}
+        className={(rest.labelProps as any).className ? (rest.labelProps as any).className + ' size-sm' : 'size-sm'}
+        style={{
+          color: colors.labelColor,
+          ...(rest.labelProps as any).style,
+        }}
+      >
+        {label}
+      </Text>
+      <Text
+        {...rest.valueProps}
+        className={(rest.valueProps as any).className ? (rest.valueProps as any).className + ' size-md' : 'size-md'}
+        style={{
+          color: colors.foregroundColor,
+          ...(rest.valueProps as any).style,
+        }}
+      >
+        {value}
+      </Text>
+    </View>
+  );
 };
 
 interface FieldsProps extends React.ComponentProps<typeof View> {
@@ -108,32 +108,32 @@ interface FieldsProps extends React.ComponentProps<typeof View> {
 }
 
 const Fields = ({ colors, fields, ...rest }: FieldsProps) => {
-    return (
-      <>
-        {fields.map((f, index) => {
-          const labelProps = { className: 'align-center' };
-          const valueProps = { className: 'align-center' };
-          if (index === 0) {
-            labelProps.className = 'align-left';
-            valueProps.className = 'align-left';
-          } else if (index === fields.length - 1) {
-            labelProps.className = 'align-right';
-            valueProps.className = 'align-right';
-          }
-          return (
-            <Field
-              colors={colors}
-              key={f.key}
-              label={f.label ?? f.key}
-              labelProps={labelProps}
-              value={f.value}
-              valueProps={valueProps}
-              {...rest}
-            />
-          );
-        })}
-      </>
-    );
+  return (
+    <>
+      {fields.map((f, index) => {
+        const labelProps = { className: 'align-center' };
+        const valueProps = { className: 'align-center' };
+        if (index === 0) {
+          labelProps.className = 'align-left';
+          valueProps.className = 'align-left';
+        } else if (index === fields.length - 1) {
+          labelProps.className = 'align-right';
+          valueProps.className = 'align-right';
+        }
+        return (
+          <Field
+            colors={colors}
+            key={f.key}
+            label={f.label ?? f.key}
+            labelProps={labelProps}
+            value={f.value}
+            valueProps={valueProps}
+            {...rest}
+          />
+        );
+      })}
+    </>
+  );
 };
 
 interface AssetImageProps extends React.ComponentProps<typeof Image> {
@@ -212,7 +212,9 @@ const BoardingPass = (props: { pkpass: PKPassData }) => {
             {airline}
           </Text>
         )}
-        {boardingPass.headerFields ? <Fields colors={colors} fields={boardingPass.headerFields} className="alignitems-end" /> : null}
+        {boardingPass.headerFields ? (
+          <Fields colors={colors} fields={boardingPass.headerFields} className="alignitems-end" />
+        ) : null}
       </View>
       {boardingPass.primaryFields && boardingPass.primaryFields.length == 2 ? (
         <View className="flex-row alignitems-end justifycontent-between mt-lg mb-md">

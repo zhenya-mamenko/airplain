@@ -93,11 +93,7 @@ function RootLayout() {
 
   useEffect(() => {
     /* oxlint-disable react/immutability -- Reanimated shared values are intentionally updated to start the splash animation. */
-    planeYPosition.value = withRepeat(
-      withTiming(-30, { duration: 2000, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
+    planeYPosition.value = withRepeat(withTiming(-30, { duration: 2000, easing: Easing.inOut(Easing.sin) }), -1, true);
 
     planeShadowOpacity.value = withRepeat(
       withTiming(0.3, { duration: 2000, easing: Easing.inOut(Easing.sin) }),

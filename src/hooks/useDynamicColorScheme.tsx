@@ -7,7 +7,9 @@ const normalizeColorScheme = (colorScheme: ColorSchemeName | null | undefined): 
   colorScheme === 'dark' ? 'dark' : 'light';
 
 const useDynamicColorScheme = () => {
-  const [colorScheme, setColorScheme] = useState<AppColorScheme>(() => normalizeColorScheme(Appearance.getColorScheme()));
+  const [colorScheme, setColorScheme] = useState<AppColorScheme>(() =>
+    normalizeColorScheme(Appearance.getColorScheme()),
+  );
 
   useEffect(() => {
     const listener = Appearance.addChangeListener(({ colorScheme }) => {
