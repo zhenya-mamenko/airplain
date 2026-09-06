@@ -136,6 +136,7 @@ const rowStyle: ViewStyle = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
+  paddingBottom: 2,
 };
 
 const baseCaptionStyle: TextStyle = {
@@ -179,10 +180,16 @@ export interface StatsRowRendererProps {
   locale?: string;
 }
 
+const processRowStyle = (index: number, baseStyle: ViewStyle): ViewStyle => ({
+  ...baseStyle,
+  backgroundColor: index % 2 === 0 ? undefined : baseStyle.backgroundColor,
+});
+
 export const statsRowRenderers = {
   countries: (item: any, index: number, props: StatsRowRendererProps) => (
-    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+    <Animated.View key={index} style={[props.animatedStyle, processRowStyle(index, props.rowStyle)]}>
       <Text numberOfLines={1} style={props.captionStyle}>
+        {'\u00A0'}
         {item.flag}
       </Text>
       <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyle}>
@@ -190,17 +197,20 @@ export const statsRowRenderers = {
       </Text>
       <Text numberOfLines={1} style={props.captionCountStyle}>
         {item.count}
+        {'\u00A0\u00A0'}
       </Text>
     </Animated.View>
   ),
   airlines: (item: any, index: number, props: StatsRowRendererProps) => (
-    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
-      <View style={{ width: '12%' }}>
+    <Animated.View key={index} style={[props.animatedStyle, processRowStyle(index, props.rowStyle)]}>
+      <View style={{ width: '12%', justifyContent: 'flex-start', alignItems: 'flex-start', flexDirection: 'row' }}>
+        <Text>{'\u00A0'}</Text>
         <Image
           className="radius-xs b-1 bordercolor-secondaryContainer"
+          placeholder={require('@/assets/images/favicon.png')}
           recyclingKey={item.airline}
           source={item.logo}
-          style={{ width: 16, height: 16, backgroundColor: props.colorPrimaryContainer }}
+          style={{ width: 16, height: 16, backgroundColor: props.colorPrimaryContainer, marginTop: 2 }}
         />
       </View>
       <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyle}>
@@ -208,12 +218,14 @@ export const statsRowRenderers = {
       </Text>
       <Text numberOfLines={1} style={props.captionCountStyle}>
         {item.count}
+        {'\u00A0\u00A0'}
       </Text>
     </Animated.View>
   ),
   airports: (item: any, index: number, props: StatsRowRendererProps) => (
-    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+    <Animated.View key={index} style={[props.animatedStyle, processRowStyle(index, props.rowStyle)]}>
       <Text numberOfLines={1} style={props.captionStyle}>
+        {'\u00A0'}
         {item.airport.toLocaleLowerCase()}
       </Text>
       <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyle}>
@@ -221,16 +233,19 @@ export const statsRowRenderers = {
       </Text>
       <Text numberOfLines={1} style={props.captionCountStyle}>
         {item.count}
+        {'\u00A0\u00A0'}
       </Text>
     </Animated.View>
   ),
   aircrafts: (item: any, index: number, props: StatsRowRendererProps) => (
-    <Animated.View key={index} style={[props.animatedStyle, props.rowStyle]}>
+    <Animated.View key={index} style={[props.animatedStyle, processRowStyle(index, props.rowStyle)]}>
       <Text ellipsizeMode="tail" numberOfLines={1} style={props.captionTextStyleLong}>
+        {'\u00A0'}
         {item.aircraft.toLocaleLowerCase() || t('stats.unknown').toLocaleLowerCase()}
       </Text>
       <Text numberOfLines={1} style={props.captionCountStyle}>
         {item.count}
+        {'\u00A0\u00A0'}
       </Text>
     </Animated.View>
   ),
@@ -255,6 +270,7 @@ const Top10Card: React.FC<Top10CardProps> = (props) => {
   const captionTextStyle = { ...baseCaptionTextStyle, color: valueColor };
   const captionTextStyleLong = { ...baseCaptionTextStyleLong, color: valueColor };
   const captionCountStyle = { ...baseCaptionCountStyle, color: valueColor };
+  const colorSurfaceVariant = useThemeColor('colors.surfaceVariant');
 
   const title = t('stats.top10', { type: t(`stats.${caption}`) });
   const rendererProps: StatsRowRendererProps = {
@@ -263,7 +279,7 @@ const Top10Card: React.FC<Top10CardProps> = (props) => {
     captionTextStyle,
     captionTextStyleLong,
     captionCountStyle,
-    rowStyle,
+    rowStyle: { ...rowStyle, backgroundColor: colorSurfaceVariant },
     colorPrimaryContainer,
     locale,
   };
@@ -291,7 +307,7 @@ const Top10Card: React.FC<Top10CardProps> = (props) => {
           </Pressable>
         )}
       </View>
-      <View className="flex-column px-md pt-md">
+      <View className="flex-column px-smm pt-sm">
         {data.slice(0, 10).map((item, index) => renderRow(item, index, rendererProps))}
       </View>
     </View>

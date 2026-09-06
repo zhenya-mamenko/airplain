@@ -607,6 +607,7 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
             <View className="flex-row justifycontent-start alignitems-center mt-xs" style={{ width: '100%' }}>
               <Image
                 className="radius-xs b-1 bordercolor-secondaryContainer"
+                placeholder={require('@/assets/images/favicon.png')}
                 recyclingKey={state.airline}
                 source={airlineLogoUri(state.airline)}
                 style={{ width: 20, height: 20, backgroundColor: '#FFFFFF' }}
@@ -635,6 +636,7 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
               <View className="flex-row justifycontent-start alignitems-center mt-xs" style={{ width: '100%' }}>
                 <Image
                   className="radius-xs b-1 bordercolor-secondaryContainer"
+                  placeholder={require('@/assets/images/favicon.png')}
                   recyclingKey={state.extra.carrier}
                   source={airlineLogoUri(state.extra.carrier)}
                   style={{ width: 20, height: 20, backgroundColor: '#FFFFFF' }}

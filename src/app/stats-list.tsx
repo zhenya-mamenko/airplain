@@ -32,6 +32,8 @@ const StatsList = () => {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+    backgroundColor: colorSurfaceVariant,
+    paddingBottom: 2,
   };
 
   const captionStyle: TextStyle = {
@@ -96,8 +98,8 @@ const StatsList = () => {
       <ThemeProvider theme={theme}>
         <ScrollView keyboardShouldPersistTaps="always" style={{ flex: 1, backgroundColor: colorSurfaceVariant }}>
           <View className="bg-surfaceVariant flex-column flex-1">
-            <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm my-md pb-md radius-md b-1 bordercolor-outline elevated">
-              <View className="flex-column px-md pt-md">
+            <View className="flex-column alignitems-start justifycontent-start bg-surface m-sm mb-lg radius-md b-1 bordercolor-outline elevated">
+              <View className="flex-column p-smm">
                 {data.map((item, index) => renderRow(item, index, rendererProps))}
               </View>
             </View>

@@ -76,15 +76,20 @@ function collectCandidates() {
 
 function pickJavaHome(minimumJavaMajor = 17) {
   const candidates = collectCandidates();
+  let fallback = null;
 
   for (const candidate of candidates) {
     const major = readJavaMajor(candidate);
-    if (SUPPORTED_JAVA_MAJORS.has(major) && major >= minimumJavaMajor) {
+    if (!SUPPORTED_JAVA_MAJORS.has(major) || major < minimumJavaMajor) continue;
+
+    if (major === minimumJavaMajor) {
       return { javaHome: candidate, major };
     }
+
+    fallback ??= { javaHome: candidate, major };
   }
 
-  return null;
+  return fallback;
 }
 
 function parseCommand() {
