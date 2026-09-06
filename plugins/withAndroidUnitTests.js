@@ -11,7 +11,15 @@ const TEST_OPTIONS_BLOCK = [
 const TEST_DEPENDENCIES_BLOCK = [
   '    testImplementation("androidx.test:core:1.6.1")',
   '    testImplementation("junit:junit:4.13.2")',
-  '    testImplementation("org.robolectric:robolectric:4.14.1")',
+  '    testImplementation("org.robolectric:robolectric:4.16.1")',
+].join('\n');
+
+const TEST_JAVA_LAUNCHER_BLOCK = [
+  'tasks.withType(org.gradle.api.tasks.testing.Test).configureEach {',
+  '    javaLauncher = javaToolchains.launcherFor {',
+  '        languageVersion = JavaLanguageVersion.of(21)',
+  '    }',
+  '}',
 ].join('\n');
 
 function replaceOnce(contents, searchValue, replacement, label) {
@@ -45,6 +53,15 @@ module.exports = function withAndroidUnitTests(config) {
         '    } else {\n        implementation jscFlavor\n    }\n}',
         `    } else {\n        implementation jscFlavor\n    }\n\n${TEST_DEPENDENCIES_BLOCK}\n}`,
         'android test dependencies',
+      );
+    }
+
+    if (!contents.includes('javaLauncher = javaToolchains.launcherFor')) {
+      contents = replaceOnce(
+        contents,
+        '// Apply static values from `gradle.properties` to the `android.packagingOptions`',
+        `${TEST_JAVA_LAUNCHER_BLOCK}\n\n// Apply static values from \`gradle.properties\` to the \`android.packagingOptions\``,
+        'Android unit test Java launcher',
       );
     }
 
