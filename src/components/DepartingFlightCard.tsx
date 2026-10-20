@@ -16,6 +16,7 @@ import { makeCardGestures } from '@/helpers/gestures';
 import { useLocale } from '@/helpers/localization';
 import t from '@/helpers/localization';
 import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import useNow from '@/hooks/useNow';
 import type { DepartingFlightCardData } from '@/types';
 
 const Image = createPicassoComponent(_Image);
@@ -100,7 +101,8 @@ export default function DepartingFlightCard(props: { data: DepartingFlightCardDa
     scheduleOnRN(openUrl, onlineCheckInLink!);
   });
 
-  const tresholdDate = new Date();
+  const now = useNow();
+  const tresholdDate = new Date(now);
   tresholdDate.setHours(tresholdDate.getHours() - 1);
   const { gestures, animatedStyle } = makeCardGestures(flightId, isArchived, tresholdDate < arrivalDate, tap);
 

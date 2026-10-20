@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.4.6
+
+- Bugfix: Fixed opening a flight from a notification when the app is not running.
+- Bugfix: Fixed filght card for diverted flights.
+- Bugfix: Restored system brightness control after closing a boarding pass.
+- Bugfix: Updating aircraft type now cause recalculating statistics.
+- Chore: Updated dependencies.
+- Improvement: Default flight input times to noon and keep time-dependent flight controls up to date.
+
 ## 0.4.5
 
 - Bugfix: Fixed an issue scanning barcodes.
@@ -160,4 +169,3 @@ All notable changes to this project will be documented in this file.
 - Feature: Added actual departure and arrival times, terminal information, check-in counters, boarding gates, baggage claim belts, and weather data at the arrival airport.
 - Feature: Added flight statistics for all time or by year, including flight count, time in the air, distance, and more.
 - Feature: Added profile achievements for visiting countries and completing specific flights.
-

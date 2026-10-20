@@ -19,9 +19,12 @@ import {
   stopBackgroundTask,
 } from '@/helpers/common';
 import emitter from '@/helpers/emitter';
+import useNow from '@/hooks/useNow';
 import type { Flight } from '@/types';
 
 const ActualFlights = memo((props: { now?: Date }) => {
+  const currentTime = useNow();
+  const now = props.now ?? currentTime;
   const [refreshing, setRefreshing] = useState(false);
   const [flights, setFlights] = useState<Flight[]>([]);
 
@@ -106,7 +109,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
       return <FlightCard data={flightToFlightData(item)} />;
     }
     const sd = new Date(item.actualStartDatetime ?? item.startDatetime).getTime() / 1000;
-    const cd = new Date().getTime() / 1000;
+    const cd = now.getTime() / 1000;
     if (sd - cd > 0 && sd - cd < 3600 * 4) {
       return <DepartingFlightCard data={flightToDepartingFlightData(item)} />;
     }
@@ -132,6 +135,7 @@ const ActualFlights = memo((props: { now?: Date }) => {
       <View className="bg-surfaceVariant flex-1">
         <FlatList
           data={flights}
+          extraData={now}
           keyboardShouldPersistTaps="always"
           keyExtractor={(item: Flight, index: number) => item.flightId?.toString() ?? index.toString()}
           ref={ref}

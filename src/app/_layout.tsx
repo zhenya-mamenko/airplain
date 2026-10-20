@@ -3,9 +3,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useImage } from '@shopify/react-native-skia';
 
 import { loadAsync } from 'expo-font';
-import * as Notifications from 'expo-notifications';
 import { Stack } from 'expo-router';
-import { router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -35,19 +33,7 @@ import { syncScheduledFlightReminders } from '@/helpers/notifications';
 import { getActualFlights, openDatabase } from '@/helpers/sqlite';
 import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
-
-function useNotificationObserver() {
-  const lastNotificationResponse = Notifications.useLastNotificationResponse();
-
-  useEffect(() => {
-    if (lastNotificationResponse) {
-      const url = lastNotificationResponse.notification.request.content.data?.url;
-      if (url) {
-        router.replace(url as any);
-      }
-    }
-  }, [lastNotificationResponse]);
-}
+import useNotificationObserver from '@/hooks/useNotificationObserver';
 
 export const unstable_settings = {
   initialRouteName: '/(tabs)',
@@ -56,8 +42,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function App() {
-  useNotificationObserver();
-
   return (
     <GlobalContextProvider>
       <FlightsFilterModal />
@@ -68,6 +52,7 @@ export default function App() {
 
 function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
+  useNotificationObserver(appIsReady);
 
   const { width, height } = useWindowDimensions();
   const bgImage = useImage(require('@/assets/images/profile-background.png'));

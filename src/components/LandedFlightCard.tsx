@@ -14,6 +14,7 @@ import { useLocale } from '@/helpers/localization';
 import t from '@/helpers/localization';
 import { loadWeather, parseWeather } from '@/helpers/weather';
 import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import useNow from '@/hooks/useNow';
 import type { LandedFlightCardData, WeatherData } from '@/types';
 
 const Image = createPicassoComponent(_Image);
@@ -98,7 +99,8 @@ export default function LandedFlightCard(props: { data: LandedFlightCardData }) 
       ? flags.find((x) => x.country_code === arrivalAirportData?.country_code)?.flag
       : null;
 
-  const tresholdDate = new Date();
+  const now = useNow();
+  const tresholdDate = new Date(now);
   tresholdDate.setHours(tresholdDate.getHours() - 1);
   const { gestures, animatedStyle } = makeCardGestures(flightId, isArchived, tresholdDate < arrivalDate);
 

@@ -5,6 +5,16 @@ jest.mock('expo-localization', () => ({
 }));
 
 describe('datetime helper', () => {
+  test.each([0, 11, 23])('getTodayAtNoon uses the local date at hour %i', (hour) => {
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(new Date(2026, 9, 19, hour, 45, 30, 123));
+      expect(DT.getTodayAtNoon()).toEqual(new Date(2026, 9, 19, 12, 0, 0, 0));
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   test('durationToLocaleString', () => {
     expect(DT.durationToLocaleString(120, 'en-US')).toBe('2h');
     expect(DT.durationToLocaleString(121, 'en-US')).toBe('2h 1m');

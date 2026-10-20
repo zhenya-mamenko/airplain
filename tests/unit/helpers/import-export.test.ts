@@ -1,3 +1,5 @@
+import { parse } from 'csv-parse/sync';
+
 import { processExportData, processImportData } from '@/helpers/import-export';
 import { isFlightExists } from '@/helpers/sqlite';
 
@@ -106,6 +108,34 @@ describe('processExportData', () => {
 describe('processImportData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('imports CSV with quoted values, empty lines and optional columns using csv-parse 7', async () => {
+    mockedIsFlightExists.mockResolvedValue(0);
+    const csv = [
+      'airline,flight_number,departure_airport,departure_country,departure_airport_timezone,arrival_airport,arrival_country,arrival_airport_timezone,start_datetime,end_datetime,distance,aircraft_type',
+      'BA,00123,JFK,US,America/New_York,LAX,US,America/Los_Angeles,2023-01-01T10:00:00Z,2023-01-01T13:00:00Z,2475,"Boeing 737, MAX"',
+      '',
+      'BA,00124,LAX,US,America/Los_Angeles,JFK,US,America/New_York,2023-01-02T10:00:00Z,2023-01-02T13:00:00Z,2475',
+    ].join('\n');
+    const records = parse(csv, {
+      columns: true,
+      delimiter: ',',
+      escape: '"',
+      trim: true,
+      quote: '"',
+      skip_empty_lines: true,
+      relax_quotes: true,
+      relax_column_count: true,
+    });
+    const flights = await processImportData(records);
+    expect(flights).toHaveLength(2);
+    expect(flights[0]).toMatchObject({
+      flight_number: '00123',
+      aircraft_type: 'Boeing 737, MAX',
+      airline_id: 175,
+    });
+    expect(flights[1].flight_number).toBe('00124');
   });
 
   it('should return empty array for empty records', async () => {

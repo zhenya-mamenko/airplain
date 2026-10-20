@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import { router } from 'expo-router';
 import React, { useReducer, useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Pressable, ScrollView, ToastAndroid } from 'react-native';
@@ -14,7 +16,7 @@ import { getAirlineData, getAirlinesData } from '@/helpers/airdata';
 import { BCBPData } from '@/helpers/boardingpass';
 import { haversine, showConfirmation } from '@/helpers/common';
 import { refreshFlights } from '@/helpers/common';
-import { fromLocaltoLocalISOString, fromUTCtoLocalISOString } from '@/helpers/datetime';
+import { fromLocaltoLocalISOString, fromUTCtoLocalISOString, getTodayAtNoon } from '@/helpers/datetime';
 import { getFlightData, getLastFlightDataError } from '@/helpers/flights';
 import t from '@/helpers/localization';
 import { useLocale } from '@/helpers/localization';
@@ -27,7 +29,11 @@ import type { Flight, FlightStatus, PKPassData } from '@/types';
 /* oxlint-disable react/refs -- These refs are invoked exclusively from React Native event handlers. */
 
 export default function AddFlight(props: { today?: Date }) {
-  const today = fromUTCtoLocalISOString((props.today ?? new Date()).toISOString(), 'UTC');
+  const [initialDate] = useState(getTodayAtNoon);
+  const today = fromLocaltoLocalISOString(
+    DateTime.fromJSDate(props.today ?? initialDate).toFormat('yyyy-MM-dd HH:mm:ss'),
+    'UTC',
+  );
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
@@ -111,7 +117,7 @@ export default function AddFlight(props: { today?: Date }) {
       endDatetime: endDatetime,
       extra: {},
       flightNumber: state.add.flightNumber,
-      isArchived: state.add.departureDate < today,
+      isArchived: state.add.departureDate < fromUTCtoLocalISOString((props.today ?? new Date()).toISOString(), 'UTC'),
       recordType: 2,
       startDatetime: startDatetime,
       status: 'scheduled' as FlightStatus,

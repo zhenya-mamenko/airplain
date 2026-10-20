@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import React, { useImperativeHandle, useMemo, useState } from 'react';
 
 import Button from '@/components/Button';
+import { getTodayAtNoon } from '@/helpers/datetime';
 import { useLocale } from '@/helpers/localization';
 
 interface Props {
@@ -28,6 +29,7 @@ const removeTimeZone = (dateString: string) => dateString.replace(/(\+|-)\d{2}:\
 const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
   ({ className, dateFormatOptions, textClass, timeFormatOptions, onChange, timezone, ...props }: Props, currentRef) => {
     const [overrideValue, setOverrideValue] = useState<string | null>(null);
+    const [initialDate] = useState(getTodayAtNoon);
 
     const { value, dateValue } = useMemo(() => {
       const v = overrideValue ?? props.value ?? '';
@@ -35,8 +37,8 @@ const DatetimeInput = React.forwardRef<IDatetimeInputRef, Props>(
       if (!isNaN(parsed.valueOf())) {
         return { value: v, dateValue: parsed };
       }
-      return { value: '', dateValue: new Date() };
-    }, [overrideValue, props.value]);
+      return { value: '', dateValue: initialDate };
+    }, [overrideValue, props.value, initialDate]);
 
     const locale = useLocale();
     const dateOptions: Intl.DateTimeFormatOptions = useMemo(
