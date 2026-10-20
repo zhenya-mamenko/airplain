@@ -16,6 +16,7 @@ import { dateClass } from '@/helpers/datetime';
 import { makeCardGestures } from '@/helpers/gestures';
 import t, { useLocale } from '@/helpers/localization';
 import { usePaletteColor, useThemeColor } from '@/hooks/useColors';
+import useNow from '@/hooks/useNow';
 import type { FlightCardData, FlightStatus } from '@/types';
 
 const Image = createPicassoComponent(_Image);
@@ -214,7 +215,8 @@ const FlightCard = React.memo(
     const tap = Gesture.Tap().onEnd(() => {
       scheduleOnRN(openUrl, onlineCheckInLink!);
     });
-    const tresholdDate = new Date();
+    const now = useNow();
+    const tresholdDate = new Date(now);
     tresholdDate.setHours(tresholdDate.getHours() - 1);
     const { gestures, animatedStyle } = makeCardGestures(flightId, isArchived, tresholdDate < arrivalDate, tap);
 
@@ -281,7 +283,7 @@ const FlightCard = React.memo(
               timeOptions={arrivalTimeOptions}
             />
           </View>
-          {((isOnlineCheckInOpen && !seatNumber && !['en_route', 'departed'].includes(state ?? '')) || !!state) && (
+          {((isOnlineCheckInOpen && !seatNumber && !['en_route', 'departed'].includes(status ?? '')) || !!state) && (
             <View
               className="p-md bt-1 bordercolor-outlineVariant flex-row justifycontent-start alignitems-center"
               style={{
@@ -301,7 +303,7 @@ const FlightCard = React.memo(
               ) : !state ? (
                 onlineCheckInText
               ) : null}
-              {!!state && !!stateTimeString ? (
+              {!!state && !!stateTimeString && !['canceled', 'diverted'].includes(status ?? '') ? (
                 <>
                   <FontAwesome5 color={colorPrimaryContainer} name="clock" size={12} />
                   <Text className="size-sm color-primaryContainer ml-xs" style={{ fontVariant: ['small-caps'] }}>

@@ -4,7 +4,7 @@ import { Image as _Image } from 'expo-image';
 import { useNetworkState } from 'expo-network';
 import { useNavigation } from 'expo-router';
 import { router } from 'expo-router';
-import React, { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { KeyboardAvoidingView, ListRenderItemInfo, Pressable } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Text, ThemeProvider, View, createPicassoComponent } from 'react-native-picasso';
@@ -24,12 +24,14 @@ import { airlineLogoUri, getAirportData } from '@/helpers/airdata';
 import { syncBackgroundFlights } from '@/helpers/backgroundtasks';
 import { refreshFlights, showConfirmation } from '@/helpers/common';
 import { durationToLocaleString } from '@/helpers/datetime';
+import emitter from '@/helpers/emitter';
 import { getFlightData } from '@/helpers/flights';
 import t, { useLocale } from '@/helpers/localization';
 import { getActualFlights, updateFlight } from '@/helpers/sqlite';
 import { loadForecast, parseWeather } from '@/helpers/weather';
 import { useThemeColor } from '@/hooks/useColors';
 import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
+import useNow from '@/hooks/useNow';
 import useTheme from '@/hooks/useTheme';
 import { type ConfirmationDialogSettings, type Flight, FlightStatusValues, WeatherData } from '@/types';
 
@@ -101,7 +103,8 @@ const Card: React.FC<{ dataCards: any; item: string; dragEnabled: boolean }> = R
 );
 
 const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
-  const today = props.today ?? new Date();
+  const now = useNow();
+  const today = props.today ?? now;
   const themeName = useDynamicColorScheme() || 'light';
   const theme = useTheme(themeName);
   const locale = useLocale();
@@ -143,8 +146,14 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
     }
   }, []);
 
-  const departureDate = new Date(state.actualStartDatetime ?? state.startDatetime);
-  const arrivalDate = new Date(state.actualEndDatetime ?? state.endDatetime);
+  const departureDate = useMemo(
+    () => new Date(state.actualStartDatetime ?? state.startDatetime),
+    [state.actualStartDatetime, state.startDatetime],
+  );
+  const arrivalDate = useMemo(
+    () => new Date(state.actualEndDatetime ?? state.endDatetime),
+    [state.actualEndDatetime, state.endDatetime],
+  );
   const durationString = durationToLocaleString(
     Math.round((arrivalDate.getTime() - departureDate.getTime()) / 60000),
     locale,
@@ -183,6 +192,7 @@ const EditFlight = React.memo((props: { data: Flight; today?: Date }) => {
     await updateFlight({ ...state, ...result });
     await syncBackgroundSnapshotFromDb();
     refreshFlights(true, false);
+    emitter.emit('updateStats');
   };
 
   const departureFlag = flags.find((x) => x.country_code === state.departureCountry)?.flag;

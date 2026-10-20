@@ -13,7 +13,7 @@ import useDynamicColorScheme from '@/hooks/useDynamicColorScheme';
 import { BCBPFormat } from '@/types';
 
 const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boolean }) => {
-  const { today = new Date(), dispatch, showToast = true } = props;
+  const { today, dispatch, showToast = true } = props;
   const colorPrimary = useThemeColor('textColors.primary');
   const isLightTheme = (useDynamicColorScheme() || 'light') === 'light';
 
@@ -23,7 +23,7 @@ const LoadBCBPOptions = (props: { today?: Date; dispatch: any; showToast?: boole
       value: {
         airline: leg.operatingCarrierDesignator,
         flightNumber: leg.flightNumber.replace(/^0+/, ''),
-        departureDate: leg.flightDate ?? today,
+        departureDate: leg.flightDate ?? today ?? new Date(),
       },
     });
     if (showToast) ToastAndroid.show(t('add.check_flight_date'), ToastAndroid.SHORT);

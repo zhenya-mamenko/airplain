@@ -2,6 +2,12 @@ import { DateTime } from 'luxon';
 
 import t from '@/helpers/localization';
 
+export function getTodayAtNoon(): Date {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  return date;
+}
+
 // oxlint-disable-next-line no-unused-vars
 export function durationToLocaleString(duration: number, locale: string): string {
   // This is a workaround for the lack of support for Intl.RelativeTimeFormat in Expo.

@@ -3,7 +3,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 import * as Brightness from 'expo-brightness';
 import { Image, useImage } from 'expo-image';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Text, View } from 'react-native-picasso';
 
@@ -59,7 +59,7 @@ const BarCode = ({ format, options, ...rest }: BarCodeProps) => {
 
   return (
     <Image
-      recyclingKey={`${new Date().valueOf()}`}
+      recyclingKey={img.uri}
       source={{ uri: img.uri }}
       {...rest}
       style={{ height: img.height, width: img.width, ...(rest.style as any) }}
@@ -175,20 +175,11 @@ const AssetImage = ({ asset, ...rest }: AssetImageProps) => {
 const BoardingPass = (props: { pkpass: PKPassData }) => {
   const { airline, barcode, boardingPass, colors, images } = props.pkpass;
 
-  const brightness = useRef(0);
   useEffect(() => {
-    let isMounted = true;
-    void (async () => {
-      const level = await Brightness.getBrightnessAsync();
-      if (isMounted) brightness.current = level;
-      await Brightness.setBrightnessAsync(1);
-    })();
+    const maximizeBrightness = Brightness.setBrightnessAsync(1).catch(console.error);
 
     return () => {
-      isMounted = false;
-      if (brightness.current !== 0) {
-        void Brightness.setBrightnessAsync(brightness.current);
-      }
+      void maximizeBrightness.then(() => Brightness.restoreSystemBrightnessAsync()).catch(console.error);
     };
   }, []);
 
